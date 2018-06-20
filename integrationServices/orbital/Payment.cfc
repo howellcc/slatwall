@@ -76,6 +76,25 @@ component accessors="true" output="false" displayname="PayFlowPro" implements="S
 		return this;
 	}
 	
+	public any function testIntegration(){
+		var requestBean = new Slatwall.model.transient.payment.CreditCardTransactionRequestBean();
+		var testAccount = getHibachiScope().getAccount();
+		requestBean.setTransactionType('authorize');
+		requestBean.setOrder(getHibachiScope().getCart());
+		requestBean.setCreditCardNumber('4111111111111111');
+		requestBean.setSecurityCode('123');
+		requestBean.setExpirationMonth('01');
+		requestBean.setExpirationYear(year(now())+1);
+		requestBean.setTransactionAmount('1');
+		requestBean.setTransactionCurrencyCode('USD');
+		requestBean.setAccountFirstName(testAccount.getFirstName());
+		requestBean.setAccountLastName(testAccount.getLastName());
+		
+		var response = processCreditCard(requestBean); 
+		structDelete(response.getData(),"requestData");
+		return response;
+	}
+	
 	public string function getPaymentMethodTypes() {
 		return "creditCard";
 	}

@@ -446,9 +446,19 @@ component extends="HibachiService" output="false" accessors="true" {
  
 	private string function extractPackageNameBySettingName (required string settingName){
 		var substringInfo = REFIND('\integration(?!.*\\)(.*?)(?=[A-Z])',arguments.settingName,1,true);
-		var substring = Mid(arguments.settingName,substringInfo.pos[1],substringInfo.len[1]);
-		var packageName = Mid(substring,12,len(substring));
-		return packageName;
+		if(!IsNull(substringInfo) 
+			&& structKeyExists(substringInfo,'pos') 
+			&& structKeyExists(substringInfo,'len')
+			&& substringInfo.pos[1]
+			&& substringInfo.len[1]
+		){
+			var substring = Mid(arguments.settingName,substringInfo.pos[1],substringInfo.len[1]);
+			var packageName = Mid(substring,12,len(substring));
+		} else {
+			var packageName = '';
+		}
+		
+		return packageName;	
 	}
 
 	public array function getSettingOptions(required string settingName, any settingObject) {
