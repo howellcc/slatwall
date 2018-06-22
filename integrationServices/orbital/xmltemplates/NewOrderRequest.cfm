@@ -71,9 +71,12 @@ Notes:
 		<CurrencyCode>#arguments.requestBean.getTransactionCurrencyISONumber()#</CurrencyCode>
 		<CurrencyExponent>2</CurrencyExponent>
 		<cfif !isNull(requestBean.getSecurityCode())>
-			<CardSecValInd>1</CardSecValInd>
+			<cfif requestBean.getCreditCardType() EQ "Visa" OR requestBean.getCreditCardType() EQ "Discover" OR NOT len(requestBean.getCreditCardType()) OR isNull(requestBean.getCreditCardType()) >
+				<CardSecValInd>1</CardSecValInd>
+			</cfif>
 			<CardSecVal>#arguments.requestBean.getSecurityCode()#</CardSecVal>
 		</cfif>
+		<ECPActionCode>TN</ECPActionCode>
 		<cfif listFindNoCase("US,CA,GB,UK", arguments.requestBean.getBillingCountryCode())>
 			<AVSzip>#arguments.requestBean.getBillingPostalCode()#</AVSzip>
 			<cfset fullAddress = arguments.requestBean.getBillingStreetAddress() />
@@ -94,13 +97,16 @@ Notes:
 		<cfif isNull(arguments.requestBean.getCreditCardNumber())>
 			<CustomerRefNum>#arguments.requestBean.getProviderToken()#</CustomerRefNum>
 		</cfif>
-		<OrderID>#arguments.requestBean.getOrder().getShortReferenceID( true )#</OrderID>
-		<Amount>#getHibachiScope().getService('HibachiUtilityService').precisionCalculate(numberFormat(arguments.requestBean.getTransactionAmount(),'.00')*100)#</Amount>
+		<cfif isNull(requestBean.getOrder().getShortReferenceID()) OR NOT len(requestBean.getOrder().getShortReferenceID()) >
+			<OrderID>8316384413</OrderID>
+		<cfelse>
+			<OrderID>#requestBean.getOrder().getShortReferenceID()#</OrderID>
+		</cfif>
+		<Amount>#round(getHibachiScope().getService('HibachiUtilityService').precisionCalculate(numberFormat(arguments.requestBean.getTransactionAmount(),'.00')*100))#</Amount>
 		<cfif arguments.requestBean.getTransactionType() EQ "credit">
 			<TxRefNum>#arguments.requestBean.getOriginalChargeProviderTransactionID()#</TxRefNum>
 		</cfif>
 		<CustomerEmail>#arguments.requestBean.getAccountPrimaryEmailAddress()#</CustomerEmail>
-		<CustomerIpAddress>#getRemoteAddress()#</CustomerIpAddress>
 	</NewOrder>
 </Request>
 </cfoutput>

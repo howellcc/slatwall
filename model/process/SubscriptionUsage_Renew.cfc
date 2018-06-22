@@ -170,7 +170,7 @@ component output="false" accessors="true" extends="HibachiProcess" {
 				variables.renewalPaymentType = 'new';
 			}
 		}
-
+		
 		return variables.renewalPaymentType;
 	}
 

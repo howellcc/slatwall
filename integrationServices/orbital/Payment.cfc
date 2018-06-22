@@ -81,16 +81,24 @@ component accessors="true" output="false" displayname="PayFlowPro" implements="S
 		var testAccount = getHibachiScope().getAccount();
 		requestBean.setTransactionType('authorize');
 		requestBean.setOrder(getHibachiScope().getCart());
-		requestBean.setCreditCardNumber('4111111111111111');
-		requestBean.setSecurityCode('123');
+		requestBean.setCreditCardNumber('4012888888881881');
 		requestBean.setExpirationMonth('01');
+		requestBean.setBillingCountryCode('US');
+		requestBean.setBillingPostalCode('01605');
+		requestBean.setBillingStreetAddress('20 Franklin Street');
+		requestBean.setBillingCity('Worcester');
+		requestBean.setBillingStateCode('MA');
+		requestBean.setAccountPrimaryPhoneNumber('8004564512');
+		requestBean.setNameOnCreditCard('John McCLane');
 		requestBean.setExpirationYear(year(now())+1);
-		requestBean.setTransactionAmount('1');
+		requestBean.setTransactionAmount(2);
 		requestBean.setTransactionCurrencyCode('USD');
+		requestBean.setTransactionCurrencyISONumber(840);
 		requestBean.setAccountFirstName(testAccount.getFirstName());
 		requestBean.setAccountLastName(testAccount.getLastName());
+		requestBean.setAccountPrimaryEmailAddress(testAccount.getPrimaryEmailAddress().getEmailAddress());
 		
-		var response = processCreditCard(requestBean); 
+		var response = processCreditCard(requestBean);
 		structDelete(response.getData(),"requestData");
 		return response;
 	}
@@ -117,7 +125,8 @@ component accessors="true" output="false" displayname="PayFlowPro" implements="S
 				include "xmltemplates/ProfileAddRequest.cfm"; 
 			}
 		}
-
+		
+		writeDump(requestXML);abort;
 		// Get the response from Orbital
 		try {
 			var liveModeFlag = getLiveModeFlag(arguments.requestBean);
