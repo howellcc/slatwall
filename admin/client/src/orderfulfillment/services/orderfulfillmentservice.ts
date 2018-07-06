@@ -16,6 +16,7 @@ class OrderFulfillmentService {
         showFulfillmentListing: true,
         expandedFulfillmentBatchListing: true,
         editComment:false,
+        useShippingIntegrationForTrackingNumber:true,
         
         //objects
         commentBeingEdited:undefined,
@@ -37,11 +38,13 @@ class OrderFulfillmentService {
         //arrays
         accountNames:[],
         orderDeliveryAttributes:[],
+        orderItem:[],
         loading: false,
         tableSelections: {
             table1: [],
             table2: []
-        }
+        },
+        boxes:[{}]
     };
     private updateLock:Boolean = false;
     private selectedValue:string = "";
@@ -132,6 +135,14 @@ class OrderFulfillmentService {
                 this.getEmailList();
                 return {...this.state, action}
             
+            case actions.ADD_BOX:
+                this.addNewBox();
+                return {...this.state, action}
+            
+            case actions.REMOVE_BOX:
+                this.removeBox(action.payload.index);
+                return {...this.state, action}
+            
             case actions.TOGGLE_LOADER:
                 this.state.loading = !this.state.loading;
                 return {...this.state, action}
@@ -177,6 +188,9 @@ class OrderFulfillmentService {
                 
                 this.selectionService.removeSelection("fulfillmentBatchItemTable2", current);
                 this.state.currentSelectedFulfillmentBatchItemID = this.selectedValue;
+                this.state.useShippingIntegrationForTrackingNumber = true;
+                this.state.orderItem = [];
+                this.state.boxes = [{}];
                 this.state.smFulfillmentBatchItemCollection.getEntity().then((results)=>{
                     for (var result in results.pageRecords){
                         let currentRecord = results['pageRecords'][result];
@@ -304,7 +318,8 @@ class OrderFulfillmentService {
         data['orderFulfillment']['orderFulfillmentID'] = this.state.currentRecordOrderDetail['fulfillmentBatchItem']['orderFulfillment_orderFulfillmentID'];
         data['trackingNumber'] = state.trackingCode || "";
         
-        if (data['trackingNumer'] == undefined || !data['trackingNumber'].length){
+        data['containers'] = state.boxes || [];
+        if (data['trackingNumber'] == undefined || !data['trackingNumber'].length){
             data['useShippingIntegrationForTrackingNumber'] = state.useShippingIntegrationForTrackingNumber || "false";
         }
 
@@ -358,6 +373,7 @@ class OrderFulfillmentService {
         processObject.data['containerLabel'] = data.containerLabel || "";
         processObject.data['shippingIntegration'] = data.shippingIntegration || "";
         processObject.data['shippingAddress'] = data.shippingAddress || "";
+        processObject.data['containers'] = data.containers;
         processObject.data['useShippingIntegrationForTrackingNumber'] = data.useShippingIntegrationForTrackingNumber || false;
         
         this.$hibachi.saveEntity("OrderDelivery", '', processObject.data, "create").then((result)=>{
@@ -503,6 +519,7 @@ class OrderFulfillmentService {
         this.state.currentRecordOrderDetail.addDisplayProperty("shippingAddress.city");
         this.state.currentRecordOrderDetail.addDisplayProperty("shippingAddress.stateCode");
         this.state.currentRecordOrderDetail.addDisplayProperty("orderFulfillmentStatusType.typeName");
+        this.state.currentRecordOrderDetail.addDisplayProperty("shippingIntegrationOptions");
         
         this.state.currentRecordOrderDetail.getEntity().then( (entityResults) => {
             if (entityResults['pageRecords'].length){
@@ -615,6 +632,20 @@ class OrderFulfillmentService {
                 this.state.emailCollection = result.pageRecords || [];
             });
      }
+     
+     /**
+     * Add a box to the shipment
+     */
+     private addNewBox = () => {
+        this.state.boxes.push({});
+     }
+     
+     /**
+     * Remove a box from the shipment
+     */
+     private removeBox = (index) => {
+        this.state.boxes.splice(index,1);
+     }
 
     /**
      * Returns  orderFulfillmentItem Collection given an orderFulfillmentID.
@@ -632,10 +663,15 @@ class OrderFulfillmentService {
         collection.addDisplayProperty("quantityDelivered");
         collection.addDisplayProperty("orderItemID");
         collection.addFilter("orderFulfillment.orderFulfillmentID", orderFulfillmentID, "=");
+        collection.setPageShow(100);
         collection.getEntity().then((orderItems)=>{
             if (orderItems && orderItems.pageRecords && orderItems.pageRecords.length){
                 this.state.orderFulfillmentItemsCollection = orderItems['pageRecords'];
-            }else{
+            }
+            else if (orderItems && orderItems.records && orderItems.records.length){
+                this.state.orderFulfillmentItemsCollection = orderItems['records'];
+            }
+            else{
                 this.state.orderFulfillmentItemsCollection = [];
             }
             this.emitUpdateToClient();

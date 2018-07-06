@@ -637,8 +637,15 @@ component extends="HibachiService"  accessors="true" output="false"
             if(!isNull(orderFulfillment) && !orderFulfillment.hasErrors()){
               orderFulfillment.setShippingAddress(accountAddress.getAddress());
               orderFulfillment.setAccountAddress(accountAddress);
+              getService("OrderService").saveOrderFulfillment(orderFulfillment);
+              if(orderFulfillment.hasErrors()){
+                  order.addErrors(orderFulfillment.getErrors());
+              }
             }
             getService("OrderService").saveOrder(order);
+            if(order.hasErrors()){
+                this.addErrors(arguments.data,order.getErrors());
+            }
             getHibachiScope().addActionResult( "public:cart.addShippingAddressUsingAccountAddress", order.hasErrors());
         }else{
             if(!isNull(accountAddress)){

@@ -9,7 +9,6 @@ import * as actions from '../actions/fulfillmentbatchactions';
 class SWFulfillmentBatchDetailController  {
     
     public state;
-    public orderItem = {};
     public fulfillmentBatchId: string;
     
     // @ngInject
@@ -29,9 +28,10 @@ class SWFulfillmentBatchDetailController  {
                 stateChanges.action.type == actions.UPDATE_BATCHDETAIL || 
                 stateChanges.action.type == actions.SETUP_BATCHDETAIL || 
                 stateChanges.action.type == actions.SETUP_ORDERDELIVERYATTRIBUTES ||
-                stateChanges.action.type == actions.TOGGLE_LOADER)){
+                stateChanges.action.type == actions.TOGGLE_LOADER ||
+                stateChanges.action.type == actions.ADD_BOX ||
+                stateChanges.action.type == actions.REMOVE_BOX)){
                 //set the new state.
-                this.orderItem = {};
                 this.state = stateChanges;
             }
 
@@ -101,7 +101,6 @@ class SWFulfillmentBatchDetailController  {
 
     public userCaptureAndFulfill = () => {
         //request the fulfillment process.
-        this.state.orderItem = this.orderItem;
         
         this.orderFulfillmentService.orderFulfillmentStore.dispatch({
             type: actions.CREATE_FULFILLMENT_REQUESTED,
@@ -136,6 +135,21 @@ class SWFulfillmentBatchDetailController  {
          this.orderFulfillmentService.orderFulfillmentStore.dispatch({
             type: actions.EMAIL_LIST_REQUESTED,
             payload: {}
+        });
+    }
+        
+    /** Adds an additional box to the shipment */
+    public userAddingNewBox = () => {
+         this.orderFulfillmentService.orderFulfillmentStore.dispatch({
+            type: actions.ADD_BOX,
+            payload: {}
+        });
+    }
+    
+    public userRemovingBox = (index) => {
+        this.orderFulfillmentService.orderFulfillmentStore.dispatch({
+            type: actions.REMOVE_BOX,
+            payload: {index:index}
         });
     }
 

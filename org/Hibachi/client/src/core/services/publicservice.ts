@@ -646,7 +646,15 @@ class PublicService {
     
     /** Selects shippingAddress*/
     public selectShippingAccountAddress = (accountAddressID,orderFulfillmentID)=>{
-        this.doAction('addShippingAddressUsingAccountAddress', {accountAddressID:accountAddressID,fulfillmentID:orderFulfillmentID});
+        let fulfillmentIndex = this.cart.orderFulfillments.findIndex(fulfillment => fulfillment.orderFulfillmentID == orderFulfillmentID);
+        let oldAccountAddressID = this.cart.orderFulfillments[fulfillmentIndex].accountAddress.accountAddressID;
+        this.doAction('addShippingAddressUsingAccountAddress', {accountAddressID:accountAddressID,fulfillmentID:orderFulfillmentID}).then(result=>{
+            if(result && result.failureActions && result.failureActions.length){
+                this.$timeout(()=>{
+                    this.cart.orderFulfillments[fulfillmentIndex].accountAddress.accountAddressID = oldAccountAddressID;
+                });
+            }  
+        });
     }
     
      /** Selects shippingAddress*/

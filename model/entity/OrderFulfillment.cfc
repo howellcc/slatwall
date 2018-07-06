@@ -126,6 +126,7 @@ component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" 
 	property name="totalShippingWeight" type="numeric" persistent="false" hb_formatType="weight";
     property name="totalShippingQuantity" type="numeric" persistent="false" hb_formatType="weight";
     property name="shipmentItemMultiplier" type="numeric" persistent="false";
+    property name="shippingIntegrationOptions" type="array" persistent="false";
     
 	// Deprecated
 	property name="discountTotal" persistent="false";

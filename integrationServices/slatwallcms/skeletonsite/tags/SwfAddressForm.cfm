@@ -48,6 +48,7 @@ Notes:
 <cfparam name="attributes.visible" type="string" />
 <cfparam name="attributes.formID" type="string" default="#createUUID()#" />
 <cfparam name="attributes.additionalParameters" type="string" default="{}" />
+<cfparam name="attributes.tagContext" type="string" default="" />
 
 <cfoutput>
     <cfif thisTag.executionMode is "start">
