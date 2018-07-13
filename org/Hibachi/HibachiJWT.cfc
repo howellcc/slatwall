@@ -121,7 +121,7 @@ component accessors="true" persistent="false" output="false" extends="HibachiObj
 		arrayAppend(segments, base64UrlEscape(toBase64(serializeJSON({ "typ" =  "JWT", "alg" = hashAlgorithm }),'UTF-8')));
 		/*Add payload*/
 		arrayAppend(segments, base64UrlEscape(toBase64(serializeJSON(arguments.payload),'UTF-8')));
-		arrayAppend(segments, sign(segments,getAlgorithmMap()[hashAlgorithm]));
+		arrayAppend(segments, sign(arrayToList(segments,'.'),getAlgorithmMap()[hashAlgorithm]));
 		return arrayToList(segments,'.');
 	}
 	
