@@ -1011,9 +1011,20 @@ component output="false" accessors="true" extends="HibachiService" {
 		}
 		if(!isNull(collectionEntity.getMergeCollection())){
 			var collectionData = getMergedCollectionData(collectionEntity, data);
+			
 			var headers1 = getHeadersListByCollection(collectionEntity);
 			var headers2 = getHeadersListByCollection(collectionEntity.getMergeCollection());
 			var mergedHeaders = ListRemoveDuplicates(listAppend(headers1, headers2));
+			
+			var mergedHeadersArray = listToArray(mergedHeaders);
+			
+			//Now remove any headers not in the data to prevent errors.
+			for ( var i=1; i <= arrayLen(mergedHeadersArray); i++ ){
+				if ( !ListFindNoCase( collectionData.columnList, mergedHeadersArray[i]) ){
+					mergedHeaders = ListDeleteAt(mergedHeaders, i);
+				}
+			}
+
 			getHibachiService().export( collectionData, mergedHeaders, mergedHeaders, collectionEntity.getCollectionObject(), "csv" );
 			return;
 		}
@@ -1064,6 +1075,23 @@ component output="false" accessors="true" extends="HibachiService" {
 		
 		var collection1Headers = getHeadersListByCollection(collection1);
 		var collection2Headers = getHeadersListByCollection(collection2);
+		
+		var collection1HeadersArray =  ListToArray(collection1Headers);
+		var collection2HeadersArray =  ListToArray(collection2Headers);
+		
+		//We'll need to make sure that the primaryIDProperty is included so that we can run a join
+		if ( !ArrayFindNoCase(collection1HeadersArray, primaryIDPropertyName) ){
+			arrayAppend(collection1HeadersArray, primaryIDPropertyName);
+		}
+		
+		if ( !ArrayFindNoCase(collection2HeadersArray, primaryIDPropertyName) ){
+			arrayAppend(collection2HeadersArray, primaryIDPropertyName);
+		}
+		
+		///Because we need to be able to join the collections later, we need to force the primaryIDProperty to be exportable
+		collection1 = forcePrimaryIDExportable( collection1 );
+		collection2 = forcePrimaryIDExportable( collection2 );
+		
 		var collection1Data = this.transformArrayOfStructsToQuery(collection1.getRecords(forExport=true,formatRecords=false), ListToArray(collection1Headers));
 		var collection2Data = this.transformArrayOfStructsToQuery(collection2.getRecords(forExport=true,formatRecords=false), ListToArray(collection2Headers));
 
@@ -1093,7 +1121,19 @@ component output="false" accessors="true" extends="HibachiService" {
 		var mainSql = "	SELECT #getMergedColumnList(collection1Headers,collection2Headers)#
 						FROM collection1Data, collection2Data
 						WHERE collection1Data.#primaryIDPropertyName# = collection2Data.#primaryIDPropertyName#";
-		var leftSql = "	SELECT * FROM collection1Data";
+		
+		//Need to build out the select of the leftSql to handle if the primaryIDProperty isn't exportable
+		var leftSqlSelect = collection1Headers;
+		for( var column in getCollection2UniqueColumns(collection1Headers, collection2Headers) ) {
+			leftSqlSelect = listAppend(leftSqlSelect, column);
+			
+			//If the primaryIDproperty is in collection2Header but not in collection1Header we'll need to prevent the column from being added
+			if (  column != primaryIDPropertyName || !ArrayFindNoCase(collection1HeadersArray, column) ){
+				QueryAddColumn(collection1Data, column, 'VarChar',[]);
+			}
+		}
+		
+		var leftSql = "	SELECT #leftSqlSelect# FROM collection1Data";
 		if(len(rightIDs)){
 			leftSql &= " WHERE collection1Data.#primaryIDPropertyName# NOT IN (#rightIDs#)";
 		}
@@ -1160,7 +1200,7 @@ component output="false" accessors="true" extends="HibachiService" {
 		return headersList;
 	}
 	
-	public any function forcePrimaryIDExportable (required any collectionEntity){
+	private any function forcePrimaryIDExportable (required any collectionEntity){
 		var primaryIDPropertyName = getPrimaryIDPropertyNameByEntityName(arguments.collectionEntity.getCollectionObject());
 		
 		for (var column in arguments.collectionEntity.getCollectionConfigStruct().columns){
@@ -1443,8 +1483,7 @@ component output="false" accessors="true" extends="HibachiService" {
 			}
 		}
 	}
-
-
+	
 	// =====================  END: Logical Methods ============================
 
 	// ===================== START: DAO Passthrough ===========================
