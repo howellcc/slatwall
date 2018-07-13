@@ -57,6 +57,10 @@ component output="false" accessors="true" extends="HibachiController" {
         if(isnull(arguments.rc.apiResponse.content)){
             arguments.rc.apiResponse.content = {};
         }
+        
+        if(structKeyExists(arguments.rc,'context') && arguments.rc.context == 'GET'){
+            getHibachiScope().setPersistSessionFlag(false);
+        }
 		
 		if(
 			structKeyExists(GetHttpRequestData(),'headers')
@@ -131,9 +135,10 @@ component output="false" accessors="true" extends="HibachiController" {
     }
 
     public void function getCurrencies(required struct rc){
+       
+        var currencyStruct = {};
         var currenciesCollection = getHibachiScope().getService('hibachiCollectionService').getCurrencyCollectionList();
         currenciesCollection.setDisplayProperties('currencyCode,currencySymbol');
-        var currencyStruct = {};
         for(var currency in currenciesCollection.getRecords()){
             currencyStruct[currency['currencyCode']] = currency['currencySymbol'];
         }

@@ -239,6 +239,8 @@ class PublicService {
     public getData=(url, setter, param):any =>  {
 
         let urlBase = url + param;
+        urlBase += (urlBase.indexOf('?') == -1) ? '?' : '&';
+        urlBase += "context=GET";
         let request = this.requestService.newPublicRequest(urlBase);
 
         request.promise.then((result:any)=>{
@@ -330,6 +332,8 @@ class PublicService {
         }else{
             urlBase += (urlBase.indexOf('?') == -1) ? '?' : '&';
             urlBase += "returnJsonObject=cart,account";
+            urlBase += (urlBase.indexOf('?') == -1) ? '?' : '&';
+            urlBase += "context=GET";
         }
         if (method == "post"){
 
@@ -346,7 +350,10 @@ class PublicService {
             return request.promise;
         }else{
             //get
+            urlBase += (urlBase.indexOf('?') == -1) ? '?' : '&';
+            urlBase += "context=GET";
             var url = urlBase;
+            
             let request = this.requestService.newPublicRequest(url,data,method);
 
             request.promise.then((result:any)=>{
@@ -1018,7 +1025,7 @@ class PublicService {
         this.successfulActions = [];
         this.failureActions = [];
     }
-
+    
     public clearPaymentMethod = ()=>{
         this.activePaymentMethod = null;
     }

@@ -999,12 +999,15 @@ component extends="framework.one" {
 		if(getHibachiScope().getPersistSessionFlag()) {
 			getHibachiScope().getService("hibachiSessionService").persistSession();
 		}
-		if(!getHibachiScope().getORMHasErrors()) {
-			getHibachiScope().getDAO("hibachiDAO").flushORMSession();
+		if(structKeyExists(request,'context') && structKeyExists(request.context,'context') && request.context.context != 'GET'){
+			if(!getHibachiScope().getORMHasErrors()) {
+				getHibachiScope().getDAO("hibachiDAO").flushORMSession();
+			}
+	
+			// Commit audit queue
+			getHibachiScope().getService("hibachiAuditService").commitAudits();
 		}
-
-		// Commit audit queue
-		getHibachiScope().getService("hibachiAuditService").commitAudits();
+		
 	}
 
 	// Additional redirect function to redirect to an exact URL and flush the ORM Session when needed
