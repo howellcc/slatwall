@@ -305,8 +305,7 @@ component extends="framework.one" {
 			}
 		}
 
-		// Verify that the session is setup
-		getHibachiScope().getService("hibachiSessionService").setProperSession();
+		
 
 		var AuthToken = "";
 		if(structKeyExists(GetHttpRequestData().Headers,'Auth-Token')){
@@ -341,8 +340,9 @@ component extends="framework.one" {
 			var prefix = 'Bearer ';
 			//get token by stripping prefix
 			var token = right(authorizationHeader,len(authorizationHeader) - len(prefix));
+			
 			var jwt = getHibachiScope().getService('HibachiJWTService').getJwtByToken(token);
-
+			getHibachiScope().setHibachiJWT(jwt);
 			if(jwt.verify()){
 
 				var jwtAccount = getHibachiScope().getService('accountService').getAccountByAccountID(jwt.getPayload().accountid);
@@ -353,7 +353,11 @@ component extends="framework.one" {
 			}
 
 		}
-
+		if(!isNull(getHibachiScope().getHibachiJWT())){
+			// Verify that the session is setup
+			getHibachiScope().getService("hibachiSessionService").setProperSession();
+		}
+		
 		// Call the onEveryRequest() Method for the parent Application.cfc
 		onEveryRequest();
 		if(structKeyExists(request,'context')){

@@ -14,6 +14,7 @@ component accessors="true" persistent="false" output="false" extends="HibachiObj
 	property name="signature";
 	property name="tokenString";
 	property name="key";
+	property name="exception";
 	
 	
 	public any function setup(required string key){
@@ -72,6 +73,7 @@ component accessors="true" persistent="false" output="false" extends="HibachiObj
 		if(signature != sign(signInput,getAlgorithmMap()[getHeader().alg])){
 			throw(type="Invalid Token", message="signature verification failed"); 
 		}
+		
 		/*need valid iat*/
 		if(!structKeyExists(getPayload(),'iat')){
 			throw(type="No Valid issue at time date",message="No Valid issue at time date"); 
@@ -102,8 +104,8 @@ component accessors="true" persistent="false" output="false" extends="HibachiObj
 		if(currentTime lt getPayload().iat || currentTime gt getPayload().exp){
 			throw(type="Token is expired",message="Token is expired"); 
 		}
-		
 		var serverName = CGI['server_name'];
+		
 		if(getPayload().issuer != serverName){
 			throw(type="Invalid token issuer",message="Invalid token issuer");
 		}
@@ -131,6 +133,7 @@ component accessors="true" persistent="false" output="false" extends="HibachiObj
 			decode(getTokenString());
 		}catch(any e){
 			isValid = false;
+			setException(e);
 		}
 		return isValid;
 	}

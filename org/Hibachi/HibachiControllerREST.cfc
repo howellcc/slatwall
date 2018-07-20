@@ -157,31 +157,39 @@ component output="false" accessors="true" extends="HibachiController" {
     }
 
     public void function login(required struct rc){
-
-        if(!getHibachiScope().getLoggedInFlag()){
-            //if account doesn't exist than one is create
-            var account = getService('AccountService').processAccount(getHibachiScope().getAccount(), rc, "login");
-            var authorizeProcessObject = rc.fw.getHibachiScope().getAccount().getProcessObject("login").populate(arguments.rc);
-            arguments.rc.apiResponse.content['messages'] = [];
-            var updateProcessObject = rc.fw.getHibachiScope().getAccount().getProcessObject("updatePassword");
-            if(account.hasErrors()){
-                for(var processObjectKey in account.getErrors().processObjects){
-                    var processObject = account.getProcessObject(processObjectKey);
-                    arguments.rc.apiResponse.content['errors'] = processObject.getErrors();
-                    for(var errorKey in processObject.getErrors()){
-                        var messageStruct = {};
-                        messageStruct['message'] = processObject.getErrors()[errorKey];
-                        arrayAppend(arguments.rc.apiResponse.content['messages'],messageStruct);
+        try{
+            if(!getHibachiScope().getLoggedInFlag()){
+                //if account doesn't exist than one is create
+                var account = getService('AccountService').processAccount(getHibachiScope().getAccount(), rc, "login");
+                var authorizeProcessObject = rc.fw.getHibachiScope().getAccount().getProcessObject("login").populate(arguments.rc);
+                arguments.rc.apiResponse.content['messages'] = [];
+                var updateProcessObject = rc.fw.getHibachiScope().getAccount().getProcessObject("updatePassword");
+                if(account.hasErrors()){
+                    for(var processObjectKey in account.getErrors().processObjects){
+                        var processObject = account.getProcessObject(processObjectKey);
+                        arguments.rc.apiResponse.content['errors'] = processObject.getErrors();
+                        for(var errorKey in processObject.getErrors()){
+                            var messageStruct = {};
+                            messageStruct['message'] = processObject.getErrors()[errorKey];
+                            arrayAppend(arguments.rc.apiResponse.content['messages'],messageStruct);
+                        }
                     }
+                    var pc = getpagecontext().getresponse();
+                    pc.getresponse().setstatus(getHibachiScope().getService("hibachiAuthenticationService").getInvalidCredentialsStatusCode());
+                    return;
                 }
-                var pc = getpagecontext().getresponse();
-                pc.getresponse().setstatus(getHibachiScope().getService("hibachiAuthenticationService").getInvalidCredentialsStatusCode());
-                return;
             }
-        }
-
-        if(getHibachiScope().getLoggedinFlag()){
-            arguments.rc.apiResponse.content['token'] = getService('HibachiJWTService').createToken();
+    
+            if(getHibachiScope().getLoggedinFlag()){
+                arguments.rc.apiResponse.content['token'] = getService('HibachiJWTService').createToken();
+                arguments.rc.apiResponse.content.success = true;
+                arguments.rc.apiResponse.content['messages'] = [];
+                var messageStruct = {};
+                messageStruct['message'] = 'login success!';
+                arrayAppend(arguments.rc.apiResponse.content['messages'],messageStruct);
+            }
+        }catch(any e){
+            render500Error(arguments.rc,e);
         }
 
     }
@@ -665,56 +673,80 @@ component output="false" accessors="true" extends="HibachiController" {
     }
 
     public any function get( required struct rc ) {
-        /* TODO: handle filter parametes, add Select statements as list to access one-to-many relationships.
-            create a base default properties function that can be overridden at the entity level via function
-            handle accessing collections by id
-        */
-        param name="arguments.rc.propertyIdentifiers" default="";
-		
-		if(structKeyExists(arguments.rc, "p:show")){
-			var globalAPIPageShowLimit = getService("SettingService").getSettingValue("globalAPIPageShowLimit");
-			if(arguments.rc["p:show"] > globalAPIPageShowLimit){
-				arguments.rc["p:show"] = globalAPIPageShowLimit; 
-			}	
-		}
-       
-		if(!structKeyExists(arguments.rc, "dirtyReadFlag")){
- 			arguments.rc.dirtyReadFlag = getService("SettingService").getSettingValue("globalAPIDirtyRead"); 
- 		} 
-        
-		arguments.rc.restRequestFlag = true;  
-
-        //first check if we have an entityName value
-        if(!structKeyExists(arguments.rc, "entityName")) {
-            arguments.rc.apiResponse.content['account'] = getHibachiScope().invokeMethod("getAccountData");
-            arguments.rc.apiResponse.content['cart'] = getHibachiScope().invokeMethod("getCartData");
-        } else {
+        try{
+            /* TODO: handle filter parametes, add Select statements as list to access one-to-many relationships.
+                create a base default properties function that can be overridden at the entity level via function
+                handle accessing collections by id
+            */
+            param name="arguments.rc.propertyIdentifiers" default="";
+    		if(structKeyExists(arguments.rc, "p:show")){
+    			var globalAPIPageShowLimit = getService("SettingService").getSettingValue("globalAPIPageShowLimit");
+    			if(arguments.rc["p:show"] > globalAPIPageShowLimit){
+    				arguments.rc["p:show"] = globalAPIPageShowLimit; 
+    			}	
+    		}
+           
+    		if(!structKeyExists(arguments.rc, "dirtyReadFlag")){
+     			arguments.rc.dirtyReadFlag = getService("SettingService").getSettingValue("globalAPIDirtyRead"); 
+     		} 
             
-            //considering using all url variables to create a transient collectionConfig for api response
-            if(!structKeyExists(arguments.rc,'entityID')){
-            	
-                //should be able to add select and where filters here
-                var result = getService('hibachiCollectionService').getAPIResponseForEntityName( arguments.rc.entityName,
-																								 arguments.rc);
-                structAppend(arguments.rc.apiResponse.content,result);
-            }else{
-				
-                var collectionEntity = getService('hibachiCollectionService').getCollectionByCollectionID( arguments.rc.entityID );
+    		arguments.rc.restRequestFlag = true;  
+    
+            //first check if we have an entityName value
+            if(!structKeyExists(arguments.rc, "entityName")) {
+                arguments.rc.apiResponse.content['account'] = getHibachiScope().invokeMethod("getAccountData");
+                arguments.rc.apiResponse.content['cart'] = getHibachiScope().invokeMethod("getCartData");
+            } else {
                 
-                //figure out if we have a collection or a basic entity
-                if(isNull(collectionEntity)){
-                    //should only be able to add selects (&propertyIdentifier=)
-                    var result = getService('HibachiCollectionService').getAPIResponseForBasicEntityWithID( arguments.rc.entityName,
-																										    arguments.rc.entityID,
-																		 								    arguments.rc );
+                //considering using all url variables to create a transient collectionConfig for api response
+                if(!structKeyExists(arguments.rc,'entityID')){
+                	
+                    //should be able to add select and where filters here
+                    var result = getService('hibachiCollectionService').getAPIResponseForEntityName( arguments.rc.entityName,
+    																								 arguments.rc);
                     structAppend(arguments.rc.apiResponse.content,result);
                 }else{
-                    //should be able to add select and where filters here
-                    var result = getService('hibachiCollectionService').getAPIResponseForCollection( collectionEntity,
-																									 arguments.rc );
-                    structAppend(arguments.rc.apiResponse.content,result);
+    				
+                    var collectionEntity = getService('hibachiCollectionService').getCollectionByCollectionID( arguments.rc.entityID );
+                    
+                    //figure out if we have a collection or a basic entity
+                    if(isNull(collectionEntity)){
+                        //should only be able to add selects (&propertyIdentifier=)
+                        var result = getService('HibachiCollectionService').getAPIResponseForBasicEntityWithID( arguments.rc.entityName,
+    																										    arguments.rc.entityID,
+    																		 								    arguments.rc );
+                        structAppend(arguments.rc.apiResponse.content,result);
+                    }else{
+                        //should be able to add select and where filters here
+                        var result = getService('hibachiCollectionService').getAPIResponseForCollection( collectionEntity,
+    																									 arguments.rc );
+                        structAppend(arguments.rc.apiResponse.content,result);
+                    }
                 }
             }
+        }catch(any e){
+            render500Error(arguments.rc,e);
+        }
+    }
+    
+    private void function render500Error(required struct rc, required any exception){
+        //clear all data because of failure
+        arguments.rc.apiResponse.content = {};
+    
+        arguments.rc.apiResponse.content.success = false;
+        var context = getPageContext();
+        context.getOut().clearBuffer();
+        var response = context.getResponse();
+        response.setStatus(500);
+        if(getApplicationValue('errorDisplayFlag')){
+            writedump(var=arguments.exception);abort;
+        }else{
+            if(isNull(arguments.rc.apiResponse.content.messages)){
+                var message = {};
+                message['message']='500 Internal Server Error';
+	            arguments.rc.apiResponse.content['messages'] = [message];
+	        }
+	       
         }
     }
 
@@ -722,106 +754,110 @@ component output="false" accessors="true" extends="HibachiController" {
         param name="arguments.rc.context" default="save";
         param name="arguments.rc.entityID" default="";
         param name="arguments.rc.apiResponse.content.errors" default="";
-        if(lcase(arguments.rc.context)=='get'){
-        	get(arguments.rc);
-        }else{
-        	if(isNull(arguments.rc.apiResponse.content.messages)){
-	            arguments.rc.apiResponse.content['messages'] = [];
-	        }
-
-	        if(structKEyExists(arguments.rc, 'serializedJSONData') && isSimpleValue(arguments.rc.serializedJSONData) && isJSON(arguments.rc.serializedJSONData)) {
-	            var structuredData = deserializeJSON(arguments.rc.serializedJSONData);
-	        } else {
-	            var structuredData = arguments.rc;
-	        }
-
-	        if(structKeyExists(arguments.rc,'swProcess')){
-	            arguments.rc.context = arguments.rc.swProcess;
-	            structDelete(arguments.rc,'swProcess');
-	        }
-
-	        //if entityname is not specified then we are using the public api and it should act upon the current users session
-	        if(!structKeyExists(arguments.rc, "entityName")) {
-	            arguments.rc.entityName = 'Session';
-	            var entityService = getService('HibachiSessionService');
-	            var entity = getHibachiScope().getSession();
-	        }else{
-	            var entityService = getHibachiService().getServiceByEntityName( entityName=arguments.rc.entityName );
-	            var entity = entityService.invokeMethod("get#arguments.rc.entityName#", {1=arguments.rc.entityID, 2=true});
-	        }
-
-	        // SAVE
-	        if(arguments.rc.context eq 'save') {
-	            entity = entityService.invokeMethod("save#arguments.rc.entityName#", {1=entity, 2=structuredData});
-	        // DELETE
-	        } else if (arguments.rc.context eq 'delete') {
-	            getService('HibachiValidationService').validate(entity, 'delete');
-                if(!entity.hasErrors()){
-                  entityService.invokeMethod("delete#arguments.rc.entityName#", {1=entity});
-                }
-	        // PROCESS
-	        } else {
-	            entity = entityService.invokeMethod("process#arguments.rc.entityName#", {1=entity, 2=structuredData, 3=arguments.rc.context});
-	        }
-
-	        // respond with data
-	        arguments.rc.apiResponse.content['data'] = {};
-
-	        // Add ID's of any sub-property population
-	        arguments.rc.apiResponse.content['data'] = addPopulatedSubPropertyIDsToData(entity=entity, data=arguments.rc.apiResponse.content['data']);
-
-	        // Get any new ID's created by the post
-	        arguments.rc.apiResponse.content['data'][ entity.getPrimaryIDPropertyName() ] = entity.getPrimaryIDValue();
-
-
-	        if(!isnull(arguments.rc.propertyIdentifiersList)){
-	            //respond with data
-	            arguments.rc.apiResponse.content['data'] = {};
-	            var propertyIdentifiersArray = ListToArray(arguments.rc.propertyIdentifiersList);
-	            for(propertyIdentifier in propertyIdentifiersArray){
-	                //check if method exists before trying to retrieve a property
-	                /*if(propertyIdentifier == 'pageRecords'){
-	                    var pageRecords = entity.getValueByPropertyIdentifier(propertyIdentifier=propertyIdentifier,format=true);
-	                    var propertyIdentifiers = [];
-	                    if(arraylen(pageRecords)){
-	                        propertyIdentifiers = structKeyArray(pageRecords[1]);
-	                    }
-	                    pageRecords = getService('hibachiCollectionService').getFormattedObjectRecords(pageRecords,propertyIdentifiers);
-	                    arguments.rc.apiResponse.content['data'][propertyIdentifier] = pageRecords;
-	                }else{*/
-	                    arguments.rc.apiResponse.content['data'][propertyIdentifier] = entity.getValueByPropertyIdentifier(propertyIdentifier=propertyIdentifier);
-	                //}
-	            }
-	        }
-
-	        if(entity.hasErrors()){
-	            arguments.rc.apiResponse.content.success = false;
-	            var context = getPageContext();
-	            context.getOut().clearBuffer();
-	            var response = context.getResponse();
-	            response.setStatus(500);
-
-	        }else{
-	            arguments.rc.apiResponse.content.success = true;
-
-	            // Setup success response message
-	            var replaceValues = {
-	                entityName = rbKey('entity.#entity.getClassName()#')
-	            };
-
-	            var successMessage = getHibachiUtilityService().replaceStringTemplate( getHibachiScope().rbKey( "api.main.#entity.getClassName()#.#rc.context#_success" ), replaceValues);
-	            getHibachiScope().showMessage( successMessage, "success" );
-
-	            // getHibachiScope().showMessage( replace(getHibachiScope().rbKey( "api.main.#rc.context#_success" ), "${EntityName}", replaceValues.entityName, "all" ) , "success");
-	        }
-
-	        if(!isnull(entity.getHibachiErrors()) && structCount(entity.getHibachiErrors().getErrors())){
-	            arguments.rc.apiResponse.content.errors = entity.getHibachiErrors().getErrors();
-	            getHibachiScope().showMessage( replace(getHibachiScope().rbKey( "api.main.#rc.context#_error" ), "${EntityName}", entity.getClassName(), "all" ) , "error");
-	        }
+        
+        try{
+        
+            if(lcase(arguments.rc.context)=='get'){
+            	get(arguments.rc);
+            }else{
+            	if(isNull(arguments.rc.apiResponse.content.messages)){
+    	            arguments.rc.apiResponse.content['messages'] = [];
+    	        }
+    
+    	        if(structKEyExists(arguments.rc, 'serializedJSONData') && isSimpleValue(arguments.rc.serializedJSONData) && isJSON(arguments.rc.serializedJSONData)) {
+    	            var structuredData = deserializeJSON(arguments.rc.serializedJSONData);
+    	        } else {
+    	            var structuredData = arguments.rc;
+    	        }
+    
+    	        if(structKeyExists(arguments.rc,'swProcess')){
+    	            arguments.rc.context = arguments.rc.swProcess;
+    	            structDelete(arguments.rc,'swProcess');
+    	        }
+    
+    	        //if entityname is not specified then we are using the public api and it should act upon the current users session
+    	        if(!structKeyExists(arguments.rc, "entityName")) {
+    	            arguments.rc.entityName = 'Session';
+    	            var entityService = getService('HibachiSessionService');
+    	            var entity = getHibachiScope().getSession();
+    	        }else{
+    	            var entityService = getHibachiService().getServiceByEntityName( entityName=arguments.rc.entityName );
+    	            var entity = entityService.invokeMethod("get#arguments.rc.entityName#", {1=arguments.rc.entityID, 2=true});
+    	        }
+    
+    	        // SAVE
+    	        if(arguments.rc.context eq 'save') {
+    	            entity = entityService.invokeMethod("save#arguments.rc.entityName#", {1=entity, 2=structuredData});
+    	        // DELETE
+    	        } else if (arguments.rc.context eq 'delete') {
+    	            getService('HibachiValidationService').validate(entity, 'delete');
+                    if(!entity.hasErrors()){
+                      entityService.invokeMethod("delete#arguments.rc.entityName#", {1=entity});
+                    }
+    	        // PROCESS
+    	        } else {
+    	            entity = entityService.invokeMethod("process#arguments.rc.entityName#", {1=entity, 2=structuredData, 3=arguments.rc.context});
+    	        }
+    
+    	        // respond with data
+    	        arguments.rc.apiResponse.content['data'] = {};
+    
+    	        // Add ID's of any sub-property population
+    	        arguments.rc.apiResponse.content['data'] = addPopulatedSubPropertyIDsToData(entity=entity, data=arguments.rc.apiResponse.content['data']);
+    
+    	        // Get any new ID's created by the post
+    	        arguments.rc.apiResponse.content['data'][ entity.getPrimaryIDPropertyName() ] = entity.getPrimaryIDValue();
+    
+    
+    	        if(!isnull(arguments.rc.propertyIdentifiersList)){
+    	            //respond with data
+    	            arguments.rc.apiResponse.content['data'] = {};
+    	            var propertyIdentifiersArray = ListToArray(arguments.rc.propertyIdentifiersList);
+    	            for(propertyIdentifier in propertyIdentifiersArray){
+    	                //check if method exists before trying to retrieve a property
+    	                /*if(propertyIdentifier == 'pageRecords'){
+    	                    var pageRecords = entity.getValueByPropertyIdentifier(propertyIdentifier=propertyIdentifier,format=true);
+    	                    var propertyIdentifiers = [];
+    	                    if(arraylen(pageRecords)){
+    	                        propertyIdentifiers = structKeyArray(pageRecords[1]);
+    	                    }
+    	                    pageRecords = getService('hibachiCollectionService').getFormattedObjectRecords(pageRecords,propertyIdentifiers);
+    	                    arguments.rc.apiResponse.content['data'][propertyIdentifier] = pageRecords;
+    	                }else{*/
+    	                    arguments.rc.apiResponse.content['data'][propertyIdentifier] = entity.getValueByPropertyIdentifier(propertyIdentifier=propertyIdentifier);
+    	                //}
+    	            }
+    	        }
+    
+    	        if(entity.hasErrors()){
+    	            arguments.rc.apiResponse.content.success = false;
+    	            var context = getPageContext();
+    	            context.getOut().clearBuffer();
+    	            var response = context.getResponse();
+    	            response.setStatus(500);
+    
+    	        }else{
+    	            arguments.rc.apiResponse.content.success = true;
+    
+    	            // Setup success response message
+    	            var replaceValues = {
+    	                entityName = rbKey('entity.#entity.getClassName()#')
+    	            };
+    
+    	            var successMessage = getHibachiUtilityService().replaceStringTemplate( getHibachiScope().rbKey( "api.main.#entity.getClassName()#.#rc.context#_success" ), replaceValues);
+    	            getHibachiScope().showMessage( successMessage, "success" );
+    
+    	            // getHibachiScope().showMessage( replace(getHibachiScope().rbKey( "api.main.#rc.context#_success" ), "${EntityName}", replaceValues.entityName, "all" ) , "success");
+    	        }
+    
+    	        if(!isnull(entity.getHibachiErrors()) && structCount(entity.getHibachiErrors().getErrors())){
+    	            arguments.rc.apiResponse.content.errors = entity.getHibachiErrors().getErrors();
+    	            getHibachiScope().showMessage( replace(getHibachiScope().rbKey( "api.main.#rc.context#_error" ), "${EntityName}", entity.getClassName(), "all" ) , "error");
+    	        }
+            }
+        }catch(any e){
+            render500Error(arguments.rc,e);
         }
-
-
     }
 
     private struct function addPopulatedSubPropertyIDsToData(required any entity, required struct data) {

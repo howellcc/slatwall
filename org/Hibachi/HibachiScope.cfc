@@ -21,6 +21,7 @@ component output="false" accessors="true" extends="HibachiTransient" {
 	property name="isAWSInstance" type="boolean" default="0";
 	property name="entityURLKeyType" type="string";
 	property name="permissionGroupCacheKey" type="string";
+	property name="hibachiJWT" type="any";
 
 	public any function init() {
 		setORMHasErrors( false );
