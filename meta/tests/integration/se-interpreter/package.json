@@ -2,7 +2,11 @@
   "author": "David Stark <david.stark@zarkonnen.com>",
   "name": "se-interpreter",
   "description": "Command-line interpreter for Selenium Builder test scripts.",
-  "tags": ["selenium", "webdriver", "testing"],
+  "tags": [
+    "selenium",
+    "webdriver",
+    "testing"
+  ],
   "version": "1.0.9",
   "homepage": "http://www.sebuilder.com/",
   "repository": {
@@ -26,5 +30,7 @@
     "colors": "~0.6",
     "sax": ">= 0.6.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "string": "^1.2.0"
+  }
 }
