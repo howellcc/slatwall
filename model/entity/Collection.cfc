@@ -700,6 +700,10 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 			arguments.column['isPeriod']=arguments.columnConfig['isPeriod'];
 		}
 
+		if(structKeyExists(arguments.columnConfig,'isDistinct')){
+			arguments.column['isDistinct']=arguments.columnConfig['isDistinct'];
+		}
+
 		if(arguments.prepend){
 			arrayPrepend(collectionConfig.columns,arguments.column);
 		}else{
@@ -1668,6 +1672,9 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
     }
 
 	public string function getHQL(boolean excludeSelectAndOrderBy = false, forExport=false, excludeOrderBy = false, excludeGroupBy=false){
+		
+		structDelete(variables,'groupBys');
+		
 		variables.HQLParams = {};
 		variables.postFilterGroups = [];
 		variables.postOrderBys = [];
@@ -1768,6 +1775,10 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 		}
 
 		return groupByHQL;
+	}
+
+	public void function setPeriodInterval(required string periodInterval){
+		getCollectionConfigStruct().periodInterval = arguments.periodInterval;
 	}
 
 	public boolean function hasPropertyByPropertyIdentifier(required string propertyIdentifier){
@@ -2296,7 +2307,9 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 	}
 
 	public array function getRecords(boolean refresh=false, boolean forExport=false, boolean formatRecords=true) {
-		isReportAndHasNonPersistent();
+		if(isReport()){
+			arguments.formatRecords=false;
+		}
 		
 		if(arguments.refresh){
 			clearRecordsCache();
@@ -2987,7 +3000,11 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 				if(
 					structKeyExists(column,'isMetric') && column.isMetric
 				){
-					columnsHQL &= ' #column['aggregate']['aggregateFunction']#(#column.propertyIdentifier#) as #columnAlias#';
+					if(structKeyExists(column,'isDistinct') && column.isDistinct){
+						columnsHQL &= ' COALESCE(#column['aggregate']['aggregateFunction']#(DISTINCT #column.propertyIdentifier#),0) as #columnAlias#';
+					}else{
+						columnsHQL &= ' COALESCE(#column['aggregate']['aggregateFunction']#(#column.propertyIdentifier#),0) as #columnAlias#';
+					}
 					addingColumn = true;
 				}else if(
 					structKeyExists(column,'isPeriod') && column.isPeriod
@@ -2998,11 +3015,8 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 					columnsHQL &= " DATE_FORMAT(#column.propertyIdentifier#,'#periodIntervalFormat#') as #columnAlias#";
 					addingColumn = true;
 					
-				} else if(
-					structKeyExists(column, 'isVisible') && column.isVisible
-				){ 
-					columnsHQL &= " #column.propertyIdentifier# as #columnAlias#";
-					addingColumn = true;
+				}else if(structKeyExists(column,'isVisible') && column['isVisible']){
+					columnsHQL &= ' #column.propertyIdentifier# as #columnAlias#';
 				} 
 				//check whether a comma is needed
 				if(i != columnCount && addingColumn){
