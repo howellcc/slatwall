@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /**
  * Handles adding, editing, and deleting Workflows Tasks.
  */

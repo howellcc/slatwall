@@ -1,5 +1,5 @@
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 //services
 // import {AccountService} from "./services/accountservice";
 // import {CartService} from "./services/cartservice";

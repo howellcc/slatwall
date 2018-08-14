@@ -5968,8 +5968,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var baseobject_1 = __webpack_require__(303);
 var Entities = __webpack_require__(745);
 var Processes = __webpack_require__(751);
@@ -6342,8 +6342,8 @@ exports.MulticastOperator = MulticastOperator;
 
 "use strict";
 
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var hibachiinterceptor_1 = __webpack_require__(763);
 //constant
@@ -6611,8 +6611,8 @@ exports.coremodule = coremodule;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11081,8 +11081,8 @@ exports.pipeFromArray = pipeFromArray;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11265,8 +11265,8 @@ exports.BaseTransient = BaseTransient;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var BaseService = /** @class */ (function () {
     function BaseService() {
@@ -33695,8 +33695,8 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 //controllers
 var alertcontroller_1 = __webpack_require__(655);
 //services
@@ -33714,8 +33714,8 @@ exports.alertmodule = alertmodule;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 //modules
 var core_module_1 = __webpack_require__(21);
 //services
@@ -33794,8 +33794,8 @@ exports.collectionmodule = collectionmodule;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var BaseObject = /** @class */ (function () {
     //@ngInject
@@ -33840,8 +33840,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var basetransient_1 = __webpack_require__(67);
 var Request = /** @class */ (function (_super) {
     __extends(Request, _super);
@@ -34004,8 +34004,8 @@ exports.IStore = IStore;
 
 "use strict";
 
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 //services
 var dialogservice_1 = __webpack_require__(784);
@@ -34025,8 +34025,8 @@ exports.dialogmodule = dialogmodule;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
 * Form Controller handles the logic for this directive.
@@ -58612,8 +58612,8 @@ exports.toSubscriber = toSubscriber;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var AlertController = /** @class */ (function () {
     //@ngInject
     function AlertController($scope, alertService) {
@@ -58631,8 +58631,8 @@ exports.AlertController = AlertController;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 //model
 var Alert = /** @class */ (function () {
@@ -58655,8 +58655,8 @@ exports.Alert = Alert;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 //import Alert = require('../model/alert');
 var alert_1 = __webpack_require__(656);
@@ -58916,8 +58916,8 @@ exports.BaseBootStrapper = BaseBootStrapper;
 
 "use strict";
 
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../typings/hibachiTypescript.d.ts" />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 //modules
 var core_module_1 = __webpack_require__(21);
@@ -58951,8 +58951,8 @@ exports.cardmodule = cardmodule;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCardBodyController = /** @class */ (function () {
     //@ngInject
@@ -58998,8 +58998,8 @@ exports.SWCardBody = SWCardBody;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCardHeaderController = /** @class */ (function () {
     //@ngInject
@@ -59047,8 +59047,8 @@ exports.SWCardHeader = SWCardHeader;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCardIconController = /** @class */ (function () {
     //@ngInject
@@ -59098,8 +59098,8 @@ exports.SWCardIcon = SWCardIcon;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCardLayoutController = /** @class */ (function () {
     //@ngInject
@@ -59149,8 +59149,8 @@ exports.SWCardLayout = SWCardLayout;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCardListItemController = /** @class */ (function () {
     //@ngInject
@@ -59203,8 +59203,8 @@ exports.SWCardListItem = SWCardListItem;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCardProgressBarController = /** @class */ (function () {
     //@ngInject
@@ -59256,8 +59256,8 @@ exports.SWCardProgressBar = SWCardProgressBar;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCardViewController = /** @class */ (function () {
     //@ngInject
@@ -59309,8 +59309,8 @@ exports.SWCardView = SWCardView;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWAddFilterButtons = /** @class */ (function () {
     //@ngInject
     function SWAddFilterButtons(collectionService, collectionPartialsPath, hibachiPathBuilder) {
@@ -59354,8 +59354,8 @@ exports.SWAddFilterButtons = SWAddFilterButtons;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCollection = /** @class */ (function () {
     //@ngInject
     function SWCollection(hibachiPathBuilder, collectionPartialsPath) {
@@ -59397,8 +59397,8 @@ exports.SWCollection = SWCollection;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCollectionTable = /** @class */ (function () {
     //@ngInject
     function SWCollectionTable($log, hibachiPathBuilder, collectionPartialsPath, selectionService, $hibachi, $filter, $injector) {
@@ -59491,8 +59491,8 @@ exports.SWCollectionTable = SWCollectionTable;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWColumnItem = /** @class */ (function () {
     //@ngInject
     function SWColumnItem($log, hibachiPathBuilder, collectionPartialsPath, observerService) {
@@ -59701,8 +59701,8 @@ exports.SWColumnItem = SWColumnItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWConditionCriteria = /** @class */ (function () {
     //@ngInject
     function SWConditionCriteria($http, $compile, $templateCache, $log, $hibachi, $filter, collectionPartialsPath, metadataService, hibachiPathBuilder) {
@@ -60598,8 +60598,8 @@ exports.SWConditionCriteria = SWConditionCriteria;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCriteria = /** @class */ (function () {
     function SWCriteria(collectionPartialsPath, hibachiPathBuilder) {
@@ -60638,8 +60638,8 @@ exports.SWCriteria = SWCriteria;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCriteriaBoolean = /** @class */ (function () {
     function SWCriteriaBoolean(collectionPartialsPath, hibachiPathBuilder) {
         return {
@@ -60734,8 +60734,8 @@ exports.SWCriteriaBoolean = SWCriteriaBoolean;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCriteriaDate = /** @class */ (function () {
     function SWCriteriaDate($log, collectionPartialsPath, hibachiPathBuilder) {
         return {
@@ -61207,8 +61207,8 @@ exports.SWCriteriaDate = SWCriteriaDate;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCriteriaManyToMany = /** @class */ (function () {
     function SWCriteriaManyToMany($log, $hibachi, collectionPartialsPath, dialogService, observerService, hibachiPathBuilder, rbkeyService) {
         return {
@@ -61348,8 +61348,8 @@ exports.SWCriteriaManyToMany = SWCriteriaManyToMany;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCriteriaManyToOne = /** @class */ (function () {
     function SWCriteriaManyToOne($log, $hibachi, collectionPartialsPath, metadataService, hibachiPathBuilder, rbkeyService) {
         return {
@@ -61510,8 +61510,8 @@ exports.SWCriteriaManyToOne = SWCriteriaManyToOne;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCriteriaNumber = /** @class */ (function () {
     function SWCriteriaNumber($log, collectionPartialsPath, hibachiPathBuilder) {
         return {
@@ -61688,8 +61688,8 @@ exports.SWCriteriaNumber = SWCriteriaNumber;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCriteriaOneToMany = /** @class */ (function () {
     function SWCriteriaOneToMany($log, $hibachi, collectionPartialsPath, dialogService, observerService, hibachiPathBuilder, rbkeyService) {
         return {
@@ -61836,8 +61836,8 @@ exports.SWCriteriaOneToMany = SWCriteriaOneToMany;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCriteriaRelatedObject = /** @class */ (function () {
     function SWCriteriaRelatedObject($log, $hibachi, $filter, collectionPartialsPath, collectionService, metadataService, hibachiPathBuilder, rbkeyService) {
         return {
@@ -61933,8 +61933,8 @@ exports.SWCriteriaRelatedObject = SWCriteriaRelatedObject;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWCriteriaString = /** @class */ (function () {
     function SWCriteriaString(collectionPartialsPath, hibachiPathBuilder) {
         return {
@@ -62111,8 +62111,8 @@ exports.SWCriteriaString = SWCriteriaString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWDisplayItem = /** @class */ (function () {
     //@ngInject
     function SWDisplayItem($hibachi, collectionPartialsPath, metadataService, hibachiPathBuilder) {
@@ -62175,8 +62175,8 @@ exports.SWDisplayItem = SWDisplayItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWDisplayItemAggregate = /** @class */ (function () {
     //@ngInject
     function SWDisplayItemAggregate($hibachi, collectionPartialsPath, metadataService, hibachiPathBuilder) {
@@ -62254,8 +62254,8 @@ exports.SWDisplayItemAggregate = SWDisplayItemAggregate;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWDisplayOptions = /** @class */ (function () {
     //@ngInject
     function SWDisplayOptions($log, $hibachi, hibachiPathBuilder, collectionPartialsPath, rbkeyService) {
@@ -62513,8 +62513,8 @@ exports.SWDisplayOptions = SWDisplayOptions;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWEditFilterItem = /** @class */ (function () {
     function SWEditFilterItem($log, $filter, $timeout, $hibachi, collectionPartialsPath, collectionService, metadataService, hibachiPathBuilder, rbkeyService, observerService, utilityService) {
         return {
@@ -62906,8 +62906,8 @@ exports.SWEditFilterItem = SWEditFilterItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWFilterGroupItem = /** @class */ (function () {
     function SWFilterGroupItem($http, $compile, $templateCache, $log, collectionService, collectionPartialsPath, hibachiPathBuilder) {
         return {
@@ -62979,8 +62979,8 @@ exports.SWFilterGroupItem = SWFilterGroupItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWFilterGroups = /** @class */ (function () {
     function SWFilterGroups($log, collectionPartialsPath, hibachiPathBuilder, observerService) {
         return {
@@ -63079,8 +63079,8 @@ exports.SWFilterGroups = SWFilterGroups;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWFilterItem = /** @class */ (function () {
     function SWFilterItem($log, collectionService, collectionPartialsPath, hibachiPathBuilder) {
         return {
@@ -63147,8 +63147,8 @@ exports.SWFilterItem = SWFilterItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWRestrictionConfigController = /** @class */ (function () {
     //@ngInject
     function SWRestrictionConfigController($timeout, collectionConfigService, $hibachi, observerService) {
@@ -63207,8 +63207,8 @@ exports.SWRestrictionConfig = SWRestrictionConfig;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var CollectionController = /** @class */ (function () {
     //@ngInject
@@ -63264,8 +63264,8 @@ exports.CollectionController = CollectionController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var ConfirmationController = /** @class */ (function () {
     //@ngInject
     function ConfirmationController($scope, $log, $modalInstance) {
@@ -63302,8 +63302,8 @@ exports.ConfirmationController = ConfirmationController;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var CreateCollection = /** @class */ (function () {
     //@ngInject
@@ -63510,8 +63510,8 @@ exports.CreateCollection = CreateCollection;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var CollectionCreateController = /** @class */ (function () {
     //@ngInject
@@ -63550,8 +63550,8 @@ exports.CollectionCreateController = CollectionCreateController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var AggregateFilter = /** @class */ (function () {
     function AggregateFilter() {
     }
@@ -63581,8 +63581,8 @@ exports.AggregateFilter = AggregateFilter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var Column = /** @class */ (function () {
     function Column(propertyIdentifier, title, isVisible, isDeletable, isSearchable, isExportable, persistent, ormtype, attributeID, attributeSetObject, type) {
         if (isVisible === void 0) { isVisible = true; }
@@ -64616,8 +64616,8 @@ exports.CollectionService = CollectionService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWActionCallerController = /** @class */ (function () {
     //@ngInject
@@ -64914,8 +64914,8 @@ exports.SWActionCaller = SWActionCaller;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWActionCallerDropdownController = /** @class */ (function () {
     function SWActionCallerDropdownController() {
@@ -64966,8 +64966,8 @@ exports.SWActionCallerDropdown = SWActionCallerDropdown;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWClickOutside = /** @class */ (function () {
     //@ngInject
     function SWClickOutside($document, $timeout, utilityService) {
@@ -65016,7 +65016,7 @@ exports.SWClickOutside = SWClickOutside;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCollectionColumnController = /** @class */ (function () {
     function SWCollectionColumnController() {
@@ -65108,7 +65108,7 @@ exports.SWCollectionColumn = SWCollectionColumn;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCollectionConfigController = /** @class */ (function () {
     //@ngInject
@@ -65276,7 +65276,7 @@ exports.SWCollectionConfig = SWCollectionConfig;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCollectionFilterController = /** @class */ (function () {
     function SWCollectionFilterController() {
@@ -65339,7 +65339,7 @@ exports.SWCollectionFilter = SWCollectionFilter;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWCollectionOrderByController = /** @class */ (function () {
     function SWCollectionOrderByController() {
@@ -65391,8 +65391,8 @@ exports.SWCollectionOrderBy = SWCollectionOrderBy;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWColumnSorter = /** @class */ (function () {
     //@ngInject
     function SWColumnSorter(observerService, corePartialsPath, hibachiPathBuilder) {
@@ -65437,8 +65437,8 @@ exports.SWColumnSorter = SWColumnSorter;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /**
  * <------------------------------------------------------------------------------------------------------------------------------------>
  *   This directive can be used to prompt the user with a confirmation dialog.
@@ -65592,8 +65592,8 @@ exports.SWConfirm = SWConfirm;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWDirective = /** @class */ (function () {
     //@ngInject
     function SWDirective($compile, utilityService) {
@@ -65650,8 +65650,8 @@ exports.SWDirective = SWDirective;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWDraggableController = /** @class */ (function () {
     //@ngInject
@@ -65733,8 +65733,8 @@ exports.SWDraggable = SWDraggable;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWDraggableContainerController = /** @class */ (function () {
     //@ngInject
@@ -65868,8 +65868,8 @@ exports.SWDraggableContainer = SWDraggableContainer;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWEntityActionBarController = /** @class */ (function () {
     //@ngInject
@@ -65942,8 +65942,8 @@ exports.SWEntityActionBar = SWEntityActionBar;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWEntityActionBarButtonGroupController = /** @class */ (function () {
     function SWEntityActionBarButtonGroupController() {
     }
@@ -65980,8 +65980,8 @@ exports.SWEntityActionBarButtonGroup = SWEntityActionBarButtonGroup;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWExpandableRecordController = /** @class */ (function () {
     //@ngInject
@@ -66188,8 +66188,8 @@ exports.SWExpandableRecord = SWExpandableRecord;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWExpiringSessionNotifierController = /** @class */ (function () {
     //@ngInject
@@ -66259,8 +66259,8 @@ exports.SWExpiringSessionNotifier = SWExpiringSessionNotifier;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWExportAction = /** @class */ (function () {
     //@ngInject
     function SWExportAction($log, corePartialsPath, hibachiPathBuilder) {
@@ -66292,8 +66292,8 @@ exports.SWExportAction = SWExportAction;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var md5 = __webpack_require__(75);
 var SWGravatarController = /** @class */ (function () {
@@ -66337,8 +66337,8 @@ exports.SWGravatar = SWGravatar;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWHref = /** @class */ (function () {
     function SWHref() {
         return {
@@ -66371,8 +66371,8 @@ exports.SWHref = SWHref;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWLoading = /** @class */ (function () {
     function SWLoading($log, corePartialsPath, hibachiPathBuilder) {
         return {
@@ -66406,8 +66406,8 @@ exports.SWLoading = SWLoading;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWLoginController = /** @class */ (function () {
     //@ngInject
@@ -66483,8 +66483,8 @@ exports.SWLogin = SWLogin;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWModalLauncherController = /** @class */ (function () {
     // @ngInject
     function SWModalLauncherController() {
@@ -66599,8 +66599,8 @@ exports.SWModalLauncher = SWModalLauncher;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWModalWindowController = /** @class */ (function () {
     // @ngInject
     function SWModalWindowController() {
@@ -66663,8 +66663,8 @@ exports.SWModalWindow = SWModalWindow;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWNumbersOnly = /** @class */ (function () {
     function SWNumbersOnly() {
@@ -66723,8 +66723,8 @@ exports.SWNumbersOnly = SWNumbersOnly;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWOptions = /** @class */ (function () {
     function SWOptions($log, $hibachi, observerService, corePartialsPath, hibachiPathBuilder) {
         return {
@@ -66793,8 +66793,8 @@ exports.SWOptions = SWOptions;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWOrderByControlsController = /** @class */ (function () {
     // @ngInject
@@ -66945,8 +66945,8 @@ exports.SWOrderByControls = SWOrderByControls;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWProcessCallerController = /** @class */ (function () {
     //@ngInject
@@ -67034,8 +67034,8 @@ exports.SWProcessCaller = SWProcessCaller;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWRbKey = /** @class */ (function () {
     function SWRbKey($hibachi, observerService, utilityService, $rootScope, $log, rbkeyService) {
         return {
@@ -67078,8 +67078,8 @@ exports.SWRbKey = SWRbKey;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWScrollTrigger = /** @class */ (function () {
     function SWScrollTrigger($rootScope, $window, $timeout) {
         return {
@@ -67169,8 +67169,8 @@ exports.SWScrollTrigger = SWScrollTrigger;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWSelectionController = /** @class */ (function () {
     //@ngInject
@@ -67266,8 +67266,8 @@ exports.SWSelection = SWSelection;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWSortable = /** @class */ (function () {
     function SWSortable(expression, compiledElement) {
@@ -67324,8 +67324,8 @@ exports.SWSortable = SWSortable;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWTabContentController = /** @class */ (function () {
     // @ngInject
     function SWTabContentController($scope, $q, $transclude, $hibachi, $timeout, utilityService, rbkeyService, collectionConfigService) {
@@ -67412,8 +67412,8 @@ exports.SWTabContent = SWTabContent;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWTabGroupController = /** @class */ (function () {
     // @ngInject
     function SWTabGroupController(utilityService, rbkeyService, observerService) {
@@ -67500,8 +67500,8 @@ exports.SWTabGroup = SWTabGroup;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWTooltipController = /** @class */ (function () {
     // @ngInject
     function SWTooltipController(rbkeyService) {
@@ -67583,8 +67583,8 @@ exports.SWTooltip = SWTooltip;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWTypeaheadInputFieldController = /** @class */ (function () {
     // @ngInject
@@ -67700,8 +67700,8 @@ exports.SWTypeaheadInputField = SWTypeaheadInputField;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWTypeaheadMultiselectController = /** @class */ (function () {
     // @ngInject
@@ -67843,8 +67843,8 @@ exports.SWTypeaheadMultiselect = SWTypeaheadMultiselect;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWTypeaheadRemoveSelectionController = /** @class */ (function () {
     function SWTypeaheadRemoveSelectionController($scope, listingService, scopeService, typeaheadService, utilityService) {
@@ -68302,8 +68302,8 @@ exports.SWTypeaheadSearch = SWTypeaheadSearch;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWTypeaheadSearchLineItemController = /** @class */ (function () {
     function SWTypeaheadSearchLineItemController() {
@@ -68354,8 +68354,8 @@ exports.SWTypeaheadSearchLineItem = SWTypeaheadSearchLineItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var GlobalSearchController = /** @class */ (function () {
     //@ngInject
     function GlobalSearchController($scope, $log, $window, $timeout, $hibachi, rbkeyService) {
@@ -68504,8 +68504,8 @@ exports.GlobalSearchController = GlobalSearchController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var DateFilter = /** @class */ (function () {
     function DateFilter() {
     }
@@ -68529,8 +68529,8 @@ exports.DateFilter = DateFilter;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var EntityRBKey = /** @class */ (function () {
     function EntityRBKey() {
@@ -68556,8 +68556,8 @@ exports.EntityRBKey = EntityRBKey;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var PercentageFilter = /** @class */ (function () {
     function PercentageFilter() {
@@ -68583,8 +68583,8 @@ exports.PercentageFilter = PercentageFilter;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWTrim = /** @class */ (function () {
     function SWTrim() {
@@ -68626,8 +68626,8 @@ exports.SWTrim = SWTrim;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWUnique = /** @class */ (function () {
     function SWUnique() {
     }
@@ -68675,8 +68675,8 @@ exports.SWUnique = SWUnique;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68713,8 +68713,8 @@ exports.Account = Account;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68753,8 +68753,8 @@ exports.AccountAddress = AccountAddress;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68783,8 +68783,8 @@ exports.Address = Address;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68841,8 +68841,8 @@ exports.Cart = Cart;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var account_1 = __webpack_require__(741);
 exports.Account = account_1.Account;
@@ -68877,8 +68877,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var baseentity_1 = __webpack_require__(22);
 var OrderItem = /** @class */ (function (_super) {
     __extends(OrderItem, _super);
@@ -68896,8 +68896,8 @@ exports.OrderItem = OrderItem;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var OrderPayment = /** @class */ (function () {
     function OrderPayment() {
@@ -68913,8 +68913,8 @@ exports.OrderPayment = OrderPayment;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68950,8 +68950,8 @@ exports.Sku = Sku;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68980,8 +68980,8 @@ exports.BaseProcess = BaseProcess;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69012,8 +69012,8 @@ exports.Order_AddOrderPayment = Order_AddOrderPayment;
 
 "use strict";
 
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var order_addorderpayment_1 = __webpack_require__(750);
 exports.Order_AddOrderPayment = order_addorderpayment_1.Order_AddOrderPayment;
@@ -69036,8 +69036,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var request_1 = __webpack_require__(304);
 var AdminRequest = /** @class */ (function (_super) {
     __extends(AdminRequest, _super);
@@ -69085,8 +69085,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 var request_1 = __webpack_require__(304);
 var PublicRequest = /** @class */ (function (_super) {
     __extends(PublicRequest, _super);
@@ -69198,8 +69198,8 @@ exports.AccountService = AccountService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var CacheService = /** @class */ (function () {
     //@ngInject
     function CacheService(localStorageService) {
@@ -69317,8 +69317,8 @@ exports.CartService = CartService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var DraggableService = /** @class */ (function () {
     //ngInject
@@ -69358,8 +69358,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var baseentityservice_1 = __webpack_require__(16);
 var EntityService = /** @class */ (function (_super) {
     __extends(EntityService, _super);
@@ -69382,8 +69382,8 @@ exports.EntityService = EntityService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var ExpandableService = /** @class */ (function () {
     //ngInject
@@ -69490,8 +69490,8 @@ exports.FilterService = FilterService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var Form = /** @class */ (function () {
     //@ngInject
@@ -69584,8 +69584,8 @@ exports.FormService = FormService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var HibachiInterceptor = /** @class */ (function () {
     //@ngInject
     function HibachiInterceptor($location, $q, $log, $rootScope, $window, $injector, localStorageService, alertService, appConfig, dialogService, utilityService, hibachiPathBuilder, observerService) {
@@ -69767,8 +69767,8 @@ exports.HibachiInterceptor = HibachiInterceptor;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /*services return promises which can be handled uniquely based on success or failure by the controller*/
 var HibachiPathBuilder = /** @class */ (function () {
     //@ngInject
@@ -69803,8 +69803,8 @@ exports.HibachiPathBuilder = HibachiPathBuilder;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var HibachiScope = /** @class */ (function () {
     //@ngInject
@@ -69836,8 +69836,8 @@ exports.HibachiScope = HibachiScope;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 // interface ISlatwallRootScopeService extends ng.IRootScopeService{
 //     loadedResourceBundle:boolean;
@@ -70312,8 +70312,8 @@ exports.$Hibachi = $Hibachi;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var HibachiServiceDecorator = /** @class */ (function () {
     //@ngInject
@@ -71097,8 +71097,8 @@ exports.HibachiServiceDecorator = HibachiServiceDecorator;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var HibachiValidationService = /** @class */ (function () {
     //@ngInject
@@ -71422,8 +71422,8 @@ exports.HistoryService = HistoryService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var LocalStorageService = /** @class */ (function () {
     //@ngInject
@@ -71473,8 +71473,8 @@ exports.LocalStorageService = LocalStorageService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var MetaDataService = /** @class */ (function () {
     //@ngInject
     function MetaDataService($filter, $log) {
@@ -71623,8 +71623,8 @@ exports.MetaDataService = MetaDataService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /**
  * @ngdoc service
  * @name sdt.models:ObserverService
@@ -71789,8 +71789,8 @@ exports.ObserverService = ObserverService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -71824,8 +71824,8 @@ exports.OrderPaymentService = OrderPaymentService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -71862,8 +71862,8 @@ exports.OrderService = OrderService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var PublicService = /** @class */ (function () {
     ///index.cfm/api/scope/
@@ -73266,8 +73266,8 @@ exports.PublicService = PublicService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var RbKeyService = /** @class */ (function () {
     //@ngInject
@@ -73376,8 +73376,8 @@ exports.RbKeyService = RbKeyService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var adminrequest_1 = __webpack_require__(752);
 var publicrequest_1 = __webpack_require__(753);
@@ -73452,8 +73452,8 @@ exports.ScopeService = ScopeService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /*services return promises which can be handled uniquely based on success or failure by the controller*/
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -73575,8 +73575,8 @@ exports.SelectionService = SelectionService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -73611,8 +73611,8 @@ exports.SkuService = SkuService;
 "use strict";
 
 /// <reference path="../../../../../../node_modules/typescript/lib/lib.es6.d.ts" />
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -73858,8 +73858,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /*services return promises which can be handled uniquely based on success or failure by the controller*/
 var baseservice_1 = __webpack_require__(68);
 var UtilityService = /** @class */ (function (_super) {
@@ -74303,8 +74303,8 @@ exports.UtilityService = UtilityService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var PageDialogController = /** @class */ (function () {
     //@ngInject
     function PageDialogController($scope, $location, $anchorScroll, dialogService) {
@@ -74373,8 +74373,8 @@ exports.DialogService = DialogService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWDetail = /** @class */ (function () {
     function SWDetail($location, $log, $hibachi, coreEntityPartialsPath, hibachiPathBuilder) {
         return {
@@ -74448,8 +74448,8 @@ exports.SWDetail = SWDetail;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWDetailTabs = /** @class */ (function () {
     function SWDetailTabs(coreEntityPartialsPath, hibachiPathBuilder) {
         return {
@@ -74479,8 +74479,8 @@ exports.SWDetailTabs = SWDetailTabs;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWList = /** @class */ (function () {
     function SWList($log, coreEntityPartialsPath, hibachiPathBuilder) {
         return {
@@ -74526,8 +74526,8 @@ exports.SWList = SWList;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var OtherWiseController = /** @class */ (function () {
     //@ngInject
     function OtherWiseController($scope) {
@@ -74545,8 +74545,8 @@ exports.OtherWiseController = OtherWiseController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var RouterController = /** @class */ (function () {
     //@ngInject
     function RouterController($scope, $routeParams, $location, $log, utilityService) {
@@ -74577,8 +74577,8 @@ exports.RouterController = RouterController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 //services
 // import {AccountService} from "./services/accountservice";
 // import {CartService} from "./services/cartservice";
@@ -74653,8 +74653,8 @@ exports.entitymodule = entitymodule;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWAddressFormController = /** @class */ (function () {
     //@ngInject
     function SWAddressFormController($scope, $log, observerService, $rootScope) {
@@ -74821,8 +74821,8 @@ exports.SWAddressForm = SWAddressForm;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWErrorDisplayController = /** @class */ (function () {
     //@ngInject
@@ -74905,8 +74905,8 @@ exports.SWErrorDisplay = SWErrorDisplay;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFFileInput = /** @class */ (function () {
     // @ngInject
@@ -74979,8 +74979,8 @@ exports.SWFFileInput = SWFFileInput;
  *********************************************************************************************
  *********************************************************************************************
  */
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
     * Property Display Controller handles the logic for this directive.
@@ -75047,8 +75047,8 @@ exports.SWFFormField = SWFFormField;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
 * Form Controller handles the logic for this directive.
@@ -75370,8 +75370,8 @@ exports.SWForm = SWForm;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFormFieldController = /** @class */ (function () {
     //@ngInject
@@ -75651,8 +75651,8 @@ exports.SWFormField = SWFormField;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWFormFieldFileController = /** @class */ (function () {
     //@ngInject
     function SWFormFieldFileController(formService) {
@@ -75698,8 +75698,8 @@ exports.SWFormFieldFile = SWFormFieldFile;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFormFieldJsonController = /** @class */ (function () {
     //@ngInject
@@ -75741,8 +75741,8 @@ exports.SWFormFieldJson = SWFormFieldJson;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFormFieldSearchSelect = /** @class */ (function () {
     function SWFormFieldSearchSelect($log, $hibachi, coreFormPartialsPath, hibachiPathBuilder) {
@@ -75861,8 +75861,8 @@ exports.SWFormFieldSearchSelect = SWFormFieldSearchSelect;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFormRegistrar = /** @class */ (function () {
     //@ngInject
@@ -76030,8 +76030,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var swpropertydisplay_1 = __webpack_require__(308);
 var SWFPropertyDisplayController = /** @class */ (function (_super) {
     __extends(SWFPropertyDisplayController, _super);
@@ -76442,8 +76442,8 @@ exports.SWInput = SWInput;
 
 "use strict";
 
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 //module
 var core_module_1 = __webpack_require__(21);
@@ -76542,8 +76542,8 @@ exports.FileService = FileService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -76623,8 +76623,8 @@ exports.SWFAddressForm = SWFAddressForm;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFCartItemsController = /** @class */ (function () {
     function SWFCartItemsController($rootScope) {
@@ -76702,8 +76702,8 @@ exports.SWFCartItems = SWFCartItems;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWFDirectiveController = /** @class */ (function () {
     //@ngInject
     function SWFDirectiveController($log, $rootScope, $scope) {
@@ -76808,8 +76808,8 @@ exports.SWFDirective = SWFDirective;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFNavigationController = /** @class */ (function () {
     function SWFNavigationController($rootScope, $scope, $timeout) {
@@ -76979,8 +76979,8 @@ exports.SWFNavigation = SWFNavigation;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFPromoBoxController = /** @class */ (function () {
     function SWFPromoBoxController($rootScope) {
@@ -77036,8 +77036,8 @@ exports.SWFPromoBox = SWFPromoBox;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWFSaveNotesController = /** @class */ (function () {
     //@ngInject
@@ -77086,8 +77086,8 @@ exports.SWFSaveNotes = SWFSaveNotes;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var FrontendController = /** @class */ (function () {
     function FrontendController($scope, $element, $log, $hibachi, collectionConfigService, selectionService) {
@@ -77110,8 +77110,8 @@ exports.FrontendController = FrontendController;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../typings/hibachiTypescript.d.ts" />
+
+
 //modules
 var hibachi_module_1 = __webpack_require__(815);
 //controllers
@@ -77162,8 +77162,8 @@ exports.frontendmodule = frontendmodule;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWSaveAndFinishController = /** @class */ (function () {
     //@ngInject
@@ -77273,8 +77273,8 @@ exports.SWSaveAndFinish = SWSaveAndFinish;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 //import alertmodule = require('./alert/alert.module');
 var alert_module_1 = __webpack_require__(301);
 var card_module_1 = __webpack_require__(659);
@@ -77334,8 +77334,8 @@ exports.hibachimodule = hibachimodule;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingAggregateController = /** @class */ (function () {
     function SWListingAggregateController() {
@@ -77383,8 +77383,8 @@ exports.SWListingAggregate = SWListingAggregate;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingColorFilterController = /** @class */ (function () {
     function SWListingColorFilterController() {
@@ -77442,8 +77442,8 @@ exports.SWListingColorFilter = SWListingColorFilter;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingColumnController = /** @class */ (function () {
     //@ngInject
@@ -77602,8 +77602,8 @@ exports.SWListingColumn = SWListingColumn;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingControlsController = /** @class */ (function () {
     //@ngInject
@@ -77782,8 +77782,8 @@ exports.SWListingControls = SWListingControls;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 /* SwListingDisableRule
  * defines a filter, by which to determine what rows will be disabled
@@ -77845,8 +77845,8 @@ exports.SWListingDisableRule = SWListingDisableRule;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingDisplayController = /** @class */ (function () {
     //@ngInject
@@ -78494,8 +78494,8 @@ exports.SWListingDisplay = SWListingDisplay;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingDisplayCellController = /** @class */ (function () {
     //@ngInject
@@ -78613,8 +78613,8 @@ exports.SWListingDisplayCell = SWListingDisplayCell;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 /* SWListingExpandableRule
  * defines a filter, by which to determine what will be expanded
@@ -78690,8 +78690,8 @@ exports.SWListingExpandableRule = SWListingExpandableRule;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingFilterController = /** @class */ (function () {
     function SWListingFilterController() {
@@ -78749,8 +78749,8 @@ exports.SWListingFilter = SWListingFilter;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingFilterGroupController = /** @class */ (function () {
     function SWListingFilterGroupController($scope, $transclude) {
@@ -78788,8 +78788,8 @@ exports.SWListingFilterGroup = SWListingFilterGroup;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingGlobalSearchController = /** @class */ (function () {
     //@ngInject
@@ -78845,8 +78845,8 @@ exports.SWListingGlobalSearch = SWListingGlobalSearch;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingOrderByController = /** @class */ (function () {
     //@ngInject
@@ -78929,8 +78929,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var chart_js_1 = __webpack_require__(310);
 var SWListingReportController = /** @class */ (function () {
     //@ngInject
@@ -79358,8 +79358,8 @@ exports.SWListingReport = SWListingReport;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingRowSaveController = /** @class */ (function () {
     //@ngInject
@@ -79422,8 +79422,8 @@ exports.SWListingRowSave = SWListingRowSave;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWListingSearchController = /** @class */ (function () {
     //@ngInject
@@ -79625,8 +79625,8 @@ exports.SWListingSearch = SWListingSearch;
 
 "use strict";
 
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../typings/hibachiTypescript.d.ts" />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 //modules
 var collection_module_1 = __webpack_require__(302);
@@ -79677,8 +79677,8 @@ exports.listingmodule = listingmodule;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -80591,8 +80591,8 @@ exports.ListingService = ListingService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 //import pagination = require('../services/paginationservice');
 //var PaginationService = pagination.PaginationService;
@@ -80638,8 +80638,8 @@ exports.SWPaginationBar = SWPaginationBar;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../typings/hibachiTypescript.d.ts" />
+
+
 //services
 var paginationservice_1 = __webpack_require__(835);
 var swpaginationbar_1 = __webpack_require__(833);
@@ -80856,8 +80856,8 @@ exports.PaginationService = PaginationService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /**
  * This validate directive will look at the current element, figure out the context (save, edit, delete) and
  * validate based on that context as defined in the validation properties object.
@@ -81310,8 +81310,8 @@ exports.SWValidationEq = SWValidationEq;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /**
  * SWValidationEqProperty: Validates true if the user value == another field's value.
  * @usage <input type='text' swvalidationgte='nameOfAnotherInput' /> will validate false if the user enters
@@ -81766,8 +81766,8 @@ exports.SWValidationUniqueOrNull = SWValidationUniqueOrNull;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /*services return promises which can be handled uniquely based on success or failure by the controller*/
 Object.defineProperty(exports, "__esModule", { value: true });
 var ValidationService = /** @class */ (function () {
@@ -81923,8 +81923,8 @@ exports.ValidationService = ValidationService;
 
 "use strict";
 
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../typings/hibachiTypescript.d.ts" />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 //components
 var swvalidate_1 = __webpack_require__(836);
@@ -81976,8 +81976,8 @@ exports.validationmodule = validationmodule;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWAdminCreateSuperUser = /** @class */ (function () {
     function SWAdminCreateSuperUser($hibachi, workflowPartialsPath, hibachiPathBuilder) {
         return {
@@ -82010,8 +82010,8 @@ exports.SWAdminCreateSuperUser = SWAdminCreateSuperUser;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWSchedulePreviewController = /** @class */ (function () {
     function SWSchedulePreviewController() {
     }
@@ -82048,8 +82048,8 @@ exports.SWSchedulePreview = SWSchedulePreview;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWWorkflowBasic = /** @class */ (function () {
     function SWWorkflowBasic(workflowPartialsPath, hibachiPathBuilder) {
         return {
@@ -82082,8 +82082,8 @@ exports.SWWorkflowBasic = SWWorkflowBasic;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWWorkflowCondition = /** @class */ (function () {
     function SWWorkflowCondition($log, $hibachi, metadataService, workflowPartialsPath, hibachiPathBuilder) {
         return {
@@ -82203,8 +82203,8 @@ exports.SWWorkflowCondition = SWWorkflowCondition;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWWorkflowConditionGroupItem = /** @class */ (function () {
     function SWWorkflowConditionGroupItem(workflowPartialsPath, hibachiPathBuilder) {
         return {
@@ -82234,8 +82234,8 @@ exports.SWWorkflowConditionGroupItem = SWWorkflowConditionGroupItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWWorkflowConditionGroups = /** @class */ (function () {
     function SWWorkflowConditionGroups($log, workflowConditionService, workflowPartialsPath, hibachiPathBuilder) {
         return {
@@ -82284,8 +82284,8 @@ exports.SWWorkflowConditionGroups = SWWorkflowConditionGroups;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWWorkflowTask = /** @class */ (function () {
     function SWWorkflowTask(workflowPartialsPath, hibachiPathBuilder) {
         return {
@@ -82330,8 +82330,8 @@ exports.SWWorkflowTask = SWWorkflowTask;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var SWWorkflowTaskActionsController = /** @class */ (function () {
     //@ngInject
@@ -82603,8 +82603,8 @@ exports.SWWorkflowTaskActions = SWWorkflowTaskActions;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 /**
  * Handles adding, editing, and deleting Workflows Tasks.
  */
@@ -82798,8 +82798,8 @@ exports.SWWorkflowTasks = SWWorkflowTasks;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWWorkflowTrigger = /** @class */ (function () {
     function SWWorkflowTrigger($http, $hibachi, alertService, metadataService, workflowPartialsPath, hibachiPathBuilder, utilityService) {
         return {
@@ -82897,8 +82897,8 @@ exports.SWWorkflowTrigger = SWWorkflowTrigger;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWWorkflowTriggerHistory = /** @class */ (function () {
     function SWWorkflowTriggerHistory(workflowPartialsPath, hibachiPathBuilder, $rootScope, collectionConfigService) {
         return {
@@ -82942,8 +82942,8 @@ exports.SWWorkflowTriggerHistory = SWWorkflowTriggerHistory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var SWWorkflowTriggers = /** @class */ (function () {
     function SWWorkflowTriggers($hibachi, workflowPartialsPath, formService, observerService, hibachiPathBuilder, collectionConfigService, scheduleService, dialogService) {
         return {
@@ -83231,8 +83231,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 var baseentityservice_1 = __webpack_require__(16);
 var ScheduleService = /** @class */ (function (_super) {
     __extends(ScheduleService, _super);
@@ -83329,8 +83329,8 @@ exports.ScheduleService = ScheduleService;
 
 "use strict";
 
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var WorkflowCondition = /** @class */ (function () {
     function WorkflowCondition() {
@@ -83388,8 +83388,8 @@ exports.WorkflowConditionService = WorkflowConditionService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 //services
 var workflowconditionservice_1 = __webpack_require__(867);
 var scheduleservice_1 = __webpack_require__(866);

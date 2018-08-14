@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 class SWTabContentController {
     public id:string; 
     public name:string; 

@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 class SWDisplayOptions{
     public static Factory():ng.IDirectiveFactory{
         var directive:ng.IDirectiveFactory = (

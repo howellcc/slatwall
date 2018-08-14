@@ -1,5 +1,5 @@
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 //services
 import {WorkflowConditionService} from "./services/workflowconditionservice";
 import {ScheduleService} from "./services/scheduleservice";

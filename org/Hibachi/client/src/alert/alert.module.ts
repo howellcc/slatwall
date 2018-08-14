@@ -1,5 +1,5 @@
-/// <reference path='../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../typings/tsd.d.ts' />
+
+
 //controllers
 import {AlertController} from "./controllers/alertcontroller";
 //services
@@ -12,4 +12,4 @@ var alertmodule = angular.module('hibachi.alert',[])
 ;
 export{
 	alertmodule
-};
+}; 

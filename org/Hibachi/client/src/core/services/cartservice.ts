@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 import {Cart} from "../model/entity/cart";
 import {BaseEntityService} from "./baseentityservice";
 class CartService extends BaseEntityService{

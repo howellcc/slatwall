@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 import {AccountAddress} from "../model/entity/accountaddress";
 import {BaseEntityService} from "./baseentityservice";
 class AccountAddressService extends BaseEntityService{

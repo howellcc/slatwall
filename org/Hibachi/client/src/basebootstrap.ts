@@ -1,9 +1,9 @@
-/// <reference path='../typings/hibachiTypescript.d.ts' />
-/// <reference path='../typings/tsd.d.ts' />
 import {coremodule} from "./core/core.module";
-declare var angular:any;
+import * as angular from "angular";
+import * as $ from "jquery";
 declare var hibachiConfig:any;
-var md5 = require('md5');
+import * as md5 from "md5";
+
 //generic bootstrapper
 export class BaseBootStrapper{
     public myApplication:any;

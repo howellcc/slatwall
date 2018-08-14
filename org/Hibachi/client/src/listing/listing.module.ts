@@ -1,5 +1,5 @@
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../typings/hibachiTypescript.d.ts" />
+
+
 
 //modules
 import {collectionmodule} from "../collection/collection.module";

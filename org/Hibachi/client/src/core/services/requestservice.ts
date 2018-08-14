@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../typings/tsd.d.ts' />
+
+
 
 import {AdminRequest} from "../model/transient/adminrequest";
 import {PublicRequest} from "../model/transient/publicrequest";

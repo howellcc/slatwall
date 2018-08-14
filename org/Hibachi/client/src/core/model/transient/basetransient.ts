@@ -1,5 +1,5 @@
-/// <reference path='../../../../typings/hibachiTypescript.d.ts' />
-/// <reference path='../../../../typings/tsd.d.ts' />
+
+
 
 import {BaseObject} from "../baseobject";
 import {HibachiService} from "../../services/hibachiservice";

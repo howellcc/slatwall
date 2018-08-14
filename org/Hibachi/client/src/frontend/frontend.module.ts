@@ -1,5 +1,5 @@
-/// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../typings/hibachiTypescript.d.ts" />
+
+
 //modules
 import {hibachimodule} 	from "../hibachi/hibachi.module";
 //controllers

@@ -1,4 +1,4 @@
-/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+
 
 class SWCollectionFilterController{
     constructor(){}
