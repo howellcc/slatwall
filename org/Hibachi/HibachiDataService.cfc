@@ -137,6 +137,10 @@ component accessors="true" output="false" extends="HibachiService" {
 		var retryCount=0;
 		var runPopulation = true;
 
+		if(!structKeyExists(request,'successfulDBDataScripts')){
+			request.successfulDBDataScripts = [];
+		}
+		
 		do{
 			// Set to false so that it will only rerun if an error occurs
 			runPopulation = false;
@@ -154,9 +158,12 @@ component accessors="true" output="false" extends="HibachiService" {
 					}	
 
 					try{
+						if(!arrayfind(request.successfulDBDataScripts,dirList[i])){
 						if( loadDataFromXMLRaw(xmlRaw, arguments.ignorePreviouslyInserted) && retryCount <= 6) {
 							retryCount += 1;
 							runPopulation = true;
+								arrayAppend(request.successfulDBDataScripts,dirList[i]);
+							}
 						}
 						var index = findNoCase(filePath, checksumList);
 						if(index != 0){
@@ -193,12 +200,24 @@ component accessors="true" output="false" extends="HibachiService" {
 	
 
 	public boolean function loadDataFromXMLRaw(required string xmlRaw, boolean ignorePreviouslyInserted=true) {
-		var xmlRawEscaped = replace(xmlRaw,"&","&amp;","all");
-		
+		var xmlRawEscaped = replace(arguments.xmlRaw,"&","&amp;","all");
 		var xmlData = xmlParse(xmlRawEscaped);
 		var columns = {};
 		var idColumns = "";
 		var includesCircular = false;
+
+		if(structKeyExists(xmlData.Table.xmlAttributes,'dependencies')){
+			var dependencies = listToArray(xmlData.Table.xmlAttributes.dependencies);
+			for(var dependency in dependencies){
+				var dependencyPath = expandPath('/Slatwall')&dependency;
+				var dependencyXMLRaw = FileRead(dependencyPath);
+				if(!arrayFind(request.successfulDBDataScripts,dependencyPath)){
+					loadDataFromXMLRaw(dependencyXMLRaw);
+					arrayAppend(request.successfulDBDataScripts,dependencyPath);
+				}
+			}
+			
+		}
 
 		// Loop over each column to parse xml
 		for(var ii=1; ii<= arrayLen(xmlData.Table.Columns.xmlChildren); ii++) {
@@ -259,8 +278,12 @@ component accessors="true" output="false" extends="HibachiService" {
 			var keyFound = listFindNoCase(variables.insertedData, idKey);
 
 			var updateOnly = ignorePreviouslyInserted && keyFound;
-
-			getHibachiDataDAO().recordUpdate(xmlData.table.xmlAttributes.tableName, idColumns, updateData, insertData, updateOnly);
+			try{
+				getHibachiDataDAO().recordUpdate(xmlData.table.xmlAttributes.tableName, idColumns, updateData, insertData, updateOnly);
+			}catch(any e){
+				writedump(xmlData.table.xmlAttributes.tableName);
+				writedump(e);abort;
+			}
 			if(!keyFound){
 				variables.insertedData = listAppend(variables.insertedData, idKey);
 			}
