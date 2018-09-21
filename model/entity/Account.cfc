@@ -983,5 +983,69 @@ component displayname="Account" entityname="SlatwallAccount" table="SwAccount" p
 		return "/#setting('globalUrlKeyAccount')#/#getUrlTitle()#/";
 	}
 
+	// ================== START: Custom Methods ============================
+	
+	public any function getPreferredLocationOptions(){
+		return getStoreLocationOptions();
+	}
+	
+	public any function getStoreLocationOptions(){
+		var emptyOption = {Value='',NAME='Please Select a Store'};
+		var locationCollectionList = getService("LocationService").getLocationCollectionList();
+		locationCollectionList.setDisplayProperties('locationID');
+		locationCollectionList.addDisplayProperty(displayProperty='locationID',title='VALUE');
+		locationCollectionList.addDisplayProperty(displayProperty='locationName',title='NAME');
+		locationCollectionList.addFilter('parentLocation.locationName','Store Locations');
+		var locations = locationCollectionList.getRecords();
+		for(var location in locations){
+			location['NAME'] = location['locationName'];
+			location['VALUE'] = location['locationID'];
+		}
+		ArrayPrepend(locations,emptyOption);
+		return locations;
+	}
+	
+	public boolean function getCanPlaceReturnOrdersFlag(){
+		var canPlaceReturnOrdersFlag = false;
+		if(getSuperUserFlag()){
+			canPlaceReturnOrdersFlag = true;
+		} else {
+			for(var permissionGroup in getPermissionGroups()){
+				if(
+					permissionGroup.getPermissionGroupName() == "Concierge Sales Manager" 
+					||
+					permissionGroup.getPermissionGroupName() == "Store Admin"
+				){
+					canPlaceReturnOrdersFlag = true;
+					break;
+				}
+			}
+		}
+		
+		return canPlaceReturnOrdersFlag;
+	}
+	
+	public any function getEditOrderTypeOptions(){
 
+		var canPlaceReturnOrdersFlag = getCanPlaceReturnOrdersFlag();
+
+		var typeCollectionList = getService("TypeService").getTypeCollectionList();
+		typeCollectionList.addFilter("parentType.systemCode","orderType");
+		if(!canPlaceReturnOrdersFlag){
+			typeCollectionList.addFilter("systemCode","otReturnOrder","<>");
+		}
+		typeCollectionList.addDisplayProperty(displayProperty='typeID',title="VALUE");
+		typeCollectionList.addDisplayProperty(displayProperty='typeName',title="NAME");
+		
+		var types = typeCollectionList.getRecords();
+		
+		for(var type in types){
+			type['NAME'] = type['typeName'];
+			type['VALUE'] = type['typeID'];
+		}
+		
+		return types;
+	}
+	
+	// ==================== END: Custom Methods ============================
 }

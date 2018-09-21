@@ -92,9 +92,10 @@ Notes:
 				<hb:HibachiProcessCaller action="admin:entity.processOrder" entity="#rc.order#" processContext="reopenOrder" type="list" hideDisabled="false" />
 			</cfif>
 			
-			<!--- Create Return --->
-			<hb:HibachiProcessCaller action="admin:entity.preProcessOrder" entity="#rc.order#" processContext="createReturn" type="list" modal="true" />
-
+			<!--- Create Return OVERRIDE--->
+			<cfif $.slatwall.getAccount().getCanPlaceReturnOrdersFlag()>
+				<hb:HibachiProcessCaller action="admin:entity.preProcessOrder" entity="#rc.order#" processContext="createReturn" type="list" modal="true" />
+			</cfif>
 			<li class="divider"></li>
 
 			<!--- Add Elements --->
