@@ -67,6 +67,7 @@ component accessors="true" output="false" extends="Slatwall.integrationServices.
 			transactionKey = {fieldType="text"},
 			meterNo = {fieldType="text"},
 			testingFlag = {fieldType="yesno", defaultValue="1"},
+			debugModeFlag = {fieldType="yesno", defaultValue="0"},
 			shipperStreet = {fieldType="text"},
 			shipperCity = {fieldType="text"},
 			shipperStateCode = {fieldType="text"},
