@@ -64,7 +64,7 @@ component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" 
 	property name="calculatedChargeTaxAmount" ormtype="big_decimal" hb_formatType="currency";
 	//hash of the integrationResponse used to decide if we need to rebuild the shippingMethodOptions
 	property name="fulfillmentMethodOptionsCacheKey" column="fulfillMethOptionsCacheKey" ormtype="string" hb_auditable="false";
-	property name="message" ormtype="string" length="4000"; // @hint this is a pipe and tilda delimited list of any messages that came back in the response.
+	property name="message" ormtype="string" length="4000"; // @hint this is used to hold the request and response
 	
 	// Related Object Properties (many-to-one)
 	property name="accountAddress" hb_populateEnabled="public" cfc="AccountAddress" fieldtype="many-to-one" fkcolumn="accountAddressID";
