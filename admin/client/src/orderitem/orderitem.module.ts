@@ -6,23 +6,30 @@ import {CoreModule} from '../../../../org/Hibachi/client/src/core/core.module';
 
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {UpgradeModule,downgradeInjectable} from '@angular/upgrade/static';
+import {UpgradeModule,downgradeInjectable,downgradeComponent} from '@angular/upgrade/static';
 
 //directives
 import {SWChildOrderItem} from "./components/swchildorderitem";
 import {SWOrderItem} from "./components/sworderitem";
-import {SWOiShippingLabelStamp} from "./components/swoishippinglabelstamp";
-import {SWOrderItemDetailStamp} from "./components/sworderitemdetailstamp";
+import {SwOiShippingLabelStamp} from "./components/swoishippinglabelstamp";
+import {SWOrderItemDetailStamp, SwOrderItemDetailStamp} from "./components/sworderitemdetailstamp";
 import {SWOrderItems} from "./components/sworderitems";
 import {SWResizedImage} from "./components/swresizedimage";
 
 @NgModule({
-    declarations :[],
+    declarations :[
+        SwOrderItemDetailStamp,
+        SwOiShippingLabelStamp
+    ],
     providers: [],
     imports : [
         CoreModule,
         CommonModule,
         UpgradeModule
+    ],
+    entryComponents: [
+        SwOrderItemDetailStamp,
+        SwOiShippingLabelStamp
     ]
 })
 export class OrderItemModule{
@@ -40,8 +47,10 @@ var orderitemmodule = angular.module('hibachi.orderitem', [coremodule.name])
 //directives
 .directive('swChildOrderItem',SWChildOrderItem.Factory())
 .directive('swOrderItem',SWOrderItem.Factory())
-.directive('swoishippinglabelstamp',SWOiShippingLabelStamp.Factory())
-.directive('swOrderItemDetailStamp',SWOrderItemDetailStamp.Factory())
+//.directive('swoishippinglabelstamp',SWOiShippingLabelStamp.Factory())
+.directive('swoishippinglabelstamp', downgradeComponent({ component: SwOiShippingLabelStamp }) as angular.IDirectiveFactory)    
+//.directive('swOrderItemDetailStamp',SWOrderItemDetailStamp.Factory())
+.directive('swOrderItemDetailStamp', downgradeComponent({ component: SwOrderItemDetailStamp }) as angular.IDirectiveFactory)    
 .directive('swOrderItems',SWOrderItems.Factory())
 .directive('swresizedimage',SWResizedImage.Factory())
 //constants
