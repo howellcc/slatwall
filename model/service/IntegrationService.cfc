@@ -233,7 +233,6 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
 					
 					if(directoryExists("#getApplicationValue("applicationRootMappingPath")#/integrationServices/#integrationPackage#/model")) {
 						var beanFactory = getBeanFactory();
-						//if we have entities then copy them into root model/entity
 						if(directoryExists("#getApplicationValue("applicationRootMappingPath")#/integrationServices/#integrationPackage#/model/entity")){
 							var modelList = directoryList( expandPath("/Slatwall") & "/integrationServices/#integrationPackage#/model/entity" );
 							for(var modelFilePath in modelList){
@@ -247,7 +246,7 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
 							}
 						}
 						
-						var integrationBF = new framework.aop("/Slatwall/integrationServices/#integrationPackage#/model", {
+						var integrationBF = new framework.hibachiaop("/Slatwall/integrationServices/#integrationPackage#/model", {
 							transients=["process", "transient", "report"],
 							exclude=["entity"],
 							omitDirectoryAliases = getApplicationValue("hibachiConfig").beanFactoryOmitDirectoryAliases
@@ -269,7 +268,6 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
 							}
 							
 						}
-						setBeanFactory(beanFactory);
 					}
 
 				}

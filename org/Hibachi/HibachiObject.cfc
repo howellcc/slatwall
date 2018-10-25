@@ -39,19 +39,30 @@ component accessors="true" output="false" persistent="false" {
 	
 	// @hint gets a bean out of whatever the fw1 bean factory is
 	public any function getBeanFactory() {
-		return application[ getApplicationValue('applicationKey') ].factory;
+		
+		// Attempts to prevent concurrent requests on same server from interfering with each other while reloading beanFactory
+		if (!structKeyExists(variables, 'beanFactory')) {
+			lock scope="Application" timeout="2400" type="readonly" {
+				if (isNull(application[ getApplicationValue('applicationKey') ].factory)) {
+					throw("The beanFactory is expected to exist at this stage. Readonly application lock is applied. It is possible another concurrent request reloaded server and is interfering. Further investigation into this issue is required.");
+				}
+				
+				variables.beanFactory = application[ getApplicationValue('applicationKey') ].factory;
+			}
+		}
+		return variables.beanFactory;
 	}
 	
 	// @hint gets a bean out of whatever the fw1 bean factory is
 	public any function getBean(required string beanName, struct constructorArgs = { }) {
-		return getBeanFactory().getBean( arguments.beanName, arguments.constructorArgs);
+		return getBeanFactory().getBean( argumentCollection=arguments);
 	}
 	
 	// @hint has a bean out of whatever the fw1 bean factory is
 	public any function hasBean(required string beanName) {
 		return getBeanFactory().containsBean( arguments.beanName );
 	}
-	// @hint sets bean factory
+	// @hint sets bean factory, this probably should not ever be invoked outside of  initialization. Application.cfc should take care of this.
 	public void function setBeanFactory(required any beanFactory) {
 		application[ getApplicationValue('applicationKey') ].factory = arguments.beanFactory;
 	}
@@ -67,8 +78,9 @@ component accessors="true" output="false" persistent="false" {
 	// @hint returns an application scope cached version of the service
 	public any function getService(required string serviceName) {
 		if( !hasApplicationValue("service_#arguments.serviceName#") ) {
-			setApplicationValue("service_#arguments.serviceName#", getBean(arguments.serviceName) );
+			setApplicationValue("service_#arguments.serviceName#", getBeanFactory().getBean(arguments.serviceName) );
 		}
+		
 		return getApplicationValue("service_#arguments.serviceName#");
 	}
 	
