@@ -14,9 +14,7 @@ export class BaseBootStrapper{
     public appConfig:any;
     public attributeMetaData:any;
     public instantiationKey:string;
-    public isPrivate:boolean;
     
-
     constructor(myApplication){
         this.myApplication = myApplication;
         return angular.lazy(this.myApplication).resolve(['$http','$q', ($http,$q)=> {
@@ -30,83 +28,67 @@ export class BaseBootStrapper{
                 baseURL += '/';
             }
 
-           return this.getInstantiationKey(baseURL).then((instantiationKey:string)=>{
+            return this.getInstantiationKey(baseURL).then((instantiationKey:string)=>{
                 this.instantiationKey = instantiationKey;
                 var invalidCache = [];
                 
-                return this.isPrivateMode().then((isPrivate)=>{
-                    if(!isPrivate){
-                        this.isPrivate = true;
-                    }
-		    
-		            // Inspecting attribute model metadata in local storage (retreived from slatAction=api:main.getAttributeModel)
-                    try{
-                        var hashedData = localStorage.getItem('attributeChecksum');
-			
-                        // attributeMetaData is valid and can be restored from local storage cache
-                        if(hashedData !== null && hibachiConfig.attributeCacheKey === hashedData.toUpperCase()){
-                            coremodule.constant('attributeMetaData',JSON.parse(localStorage.getItem('attributeMetaData')));
-			    
-                        // attributeMetaData is invalid and needs to be refreshed
-                        }else{
-                            invalidCache.push('attributeCacheKey');
-                        }
-		    
+                // Inspecting attribute model metadata in local storage
+                try {
+                    var hashedData = localStorage.getItem('attributeChecksum');
+                    
+                    // attributeMetaData is valid and can be restored from local storage cache
+                    if (hashedData !== null && hibachiConfig.attributeCacheKey === hashedData.toUpperCase()) {
+                        coremodule.constant('attributeMetaData',JSON.parse(localStorage.getItem('attributeMetaData')));
+                        
                     // attributeMetaData is invalid and needs to be refreshed
-                    }catch(e){
+                    } else {
                         invalidCache.push('attributeCacheKey');
                     }
-    
-                    // Inspecting app config/model metadata in local storage (retreived from /custom/config/config.json)
-                    try{
-                        if(!isPrivate){
-                            this.appConfig = JSON.parse(localStorage.getItem('appConfig'));
-                        }else{
-                            this.appConfig={
-                                instantiationKey:undefined
-                            };
-                            
-                        }
-			
-                        // appConfig instantiation key is valid (but attribute model may need to be refreshed)
-                        if(hibachiConfig.instantiationKey === this.appConfig.instantiationKey){
-
-
-                            // NOTE: Return a promise so bootstrapping process will wait to continue executing until after the last step of loading the resourceBundles
-			    
-                            coremodule.constant('appConfig', this.appConfig);
-
-                            // If invalidCache, that indicates a need to refresh attribute metadata prior to retrieving resourceBundles
-                            if (invalidCache.length) {
-                                let deferred = $q.defer();
-                                this.getData(invalidCache).then(resp => {
-                                    this.getResourceBundles().then((resp) => {
-                                        deferred.resolve(resp);
-                                    });
-                                });
-                                
-                                // Ends bootstrapping the process
-                                return deferred.promise;
-                            }
+                    
+                // attributeMetaData is invalid and needs to be refreshed
+                } catch(e) {
+                    invalidCache.push('attributeCacheKey');
+                }
+                
+                // Inspecting app config/model metadata in local storage
+                try {
+                    this.appConfig = JSON.parse(localStorage.getItem('appConfig'));
+                    
+                    // appConfig instantiation key is valid (but attribute model may need to be refreshed)
+                    if(hibachiConfig.instantiationKey === this.appConfig.instantiationKey){
                         
-                            // All appConfig and attribute model valid, nothing to refresh prior, ends the bootstrapping process
-                            return this.getResourceBundles();
-			    
-
-                        // Entire app config needs to be refreshed
-                        }else{
-                            invalidCache.push('instantiationKey');
+                        // NOTE: Return a promise so bootstrapping process will wait to continue executing until after the last step of loading the resourceBundles
+                        
+                        coremodule.constant('appConfig', this.appConfig);
+                        
+                        // If invalidCache, that indicates a need to refresh attribute metadata prior to retrieving resourceBundles
+                        if (invalidCache.length) {
+                            let deferred = $q.defer();
+                            this.getData(invalidCache).then(resp => {
+                                this.getResourceBundles().then((resp) => {
+                                    deferred.resolve(resp);
+                                });
+                            });
+                            
+                            // Ends bootstrapping the process
+                            return deferred.promise;
                         }
-			
+                        
+                        // All appConfig and attribute model valid, nothing to refresh prior, ends the bootstrapping process
+                        return this.getResourceBundles();
+                        
                     // Entire app config needs to be refreshed
-                    }catch(e){
+                    } else {
                         invalidCache.push('instantiationKey');
                     }
-    
-                    // NOTE: If invalidCache array does not contain 'instantiationKey' this will not work because getResourceBundles will not be in the promise chain when the bootstrapping process ends
-                    return this.getData(invalidCache);
-                });
                 
+                // Entire app config needs to be refreshed
+                } catch(e) {
+                    invalidCache.push('instantiationKey');
+                }
+                
+                // NOTE: If invalidCache array does not contain 'instantiationKey' this will not work because getResourceBundles will not be in the promise chain when the bootstrapping process ends
+                return this.getData(invalidCache);
             });
       }])
 
@@ -177,6 +159,7 @@ export class BaseBootStrapper{
             promises[invalidCacheName] = this['get'+functionName+'Data']();
 
         }
+        
         return this.$q.all(promises);
     };
 
@@ -205,10 +188,11 @@ export class BaseBootStrapper{
                 localStorage.setItem('attributeChecksum',md5(JSON.stringify(resp.data.data)));
                 
                 // NOTE: at this point attributeChecksum == hibachiConfig.attributeCacheKey
-                // Keeps localStorage appConfig.attributeCacheKey consistent after attributeChecksum updates (even though it is not referenced apparently)
+                // Keeps localStorage appConfig.attributeCacheKey consisten after attributeChecksum updates (even though it is not referenced apparently)
                 this.appConfig.attributeCacheKey = localStorage.getItem('attributeChecksum').toUpperCase();
                 localStorage.setItem('appConfig',JSON.stringify(this.appConfig));
             }catch(e){}
+            
             this.attributeMetaData = resp.data.data;
         });
 
