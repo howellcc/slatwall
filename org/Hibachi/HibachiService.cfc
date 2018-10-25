@@ -994,7 +994,7 @@
 
 		public struct function getEntitiesProcessContexts(){
 			var serviceBeanInfo = getBeanFactory().getBeanInfo(regex="\w+Service").beanInfo;
-
+			
 			if(!structCount(variables.entitiesProcessContexts)) {
 				//get processes form the services
 
