@@ -69,8 +69,8 @@ component extends="framework.one" {
 		,{ "$GET/api/v1/:entityName/:entityID/export" = "/api:adminv1/handleEntityExportAction/entityName/:entityName" } // Export
 		   // Entity Save
 		,{ "$GET/api/v1/:entityName/:entityID/save" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (temporary alternative easier development with URL params)
-		,{ "$POST/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Update intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
-		,{ "$PUT/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Create intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
+		,{ "$PUT/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Update intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
+		,{ "$POST/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Create intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
 		   // Entity Properties
 		,{ "$GET/api/v1/:entityName/:entityID/property/:propertyName" = "/api:adminv1/handleEntityListPropertyAction/entityName/:entityName/entityID/:entityID/propertyName/:propertyName" } // Property Value - Simple or Collection (if one-to-many, many-to-many relationship)
 		,{ "$GET/api/v1/:entityName/:entityID/property/" = "/api:adminv1/handleEntityListPropertyAction/entityName/:entityName/entityID/:entityID" } // List All Property Values - allow propertyName filtering
