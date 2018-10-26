@@ -63,20 +63,20 @@ component extends="framework.one" {
 		//api routes
 		
 		 /* START: Standard API */
-		 { "$GET/api/v1/:entityName/:entityID/process/:processContext" = "/api:adminv1/handleEntityProcessAction/entityName/:entityName/entityID/:entityID/processContext/:processContext" } // Process
-		,{ "$GET/api/v1/:entityName/:entityID/delete" = "/api:adminv1/handleEntityDeleteAction/entityName/:entityName/entityID/:entityID" } // Delete (temporary alternative easier development with URL params)
-		,{ "$DELETE/api/v1/:entityName/:entityID/delete" = "/api:adminv1/handleEntityDeleteAction/entityName/:entityName/entityID/:entityID" } // Delete
-		,{ "$GET/api/v1/:entityName/:entityID/export" = "/api:adminv1/handleEntityExportAction/entityName/:entityName" } // Export
+		 { "$GET/api/admin/v1/:entityName/:entityID/process/:processContext" = "/api:adminv1/handleEntityProcessAction/entityName/:entityName/entityID/:entityID/processContext/:processContext" } // Process
+		,{ "$GET/api/admin/v1/:entityName/:entityID/delete" = "/api:adminv1/handleEntityDeleteAction/entityName/:entityName/entityID/:entityID" } // Delete (temporary alternative easier development with URL params)
+		,{ "$DELETE/api/admin/v1/:entityName/:entityID/delete" = "/api:adminv1/handleEntityDeleteAction/entityName/:entityName/entityID/:entityID" } // Delete
+		,{ "$GET/api/admin/v1/:entityName/:entityID/export" = "/api:adminv1/handleEntityExportAction/entityName/:entityName" } // Export
 		   // Entity Save
-		,{ "$GET/api/v1/:entityName/:entityID/save" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (temporary alternative easier development with URL params)
-		,{ "$PUT/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Update intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
-		,{ "$POST/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Create intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
+		,{ "$GET/api/admin/v1/:entityName/:entityID/save" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (temporary alternative easier development with URL params)
+		,{ "$PUT/api/admin/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Update intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
+		,{ "$POST/api/admin/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Create intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
 		   // Entity Properties
-		,{ "$GET/api/v1/:entityName/:entityID/property/:propertyName" = "/api:adminv1/handleEntityListPropertyAction/entityName/:entityName/entityID/:entityID/propertyName/:propertyName" } // Property Value - Simple or Collection (if one-to-many, many-to-many relationship)
-		,{ "$GET/api/v1/:entityName/:entityID/property/" = "/api:adminv1/handleEntityListPropertyAction/entityName/:entityName/entityID/:entityID" } // List All Property Values - allow propertyName filtering
+		,{ "$GET/api/admin/v1/:entityName/:entityID/property/:propertyName" = "/api:adminv1/handleEntityListPropertyAction/entityName/:entityName/entityID/:entityID/propertyName/:propertyName" } // Property Value - Simple or Collection (if one-to-many, many-to-many relationship)
+		,{ "$GET/api/admin/v1/:entityName/:entityID/property/" = "/api:adminv1/handleEntityListPropertyAction/entityName/:entityName/entityID/:entityID" } // List All Property Values - allow propertyName filtering
 		   // Entity Detail & Collection Listing
-		,{ "$GET/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntityDetailAction/entityName/:entityName/entityID/:entityID" } // Detail / As Struct
-		,{ "$GET/api/v1/:entityName/" = "/api:adminv1/handleEntityListAction/entityName/:entityName" } // List / As Collection
+		,{ "$GET/api/admin/v1/:entityName/:entityID" = "/api:adminv1/handleEntityDetailAction/entityName/:entityName/entityID/:entityID" } // Detail / As Struct
+		,{ "$GET/api/admin/v1/:entityName/" = "/api:adminv1/handleEntityListAction/entityName/:entityName" } // List / As Collection
 		/* END: Standard API */
 
 		,{ "$GET/api/scope/$" = "/api:public/get/" }
