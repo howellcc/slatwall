@@ -61,8 +61,24 @@ component extends="framework.one" {
 	/* TODO: add solution to api routing for Rest api*/
 	variables.framework.routes = [
 		//api routes
+		
+		 /* START: Standard API */
+		 { "$GET/api/v1/:entityName/:entityID/process/:processContext" = "/api:adminv1/handleEntityProcessAction/entityName/:entityName/entityID/:entityID/processContext/:processContext" } // Process
+		,{ "$GET/api/v1/:entityName/:entityID/delete" = "/api:adminv1/handleEntityDeleteAction/entityName/:entityName/entityID/:entityID" } // Delete
+		,{ "$GET/api/v1/:entityName/:entityID/export" = "/api:adminv1/handleEntityExportAction/entityName/:entityName" } // Export
+		   // Entity Save
+		,{ "$GET/api/v1/:entityName/:entityID/save" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (alternative easier development with URL params)
+		,{ "$POST/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Update intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
+		,{ "$PUT/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Create intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
+		   // Entity Properties
+		,{ "$GET/api/v1/:entityName/:entityID/property/:propertyName" = "/api:adminv1/handleEntityListPropertyAction/entityName/:entityName/entityID/:entityID/propertyName/:propertyName" } // Property Value - Simple or Collection (if one-to-many, many-to-many relationship)
+		,{ "$GET/api/v1/:entityName/:entityID/property/" = "/api:adminv1/handleEntityListPropertyAction/entityName/:entityName/entityID/:entityID" } // List All Property Values - allow propertyName filtering
+		   // Entity Detail & Collection Listing
+		,{ "$GET/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntityDetailAction/entityName/:entityName/entityID/:entityID" } // Detail / As Struct
+		,{ "$GET/api/v1/:entityName/" = "/api:adminv1/handleEntityListAction/entityName/:entityName" } // List / As Collection
+		/* END: Standard API */
 
-		 { "$GET/api/scope/$" = "/api:public/get/" }
+		,{ "$GET/api/scope/$" = "/api:public/get/" }
 		,{ "$GET/api/scope/:context/$" = "/api:public/get/context/:context"}
 		,{ "$POST/api/scope/:context/$" = "/api:public/post/context/:context"}
 
@@ -436,6 +452,10 @@ component extends="framework.one" {
 			if(structKeyExists(request,'context') && structKeyExists(request.context,'context')){
 				restInfo.context = request.context.context;
 			}
+			
+			writeDump(restInfo);
+			writeDump(request.context);
+			abort;
 		}
 
 		var authorizationDetails = getHibachiScope().getService("hibachiAuthenticationService").getActionAuthenticationDetailsByAccount(action=request.context[ getAction() ] , account=getHibachiScope().getAccount(), restInfo=restInfo);
