@@ -64,10 +64,11 @@ component extends="framework.one" {
 		
 		 /* START: Standard API */
 		 { "$GET/api/v1/:entityName/:entityID/process/:processContext" = "/api:adminv1/handleEntityProcessAction/entityName/:entityName/entityID/:entityID/processContext/:processContext" } // Process
-		,{ "$GET/api/v1/:entityName/:entityID/delete" = "/api:adminv1/handleEntityDeleteAction/entityName/:entityName/entityID/:entityID" } // Delete
+		,{ "$GET/api/v1/:entityName/:entityID/delete" = "/api:adminv1/handleEntityDeleteAction/entityName/:entityName/entityID/:entityID" } // Delete (temporary alternative easier development with URL params)
+		,{ "$DELETE/api/v1/:entityName/:entityID/delete" = "/api:adminv1/handleEntityDeleteAction/entityName/:entityName/entityID/:entityID" } // Delete
 		,{ "$GET/api/v1/:entityName/:entityID/export" = "/api:adminv1/handleEntityExportAction/entityName/:entityName" } // Export
 		   // Entity Save
-		,{ "$GET/api/v1/:entityName/:entityID/save" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (alternative easier development with URL params)
+		,{ "$GET/api/v1/:entityName/:entityID/save" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (temporary alternative easier development with URL params)
 		,{ "$POST/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Update intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
 		,{ "$PUT/api/v1/:entityName/:entityID" = "/api:adminv1/handleEntitySaveAction/entityName/:entityName/entityID/:entityID" } // Save (Create intent, can use rc.restActionDetails.httpRequestMethod to change behavior)
 		   // Entity Properties
