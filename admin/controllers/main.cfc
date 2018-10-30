@@ -61,6 +61,7 @@ component output="false" accessors="true" extends="Slatwall.org.Hibachi.HibachiC
 
 	property name="hibachiSessionService" type="any";
 	property name="hibachiUtilityService" type="any";
+	property name="hibachiService" type="any";
 
 	this.publicMethods='';
 	this.publicMethods=listAppend(this.publicMethods, 'login');
@@ -386,6 +387,47 @@ component output="false" accessors="true" extends="Slatwall.org.Hibachi.HibachiC
 
 		getFW().redirect(action="entity.detailaccount", queryString="accountID=#arguments.rc.accountid#", preserve="messages");
 
+	}
+	
+	public void function loop(requires struct rc) {
+		param name="arguments.rc.t" default="5"; // full request time (seconds)
+		param name="arguments.rc.d" default="5"; // sleep wait time (ms) between each execution in loop
+		
+		var initialInstantiationKey = getApplicationValue('instantiationKey');
+		
+		getService('loopService').loop(arguments.rc.t, arguments.rc.d, function() {
+			var currentInstantiationKey = getApplicationValue('instantiationKey');
+            
+            if (!isNull(getHibachiService())) {
+                if (!isNull(getHibachiService().getService)) {
+                    try {
+                        var s = getTickCount();
+                		//lock scope="Application" timeout="2400"  {
+                            var as = getHibachiService().getService('AttributeService');
+                            var hs = getHibachiService().getService('HibachiService');
+                		//}
+                		
+                		var beanFactoryHashCode = getHibachiUtilityService().getIdentityHashCode(getBeanFactory());
+                		var newObjectBeanFactoryHashCode = getHibachiUtilityService().getIdentityHashCode((new Slatwall.org.Hibachi.HibachiObject().getBeanFactory()));
+                		
+                        
+                        var instantiationKeyDescription = "instanceKey: '#currentInstantiationKey#'";
+                        if (currentInstantiationKey != initialInstantiationKey) {
+                            instantiationKeyDescription = instantiationKeyDescription & " differs was ('#initialInstantiationKey#')";
+                        }
+                        logHibachi("lockTime: " & getTickCount() - s & " ms, #instantiationKeyDescription#, beanFactory.hashCode: #beanFactoryHashCode#, new object.beanFactory.hashCode: #newObjectBeanFactoryHashCode#, attributeService.hashCode: '#as.getIdentityHashCode()#', hibachiService.hashCode: '#hs.getIdentityHashCode()#'");
+                    } catch (any e) {
+                        logHibachi("Caught error. Message: #e.message#");
+                    }
+                } else {
+                    logHibachi("HibachiService.getService is null. How?");
+                }
+            } else {
+                logHibachi("hibachiService is null. How?");
+            }
+		});
+		
+		getFW().setView("admin:main.noaccess");
 	}
 
 }
