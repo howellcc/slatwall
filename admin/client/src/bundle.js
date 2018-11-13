@@ -87702,21 +87702,9 @@ var SWListingReportController = /** @class */ (function () {
                 _this.updatePeriod();
             }
         };
-        //hacky way to prepopulate saved dropdowns. should be replaced with better promise logic in future
-        var time = 1000;
-        var initwatch = this.$scope.$watch('swListingReport.periodColumns', function (newValue, oldValue) {
-            if (newValue) {
-                time += 1000;
-                for (var i in newValue) {
-                    _this.selectPeriodColumn(newValue[i]);
-                }
-                _this.$timeout(function () {
-                    initwatch();
-                }, time);
-            }
-        });
         this.collectionConfig = this.collectionConfig.loadJson(this.collectionConfig.collectionConfigString);
         if (this.collectionId) {
+            //hacky way to prepopulate saved dropdowns. should be replaced with better promise logic in future
             var selectedReport = {
                 collectionID: this.collectionId,
                 collectionConfig: angular.fromJson(this.collectionConfig.collectionConfigString)

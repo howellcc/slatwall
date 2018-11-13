@@ -846,7 +846,9 @@ component output="false" accessors="true" extends="HibachiService" {
 			if(structKeyExists(collectionOptions,'splitKeywords')){
 				collectionEntity.setSplitKeywords(collectionOptions.splitKeywords);
 			}
-			if(structKeyExists(collectionOptions,'isReport')){
+			//only change to report if new
+			if(structKeyExists(collectionOptions,'isReport') && collectionEntity.getNewFlag()){
+				
 				collectionEntity.setReportFlag(collectionOptions.isReport);
 			}
 			if(structKeyExists(collectionOptions,'periodInterval')){

@@ -42,22 +42,12 @@ class SWListingReportController {
         public observerService,
         public collectionConfigService
     ) {
-        //hacky way to prepopulate saved dropdowns. should be replaced with better promise logic in future
-        var time = 1000;
-        var initwatch = this.$scope.$watch('swListingReport.periodColumns',(newValue,oldValue)=>{
-            if(newValue){
-                time+=1000
-                for(var i in newValue){
-                    this.selectPeriodColumn(newValue[i]);
-                }   
-                this.$timeout(()=>{
-                    initwatch();
-                },time)
-            }
-           
-        });
+        
         this.collectionConfig = this.collectionConfig.loadJson(this.collectionConfig.collectionConfigString);
         if(this.collectionId){
+            //hacky way to prepopulate saved dropdowns. should be replaced with better promise logic in future
+            
+            
             var selectedReport = {
                 collectionID:this.collectionId,
                 collectionConfig:angular.fromJson(this.collectionConfig.collectionConfigString)
