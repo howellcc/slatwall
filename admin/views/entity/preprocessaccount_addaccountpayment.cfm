@@ -96,8 +96,9 @@ Notes:
 					                         showvalues="444df32e9b448ea196c18c66e1454c46,444df32dd2b0583d59a19f1b77869025">
 						<hb:hibachipropertylist divclass="col-md-6">
 							<!--- New Payment Method --->
-							<hb:hibachidisplaytoggle selector="select[name='accountPaymentMethodID']" 
-							                         loadvisable="#!len(rc.processObject.getAccountPaymentMethodID())#">
+							<hb:hibachidisplaytoggle selector="select[name='accountPaymentMethodID']"
+												     showvalues=""
+							                         loadvisable="#len(rc.processObject.getAccountPaymentMethodID()) < 1#">
 							
 								<!--- New Payment Type --->
 								<hb:hibachipropertydisplay object="#rc.processObject.getNewAccountPayment()#" 
