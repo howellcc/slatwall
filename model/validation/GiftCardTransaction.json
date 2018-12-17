@@ -1,6 +1,0 @@
-{
-
-	"properties":{
-	    "currencyCode":	               [{"contexts":"save","required":true}]
-	}
-}

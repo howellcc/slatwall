@@ -1,6 +1,0 @@
-{
-	"properties":{
-		"cycleCountGroups":						[{"method":"hasCycleCountGroup"}],
-		"cycleCountBatchDate":					[{"required":true,"dataType":"date"}]
-	}
-}  

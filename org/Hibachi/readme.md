@@ -1,3 +1,0 @@
-##Hibachi Scope - Coldfusion API
-
- 

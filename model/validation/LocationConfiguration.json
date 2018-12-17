@@ -1,8 +1,0 @@
-{
-	"properties":{
-		"locationConfigurationCapacity":	[{"contexts":"save", "dataType":"numeric"}],
-		"locationConfigurationName":		[{"contexts":"save","required":true}],
-		"location":		[{"contexts":"save","required":true}],
-		"skus":	[{"contexts":"delete","maxCollection":0}]
-	}
-}

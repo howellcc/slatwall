@@ -1,5 +1,0 @@
-{
-	"properties":{
-		"stock":	[{"contexts":"save", "method":"stockHasLeafLocation"}]
-	}
-}

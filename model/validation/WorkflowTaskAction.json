@@ -1,5 +1,0 @@
-{
-  "properties":{
-    "actionType": [{"contexts":"save","method":"checkPermission"}]
-  }
-}

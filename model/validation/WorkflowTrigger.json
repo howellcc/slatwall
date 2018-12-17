@@ -1,6 +1,0 @@
-{
-  "properties":{
-    "triggerType":				[{"contexts":"save","required":true}],
-    "startDateTime":            [{"contexts":"save","required":true}]
-  }
-}

@@ -1,6 +1,0 @@
-{
-	"properties":{
-		"emailID" : [{"contexts":"edit", "maxLength":0}],
-		"emailName" : [{"contexts":"save","required":true}]
-	}
-}
