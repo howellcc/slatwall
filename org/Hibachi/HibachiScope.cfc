@@ -281,14 +281,27 @@ component output="false" accessors="true" extends="HibachiTransient" {
 	// @hint gets a bean out of whatever the fw1 bean factory is
 	public any function getBeanFactory() {
 		
-		// Attempts to prevent concurrent requests on same server from interfering with each other while reloading beanFactory
+		// Attempts to prevent concurrent requests on same server from interfering with each other while reloading beanFactory by making beanFactory immutable per request
 		if (!structKeyExists(variables, 'beanFactory')) {
-			lock scope="Application" timeout="2400" type="readonly" {
-				if (isNull(application[ getApplicationValue('applicationKey') ].factory)) {
-					throw("The beanFactory is expected to exist at this stage. Readonly application lock is applied. It is possible another concurrent request reloaded server and is interfering. Further investigation into this issue is required.");
+			
+			// Attempt to lock and get beanFactory from application scope (max 3 attempts), due to application reloading
+			for (var i = 1; i <= 3 && isNull(variables.beanFactory); i++) {
+				// Wait between each subsequent lock attempt (not the first attempt though)
+				if (i > 1) {
+					sleep(100); // ms
 				}
 				
-				variables.beanFactory = application[ getApplicationValue('applicationKey') ].factory;
+				lock scope="Application" timeout="2400" type="readonly" {
+					// Check for existence
+					if (!isNull(application[ getApplicationValue('applicationKey') ].factory) {
+						variables.beanFactory = application[ getApplicationValue('applicationKey') ].factory;
+					}
+				}
+			}
+			
+			// If we exhausted all attempts and beanFactory still null, more investigation needed into edge case
+			if (isNull(variables.beanFactory)) {
+				throw("The beanFactory is expected to exist at this stage. Readonly application lock is applied. It is possible another concurrent request reloaded server and is interfering. Further investigation into this issue is required.");
 			}
 		}
 		return variables.beanFactory;
