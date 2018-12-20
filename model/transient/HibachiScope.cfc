@@ -119,7 +119,7 @@ component output="false" accessors="true" extends="Slatwall.org.Hibachi.HibachiS
 				setCurrentRequestSitePathType('sitecode');
 			}
 			
-			if(isNull(variables.currentRequestSite) && structKeyExists(session,'siteID')){
+			if(isNull(variables.currentRequestSite) && !isNull(session) && structKeyExists(session,'siteID')){
 				variables.currentRequestSite = getService('siteService').getSiteByCMSSiteID(session['siteID']);
 				setCurrentRequestSitePathType('cmsSiteID');
 			}

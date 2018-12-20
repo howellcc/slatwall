@@ -338,7 +338,7 @@ component extends="framework.one" {
 		getHibachiScope().getService("hibachiSessionService").setProperSession();
 		
 		// CSRF / Duplicate Request Handling
-		if(structKeyExists(request, "context")){
+		if(structKeyExists(request, "context") && !isNull(session)){
 			getHibachiScope().getService("hibachiSessionService").verifyCSRF(request.context, this); 
 		}	
 
