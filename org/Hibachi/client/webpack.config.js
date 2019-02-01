@@ -12,7 +12,7 @@ var appConfig = {
     context:PATHS.app,
     entry: {
         app:['./bootstrap.ts'],
-         vendor: ["date", "angular", 'angular-lazy-bootstrap', 'ui.bootstrap', 'angular-resource', 'angular-cookies', 'angular-route',
+         vendor: ["jquery","jquery-ui","date", "angular", 'angular-lazy-bootstrap', 'ui.bootstrap', 'angular-resource', 'angular-cookies', 'angular-route',
          'angular-animate','angular-sanitize','metismenu','angularjs-datetime-picker','jquery-typewatch','jquery-timepicker','Chart'],
     },
     watch:true,
@@ -37,6 +37,8 @@ var appConfig = {
             'angular-sanitize':'../lib/angular/angular-sanitize.min.js',
             'metismenu':'../lib/metismenu/metismenu.js',
             'angularjs-datetime-picker':'../lib/angularjs-datetime-picker/angularjs-datetime-picker.js',
+            'jquery':'../../HibachiAssets/js/jquery-3.3.1.min.js',
+            'jquery-ui':'../../HibachiAssets/js/jquery-ui.min.js',
             'jquery-typewatch':'../../HibachiAssets/js/jquery-typewatch-2.0.js',
             'jquery-timepicker':'../../HibachiAssets/js/jquery-ui-timepicker-addon-1.3.1.js',
             'Chart':'../lib/chart.js/Chart.min.js'
@@ -47,10 +49,20 @@ var appConfig = {
 	    rules: [
 	      // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
 	      { test: /\.tsx?$/, loader: 'ts-loader' }
-	    ]
+	    ],
+	    loaders: [
+            {
+                test: /[\/\\]node_modules[\/\\]some-module[\/\\]index\.js$/,
+                loader: "imports-loader?this=>window"
+            }
+        ]
 	},
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin({name:"vendor", filename:"vendor.bundle.js"})
+        new webpack.optimize.CommonsChunkPlugin({name:"vendor", filename:"vendor.bundle.js"}),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery"
+        })
     ]
 
 };
