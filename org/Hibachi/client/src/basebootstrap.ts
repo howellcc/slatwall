@@ -1,5 +1,8 @@
 /// <reference path='../typings/hibachiTypescript.d.ts' />
 /// <reference path='../typings/tsd.d.ts' />
+import * as $ from 'jquery';
+window["$"] = $;
+window["jQuery"] = $;
 import {coremodule} from "./core/core.module";
 declare var angular:any;
 declare var hibachiConfig:any;

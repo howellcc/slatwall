@@ -12,7 +12,7 @@ var appConfig = {
     context:PATHS.app,
     entry: {
         app:['./bootstrap.ts'],
-         vendor: ["date", "angular", 'angular-lazy-bootstrap', 'ui.bootstrap', 'angular-resource', 'angular-cookies', 'angular-route',
+         vendor: ["jquery","globals","date", "angular", 'angular-lazy-bootstrap', 'ui.bootstrap', 'angular-resource', 'angular-cookies', 'angular-route',
          'angular-animate','angular-sanitize','metismenu','angularjs-datetime-picker','jquery-typewatch','jquery-timepicker','Chart'],
     },
     watch:true,
@@ -39,17 +39,27 @@ var appConfig = {
             'angularjs-datetime-picker':'../lib/angularjs-datetime-picker/angularjs-datetime-picker.js',
             'jquery-typewatch':'../../HibachiAssets/js/jquery-typewatch-2.0.js',
             'jquery-timepicker':'../../HibachiAssets/js/jquery-ui-timepicker-addon-1.3.1.js',
-            'Chart':'../lib/chart.js/Chart.min.js'
+            'Chart':'../lib/chart.js/Chart.min.js',
+            'globals':'../lib/globals.js'
         },
     },
     module: {
     	noParse: [ /bower_components/ ],
 	    rules: [
 	      // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
-	      { test: /\.tsx?$/, loader: 'ts-loader' }
+	      { test: /\.tsx?$/, loader: 'ts-loader' },
+	      { 
+             test:require.resolve('globals.js'),
+             use: 'imports-loader?this=>window'
+           }
 	    ]
 	},
     plugins: [
+        new webpack.ProvidePlugin({
+          $: "jquery",
+          jQuery: "jquery",
+          "window.jQuery": "jquery"
+        }),
         new webpack.optimize.CommonsChunkPlugin({name:"vendor", filename:"vendor.bundle.js"})
     ]
 
