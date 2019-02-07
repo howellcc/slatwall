@@ -101,6 +101,31 @@ component extends="HibachiDAO" {
 		}
 		return isExpired;
 	}
+	
+	// used for adding server instance records to db where serverInstanceIPAddress needs to be unique
+	public void function addUniqueServerInstance(required serverInstanceIPAddress){
+		var sqlSelect = "SELECT serverInstanceIPAddress FROM swserverinstance WHERE serverInstanceIPAddress = :serverInstanceIPAddress";
+			
+		var sqlInsert = "INSERT INTO swserverinstance (serverInstanceID,serverInstanceIPAddress,serverInstanceExpired,settingsExpired,createdDateTime,modifiedDateTime) 
+						 VALUES (:serverInstanceID, :serverInstanceIPAddress, :serverInstanceExpired, :settingsExpired, :createdDateTime, :modifiedDateTime)";
+				   
+		var insertParams = {
+			serverInstanceID = LCASE(replace(createUUID(),'-','','ALL')),
+			serverInstanceIPAddress = arguments.serverInstanceIPAddress,
+			serverInstanceExpired = false,
+			settingsExpired = false,
+			createdDateTime = now(),
+			modifiedDateTime = now()
+		};
+		
+		var selectParams = {
+			serverInstanceIPAddress = arguments.serverInstanceIPAddress	
+		};
+		
+		if(QueryExecute(sqlSelect, selectParams).RecordCount == 0){
+			QueryExecute(sqlInsert, insertParams);
+		}
+	}
 
 	public void function updateServerInstanceSettingsCache(required any serverInstance){
 		if(!isNull(arguments.serverInstance) && isLocalIPAddress(arguments.serverInstance.getserverInstanceIPAddress())){

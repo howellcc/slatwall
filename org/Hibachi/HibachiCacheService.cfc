@@ -3,6 +3,7 @@ component accessors="true" output="false" extends="HibachiService" {
 	property name="cache" type="struct";
 	property name="internalCacheFlag" type="boolean";
 	property name="railoFlag" type="boolean";
+	property name="HibachiCacheDAO" type="any";
 	 
 	
 	public any function init() {
@@ -22,17 +23,11 @@ component accessors="true" output="false" extends="HibachiService" {
 	}
 	
 	public any function getServerInstanceByServerInstanceIPAddress(required any serverInstanceIPAddress){
-		var serverInstance = super.onMissingGetMethod(missingMethodName='getServerInstanceByServerInstanceIPAddress',missingMethodArguments=arguments);
+		// if there are no server instance records with this ip address it adds a new one.	
+		getHibachiCacheDAO().addUniqueServerInstance(arguments.serverInstanceIPAddress);
+
+		var serverInstance = super.onMissingGetMethod(missingMethodName='getServerInstanceByServerInstanceIPAddress',missingMethodArguments=arguments); 
 		
-		if(isNull(serverInstance) || serverInstance.getNewFlag()){
-			serverInstance = this.newServerInstance();
-			serverInstance.setServerInstanceIPAddress(arguments.serverInstanceIPAddress);
-			serverInstance.setServerInstanceExpired(false);
-			serverInstance.setSettingsExpired(false);
-			
-			this.saveServerInstance(serverInstance); 
-			getHibachiScope().flushOrmSession();
-		}
 		return serverInstance;
 	}
 	
