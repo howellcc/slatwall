@@ -75,12 +75,10 @@ class SWListingReportController {
     
     public saveReportCollection = (collectionName?)=>{
         if(collectionName || this.collectionId){
-            this.collectionConfig.setPeriodInterval(this.selectedPeriodInterval.value);
-            this.selectedPeriodColumn.isPeriod = true;
-            this.collectionConfig.columns.push(this.selectedPeriodColumn);
+            
+            
             var serializedJSONData={
                 'collectionConfig':this.collectionConfig.collectionConfigString,
-                
                 'collectionObject':this.collectionConfig.baseEntityName,
                 'accountOwner':{
                     'accountID':this.$rootScope.slatwall.account.accountID
@@ -109,7 +107,7 @@ class SWListingReportController {
                     }else{
                        url += '?collectionID='+data.data.collectionID;
                     }
-                    window.location.href = url;
+                   window.location.href = url;
                 }
             });
             return;
@@ -124,6 +122,19 @@ class SWListingReportController {
     }
     
     public updateComparePeriod = ()=>{
+        
+        this.startDateCompare = new Date(this.startDateCompare);
+        this.startDateCompare.setHours(0,0,0,0)
+        
+        this.endDateCompare = new Date(this.endDateCompare);
+        this.endDateCompare.setHours(23,59,59,999);
+        
+        //if date is in the wrong format then update those dates
+        if(this.startDateCompare.indexOf && this.startDateCompare.indexOf('000Z') != -1){
+            this.startDateCompare = new Date(this.startDateCompare).toString('MMM dd, yyyy hh:mm tt');
+            this.endDateCompare = new Date(this.endDateCompare).toString('MMM dd, yyyy hh:mm tt');
+        }
+        
         if(this.selectedPeriodInterval.value=='hour'){
             this.endDateCompare = new Date(this.startDateCompare).addDays(1).toString('MMM dd, yyyy hh:mm tt');
         }
@@ -256,7 +267,6 @@ class SWListingReportController {
     
     
     public updatePeriod = ()=>{
-        
         //if we have all the info we need then we can make a report
         if(
             this.selectedPeriodColumn 
@@ -264,6 +274,12 @@ class SWListingReportController {
             && this.startDate
             && this.endDate
         ){
+            
+            this.startDate = new Date(this.startDate);
+            this.startDate.setHours(0,0,0,0)
+            
+            this.endDate = new Date(this.endDate);
+            this.endDate.setHours(23,59,59,999);
             //if date is in the wrong format then update those dates
             if(this.startDate.indexOf && this.startDate.indexOf('000Z') != -1){
                 this.startDate = new Date(this.startDate).toString('MMM dd, yyyy hh:mm tt');
@@ -275,7 +291,6 @@ class SWListingReportController {
             if(this.selectedPeriodInterval.value=='hour'){
                 this.endDate = new Date(this.startDate).addDays(1).toString('MMM dd, yyyy hh:mm tt');
             }
-            
             for(var i=this.reportCollectionConfig.columns.length-1; i>=0; i-- ){
                 var column = this.reportCollectionConfig.columns[i];
                 if(column.aggregate){
@@ -286,6 +301,7 @@ class SWListingReportController {
                     //column.isVisible = false;
                 }
             }
+            
             if(this.hasMetric){
                 this.reportCollectionConfig.setPeriodInterval(this.selectedPeriodInterval.value);
                 this.reportCollectionConfig.setReportFlag(1);
@@ -296,13 +312,6 @@ class SWListingReportController {
                 this.reportCollectionConfig.removeFilterGroupByFilterGroupAlias('dates');
                 this.reportCollectionConfig.addFilter(this.selectedPeriodColumn.propertyIdentifier,this.startDate,'>=','AND',true,true,false,'dates');
                 this.reportCollectionConfig.addFilter(this.selectedPeriodColumn.propertyIdentifier,this.endDate,'<=','AND',true,true,false,'dates');
-                    
-                this.collectionConfig.removeFilterGroupByFilterGroupAlias('dates');
-                this.collectionConfig.addFilter(this.selectedPeriodColumn.propertyIdentifier,this.startDate,'>=','AND',true,true,false,'dates');
-                this.collectionConfig.addFilter(this.selectedPeriodColumn.propertyIdentifier,this.endDate,'<=','AND',true,true,false,'dates');
-                    
-                this.observerService.notifyById('getCollection',this.tableId,{collectionConfig:this.collectionConfig.collectionConfigString});
-                this.observerService.notifyById('swPaginationAction',this.tableId,{type:'setCurrentPage', payload:1});
                 
                 this.reportCollectionConfig.getEntity().then((reportingData)=>{
                     var ctx = $("#myChart");
@@ -313,6 +322,28 @@ class SWListingReportController {
                         this.updateComparePeriod();
                     }
                 });
+                    
+                this.collectionConfig.removeFilterGroupByFilterGroupAlias('dates');
+                delete this.collectionConfig.periodInterval;
+                this.collectionConfig.addFilter(this.selectedPeriodColumn.propertyIdentifier,this.startDate,'>=','AND',true,true,false,'dates');
+                this.collectionConfig.addFilter(this.selectedPeriodColumn.propertyIdentifier,this.endDate,'<=','AND',true,true,false,'dates');
+                    
+                this.collectionConfig.setPeriodInterval(this.selectedPeriodInterval.value);
+                this.selectedPeriodColumn.isPeriod = true;
+                
+                //decide whether to add or replace the periodcolumn
+                var hasPeriodColumn = this.collectionConfig.hasPeriodColumnFromColumns(this.collectionConfig.columns);
+                if(!hasPeriodColumn){
+                    this.collectionConfig.columns.push(this.selectedPeriodColumn);
+                }else{
+                    this.collectionConfig.removePeriodColumnFromColumns(this.collectionConfig.columns);
+                    this.collectionConfig.columns.push(this.selectedPeriodColumn);
+                }
+                    
+                this.observerService.notifyById('getCollection',this.tableId,{collectionConfig:this.collectionConfig.collectionConfigString});
+                this.observerService.notifyById('swPaginationAction',this.tableId,{type:'setCurrentPage', payload:1});
+                
+                
             }
             
         }
@@ -425,11 +456,8 @@ class SWListingReportController {
         //get meta data we need for existing columns
 
         var promise = this.$hibachi.getFilterPropertiesByBaseEntityName(baseEntityAlias).then((value)=>{
-            
-        
         
             this.metadataService.setPropertiesList(value, baseEntityAlias);
-            console.log(this);
             if(!this.filterPropertiesList){
                 this.filterPropertiesList={};
             }
@@ -463,7 +491,13 @@ class SWListingReportController {
             this.selectedPeriodPropertyIdentifierArray.push(column.name);
             this.getPeriodColumns(column.cfc);
         }else if(column && column.name){
-            this.selectedPeriodPropertyIdentifier = this.selectedPeriodPropertyIdentifierArray.join('.')+'.'+column.name;
+            if(
+                this.selectedPeriodPropertyIdentifierArray.length
+                && this.selectedPeriodPropertyIdentifierArray[this.selectedPeriodPropertyIdentifierArray.length-1] == column.name){
+                this.selectedPeriodPropertyIdentifier = this.selectedPeriodPropertyIdentifierArray.join('.');
+            }else{
+                this.selectedPeriodPropertyIdentifier = this.selectedPeriodPropertyIdentifierArray.join('.')+'.'+column.name;
+            }
             //update the option so it remains selected
             for(var i in this.periodColumns){
                 if(column.name === this.periodColumns[i].name){
@@ -474,6 +508,9 @@ class SWListingReportController {
             
             column.propertyIdentifier = this.selectedPeriodPropertyIdentifier;
             column.isPeriod = true;
+            column.isVisible = true;
+            column.title = column.displayPropertyIdentifier;
+            
             
             this.selectedPeriodColumn = column;
             if(update){
@@ -501,7 +538,7 @@ class SWListingReport  implements ng.IDirective{
     //@ngInject
     constructor(
         public scopeService,
-        public collectionPartialsPath,
+        public collectionPartialsPath, 
         public hibachiPathBuilder
     ){
         this.templateUrl = this.hibachiPathBuilder.buildPartialsPath(this.collectionPartialsPath) + "listingreport.html";

@@ -629,6 +629,17 @@ component extends="framework.one" {
 				// Check again so that the qued requests don't back up
 				if(!getHibachiScope().hasApplicationValue("initialized") || !getHibachiScope().getApplicationValue("initialized")) {
 
+					try{
+						var q = new query();
+						q.setSQL('SHOW TABLES;');
+						q.setSQL('SELECT 1');
+						q.setDatasource(variables.framework.hibachi.readOnlyDataSource);
+						q.execute();
+					}catch(any e){
+						structDelete(variables.framework.hibachi,'readOnlyDataSource');
+						variables.framework.hibachi.readOnlyDataSource=this.datasource.name;
+					}
+
 					// Setup the app init data
 					var applicationInitData = {};
 					applicationInitData["initialized"] = 				false;
@@ -1241,5 +1252,14 @@ component extends="framework.one" {
 	public void function onFirstRequestPostUpdate() {}
 	
 	public void function onBeanFactoryLoadComplete() {}
+
+	public string function onMissingView(struct rc) {
+		var context = getPageContext();
+		context.getOut().clearBuffer();
+		var response = context.getResponse();
+		response.setStatus(404);
+		getHibachiScope().getService("hibachiEventService").announceEvent(eventName="404");
+		return internalView("../../../admin/views/error/404.cfm");
+	}
 
 }
