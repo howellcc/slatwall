@@ -109,6 +109,14 @@ component extends="framework.one" {
 	variables.framework.hibachi.skipDbData = false;
 	variables.framework.hibachi.useServerInstanceCacheControl=true;
 	variables.framework.hibachi.availableEnvironments = ['local','development','production'];
+
+	variables.framework.hibachi.disableUpdateEntitiesWithCustomProperties = true;
+	variables.framework.hibachi.disableFullUpdateOrmReload = true;
+	variables.framework.hibachi.disableMigrateAttributeValuesToCustomProperties = true;  
+	variables.framework.hibachi.disableCreateJsonMetaDataFile = true;
+
+
+	variables.beginTick = getTickCount();
 	
 	// Allow For Application Config
 	try{include "../../config/configFramework.cfm";}catch(any e){}
@@ -822,24 +830,33 @@ component extends="framework.one" {
 						writeLog(file="#variables.framework.applicationKey#", text="General Log - Full Update Initiated");
 						server.runFullUpdate = false;
 						//Update custom properties
-
-						var success = getHibachiScope().getService('updateService').updateEntitiesWithCustomProperties();
-						getHibachiScope().getService("hibachiEventService").announceEvent(eventName="afterUpdateEntitiesWithCustomProperties");
-						if (success){
-							writeLog(file="Slatwall", text="General Log - Attempting to update entities with custom properties.");
-						}else{
-							writeLog(file="Slatwall", text="General Log - Error updating entities with custom properties");
-						}
+						if(!variables.framework.hibachi.disableUpdateEntitiesWithCustomProperties){
+						
+							var success = getHibachiScope().getService('updateService').updateEntitiesWithCustomProperties();
+							getHibachiScope().getService("hibachiEventService").announceEvent(eventName="afterUpdateEntitiesWithCustomProperties");
+						
+							if (success){
+								writeLog(file="Slatwall", text="General Log - Attempting to update entities with custom properties.");
+							}else{
+								writeLog(file="Slatwall", text="General Log - Error updating entities with custom properties");
+							}	
+						} 
+						
 						// Reload ORM
-						writeLog(file="#variables.framework.applicationKey#", text="General Log - ORMReload() started");
-						getHibachiScope().clearApplicationValueByPrefix('class');
-						ormReload();
-						writeLog(file="#variables.framework.applicationKey#", text="General Log - ORMReload() was successful");
+						if(!variables.framework.hibachi.disableFullUpdateOrmReload){
+							writeLog(file="#variables.framework.applicationKey#", text="General Log - ORMReload() started");
+							getHibachiScope().clearApplicationValueByPrefix('class');
+							ormReload();
+							writeLog(file="#variables.framework.applicationKey#", text="General Log - ORMReload() was successful");
+						}
 						
-						// we have to migrate attribute data to custom properties now, if we have some that haven't been migrated yet
-						
-						getHibachiScope().getService('updateService').migrateAttributeValuesToCustomProperties();
 
+						if(!variables.framework.hibachi.disableMigrateAttributeValuesToCustomProperties){
+							// we have to migrate attribute data to custom properties now, if we have some that haven't been migrated yet
+							getHibachiScope().getService('updateService').migrateAttributeValuesToCustomProperties();
+						}
+
+						
 						onUpdateRequest();
 
 						// Write File
@@ -854,8 +871,9 @@ component extends="framework.one" {
 					onFirstRequestPostUpdate();
 
 					//==================== START: JSON BUILD SETUP ========================
-
-					getBeanFactory().getBean('HibachiJsonService').createJson();
+					if(!variables.framework.hibachi.disableCreateJsonMetaDataFile){ 
+						getBeanFactory().getBean('HibachiJsonService').createJson();
+					}
 
 					//===================== END: JSON BUILD SETUP =========================
 
@@ -863,11 +881,11 @@ component extends="framework.one" {
 
 					//only run the update if it wasn't initiated by serverside cache being expired
 					if(!variables.framework.hibachi.isApplicationStart){
-					if(!arguments.reloadByServerInstance){
-						getBeanFactory().getBean('hibachiCacheService').updateServerInstanceCache(getHibachiScope().getServerInstanceIPAddress());
-					}else{
-						var serverInstance = getBeanFactory().getBean('hibachiCacheService').getServerInstanceByServerInstanceIPAddress(getHibachiScope().getServerInstanceIPAddress(),true);
-						serverInstance.setServerInstanceExpired(false);
+						if(!arguments.reloadByServerInstance){
+							getBeanFactory().getBean('hibachiCacheService').updateServerInstanceCache(getHibachiScope().getServerInstanceIPAddress());
+						}else{
+							var serverInstance = getBeanFactory().getBean('hibachiCacheService').getServerInstanceByServerInstanceIPAddress(getHibachiScope().getServerInstanceIPAddress(),true);
+							serverInstance.setServerInstanceExpired(false);
 							getBeanFactory().getBean('hibachiCacheService').saveServerInstance(serverInstance);
 							getHibachiScope().flushORMSession();
 						}						
@@ -888,6 +906,7 @@ component extends="framework.one" {
 				}
 			}
 		}
+		writeLog(file="#variables.framework.applicationKey#", text="General Log - Application Setup Complete and took  #getTickCount() - variables.beginTick#");
 	}
 
 	public void function populateAPIHeaders(){
