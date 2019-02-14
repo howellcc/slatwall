@@ -174,11 +174,7 @@ component accessors="true" output="false" displayname="Avatax" implements="Slatw
 					itemData.OriginCode = 1;
 					itemData.ItemCode = item.getOrderItem().getSku().getSkuCode();
 					itemData.TaxCode = item.getTaxCategoryRateCode();
-					if(!isNull(item.getOrderItem().getSku().getSkuDescription()) && len(item.getOrderItem().getSku().getSkuDescription())) {
-						itemData.Description = item.getOrderItem().getSku().getSkuDescription();
-					} else if (!isNull(item.getOrderItem().getSku().getProduct().getProductDescription()) && len(item.getOrderItem().getSku().getProduct().getProductDescription())) {
-						itemData.Description = item.getOrderItem().getSku().getProduct().getProductDescription();	
-					}
+					itemData.Description = item.getOrderItem().getSku().getProduct().getProductName();	
 					itemData.Qty = item.getQuantity();
 					if (item.getOrderItem().getOrderItemType().getSystemCode() == "oitReturn"){
 						itemData.Amount = item.getExtendedPriceAfterDiscount() * -1; 
@@ -272,10 +268,12 @@ component accessors="true" output="false" displayname="Avatax" implements="Slatw
 					}
 				}
 			}
+		}if(structKeyExists(responseData,'ResponseHeader') && structKeyExists(responseData.responseHeader,'Explanation')){
+ 			responseBean.setData(responseData.Responseheader.Explanation);
 		}else{
-			responseBean.setData(responseData.Responseheader.Explanation);
-		}
-
+			responseBean.setData('An Error occured when attempting to retrieve tax information');
+ 		}
+		
 		return responseBean;
 	}
 	

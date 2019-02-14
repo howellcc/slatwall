@@ -12,6 +12,7 @@ class PublicService {
     public countries:any;
     public addressOptions:any;
     public requests:{ [action: string]: PublicRequest; }={};
+    public messages:any;
     public errors:{[key:string]:any}={};
     public newBillingAddress:any;
     public newCardInfo:any;
@@ -43,6 +44,7 @@ class PublicService {
     public editingBillingAddress:any;
     public shippingAddressErrors:any;
     public billingAddressErrors:any;
+    public activePaymentMethod:string;
     public paymentMethods:any;
     public orderPlaced:boolean;
     public useShippingAsBilling:boolean;
@@ -63,6 +65,7 @@ class PublicService {
     public addBillingAddressErrors;
     public uploadingFile;
     public orderItem;
+    public cmsSiteID;
 
     ///index.cfm/api/scope/
 
@@ -326,9 +329,15 @@ class PublicService {
         if(data){
             method = "post";
             data.returnJsonObjects = "cart,account";
+            if(this.cmsSiteID){
+                data.cmsSiteID = this.cmsSiteID;
+            }
         }else{
             urlBase += (urlBase.indexOf('?') == -1) ? '?' : '&';
             urlBase += "returnJsonObject=cart,account";
+            if(this.cmsSiteID){
+                urlBase += "&cmsSiteID=" + this.cmsSiteID;
+            }
         }
         if (method == "post"){
 
@@ -398,6 +407,7 @@ class PublicService {
         if (request && request.hasSuccessfulAction()){
             this.successfulActions = [];
             for (var action in request.successfulActions){
+                this.successfulActions.push(request.successfulActions[action].split('.')[1]);
                 if (request.successfulActions[action].indexOf('public:cart.placeOrder') !== -1){
                     this.$window.location.href = this.confirmationUrl;
                     return;
@@ -407,7 +417,6 @@ class PublicService {
                 }else if(request.successfulActions[action].indexOf('public:account.logout') !== -1){
                     this.account = this.$hibachi.newAccount();
                 }
-                this.successfulActions.push(request.successfulActions[action].split('.')[1]);
             }
         }
 
@@ -428,6 +437,9 @@ class PublicService {
             this.cart.request = request;
         }
         this.errors = response.errors;
+        if(response.messages){
+            this.messages = response.messages;
+        }
     }
 
     public runCheckoutAdjustments = (response) =>{
@@ -645,8 +657,24 @@ class PublicService {
     
     /** Selects shippingAddress*/
     public selectShippingAccountAddress = (accountAddressID,orderFulfillmentID)=>{
-        this.doAction('addShippingAddressUsingAccountAddress', {accountAddressID:accountAddressID,fulfillmentID:orderFulfillmentID});
+        
+        let fulfillmentIndex = this.cart.orderFulfillments.findIndex(fulfillment => fulfillment.orderFulfillmentID == orderFulfillmentID);
+        let oldAccountAddressID;
+        
+        if(this.cart.orderFulfillments[fulfillmentIndex] && this.cart.orderFulfillments[fulfillmentIndex].accountAddress){
+            oldAccountAddressID = this.cart.orderFulfillments[fulfillmentIndex].accountAddress.accountAddressID;
+        }
+        this.doAction('addShippingAddressUsingAccountAddress', {accountAddressID:accountAddressID,fulfillmentID:orderFulfillmentID}).then(result=>{
+            if(result && result.failureActions && result.failureActions.length){
+                this.$timeout(()=>{
+                    if(oldAccountAddressID){
+                        this.cart.orderFulfillments[fulfillmentIndex].accountAddress.accountAddressID = oldAccountAddressID;
+                    }
+                });
+            }  
+        });
     }
+
     
      /** Selects shippingAddress*/
     public selectBillingAccountAddress = (accountAddressID)=>{
@@ -1018,6 +1046,10 @@ class PublicService {
         this.failureActions = [];
     }
 
+    public clearPaymentMethod = ()=>{
+        this.activePaymentMethod = null;
+    }
+
     /**Hides shipping address form, clears shipping address errors*/
     public hideAccountAddressForm = (fulfillmentIndex)=>{
         this.accountAddressEditFormIndex[fulfillmentIndex] = undefined;
@@ -1285,7 +1317,7 @@ class PublicService {
     
     public getOrderAttributeValues = (allowedAttributeSets) =>{
         var attributeValues = {};
-        var orderAttributeModel = JSON.parse(localStorage.attributeMetaData)["Order"];
+        var orderAttributeModel = JSON.parse(localStorage.getItem('attributeMetaData'))["Order"];
         for(var attributeSetCode in orderAttributeModel){
             var attributeSet = orderAttributeModel[attributeSetCode];
             if(allowedAttributeSets.indexOf(attributeSetCode) !== -1){

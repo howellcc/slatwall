@@ -60,8 +60,22 @@ component extends="HibachiDAO" accessors="true" output="false" {
 		return ormExecuteQuery( "SELECT sp FROM SlatwallSkuPrice sp WHERE sp.sku.skuID = :skuID AND sp.minQuantity is null AND sp.maxQuantity is null", { skuID=arguments.skuID }, true );
 	}
 
-	public function getBaseSkuPriceForSkuByCurrencyCode (required string skuID, required string currencyCode){
-		return ormExecuteQuery( "SELECT sp FROM SlatwallSkuPrice sp WHERE sp.sku.skuID = :skuID AND sp.minQuantity is null AND sp.maxQuantity is null AND currencyCode = :currencyCode", { skuID=arguments.skuID, currencyCode=arguments.currencyCode }, true );
+	public function getBaseSkuPriceForSkuByCurrencyCode (required string skuID, required string currencyCode, priceGroups=getHibachiScope().getAccount().getPriceGroups()){
+		var hql = "SELECT sp FROM SlatwallSkuPrice sp WHERE sp.sku.skuID = :skuID AND sp.minQuantity is null AND sp.maxQuantity is null AND currencyCode = :currencyCode";
+		
+		if(arraylen(arguments.priceGroups)){
+			var priceGroupIDs = "";
+			for(var priceGroup in arguments.priceGroups){
+				priceGroupIDs = listAppend(priceGroupIDs,priceGroup.getPriceGroupID());
+			}
+			//get the best price
+			hql &= ' AND sp.priceGroup.priceGroupID IN (:priceGroupIDs) ORDER BY sp.price ASC';
+			return ormExecuteQuery( hql, { skuID=arguments.skuID, currencyCode=arguments.currencyCode, priceGroupIDs=priceGroupIDs }, true,{maxresults=1} );
+		}else{
+			hql &= ' AND sp.priceGroup is NULL';
+			return ormExecuteQuery( hql, { skuID=arguments.skuID, currencyCode=arguments.currencyCode }, true );
+		}
+		
 	}
 
 	public function getSkuPricesForSkuAndQuantity(required string skuID, required numeric quantity){
@@ -72,13 +86,14 @@ component extends="HibachiDAO" accessors="true" output="false" {
 		var priceGroupString = "";
 		
 		if(arraylen(arguments.priceGroups)){
-			priceGroupString = "OR _skuPrice.priceGroup in :priceGroups";
+			priceGroupString = "OR _priceGroup.priceGroupID IN (:priceGroupIDs)";
 		}
 		
 		var hql = "
 			SELECT NEW MAP(_skuPrice.price as price, _skuPrice.skuPriceID as skuPriceID)
 			FROM SlatwallSkuPrice _skuPrice 
 			left join _skuPrice.sku as _sku
+			left join _skuPrice.priceGroup as _priceGroup
 			WHERE _sku.skuID = :skuID 
 			AND _skuPrice.minQuantity <= :quantity 
 			AND _skuPrice.maxQuantity >= :quantity 
@@ -97,7 +112,11 @@ component extends="HibachiDAO" accessors="true" output="false" {
 			
 		};
 		if(len(priceGroupString)){
-			params.priceGroups=arguments.priceGroups;
+			var priceGroupIDs = [];
+			for(var priceGroup in arguments.priceGroups){
+				arrayAppend(priceGroupIDs,priceGroup.getPriceGroupID());
+			}
+			params.priceGroupIDs= priceGroupIDs;
 		}
 		return  ormExecuteQuery( hql,
 			params

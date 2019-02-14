@@ -46,7 +46,7 @@
 Notes:
 
 */
-component extends="HibachiService"  accessors="true" output="false" 
+component  accessors="true" output="false" 
 {
     property name="accountService" type="any";
     property name="addressService" type="any";
@@ -61,11 +61,32 @@ component extends="HibachiService"  accessors="true" output="false"
     property name="productService" type="any";
     property name="hibachiAuditService" type="any";
     property name="validationService" type="any";
-    
+    property name="hibachiService" type="any";
 
     variables.publicContexts = [];
     variables.responseType = "json";
     
+    public any function getHibachiScope(){
+        return getHibachiService().getHibachiScope();
+    }
+    
+    public any function getDAO(required string daoName){
+        return getHibachiService().getDAO(arguments.daoName);
+    }
+    
+    public any function getService(required string serviceName){
+        return getHibachiService().getService(arguments.serviceName);
+    }
+    
+    public any function invokeMethod(required string methodName, struct methodArguments={}) {
+        
+		if(structKeyExists(this, arguments.methodName)) {
+			var theMethod = this[ arguments.methodName ];
+			return theMethod(argumentCollection = methodArguments);
+		}
+		
+		throw("You have attempted to call the method #arguments.methodName# which does not exist in publicService");
+	}
     
     /**
      * This will return the path to an image based on the skuIDs (sent as a comma seperated list)
@@ -78,20 +99,25 @@ component extends="HibachiService"  accessors="true" output="false"
         var imageHeight = 60;
         var imageWidth  = 60;
         
-        if(arguments.data.profileName == "medium"){
-            imageHeight = 90;
-            imageWidth  = 90;
-        }else if (arguments.data.profileName == "large"){
-            imageHeight = 150;
-            imageWidth  = 150;
+        if(arguments.data.profileName == "small"){
+            imageHeight = getService('SettingService').getSettingValue('productImageSmallHeight');
+            imageWidth  = getService('SettingService').getSettingValue('productImageSmallWidth');
+            
+        }else if (arguments.data.profileName == "medium"){
+            imageHeight = getService('SettingService').getSettingValue('productImageMediumHeight');
+            imageWidth  = getService('SettingService').getSettingValue('productImageMediumWidth');
+        }
+        else if (arguments.data.profileName == "large"){
+            imageHeight = getService('SettingService').getSettingValue('productImageLargeHeight');
+            imageWidth  = getService('SettingService').getSettingValue('productImageLargeWidth');
         }
         else if (arguments.data.profileName == "xlarge"){
-            imageHeight = 250;
-            imageWidth  = 250;
+            imageHeight = getService('SettingService').getSettingValue('productImageXLargeHeight');
+            imageWidth  = getService('SettingService').getSettingValue('productImageXLargeWidth');
         }
         else if (arguments.data.profileName == "listing"){
-            imageHeight = 263;
-            imageWidth  = 212;
+            imageHeight = getService('SettingService').getSettingValue('productListingImageHeight');
+            imageWidth  = getService('SettingService').getSettingValue('productListingImageWidth');
         }
         arguments.data.ajaxResponse['resizedImagePaths'] = {};
         var skus = [];
@@ -135,32 +161,6 @@ component extends="HibachiService"  accessors="true" output="false"
             addErrors(data, getHibachiScope().getAccount().getProcessObject("login").getErrors());
         }
         return accountProcess;
-    }
-    
-    /** returns meta data as well as validation information for a process object. This is
-        the default behavior for a GET request to process context /api/scope/process/ 
-     
-     */ 
-    public any function getProcessObjectDefinition(required struct data){
-        
-        try{
-            if (structKeyExists(data, entityName) && lCase(data.entityName) == "account"){
-                var processObject = evaluate("getHibachiScope().getAccount().getProcessObject('#data.processObject#')");
-            }else if(structKeyExists(data, entityName) && (lCase(data.entityName) == "order" || lCase(data.entityName) == "cart")){
-                var processObject = evaluate("getHibachiScope().cart().getProcessObject('#data.processObject#')");
-            }else{
-                var processObject = evaluate("getHibachiScope().#data.entityName#().getProcessObject('#data.processObject#')");
-            }
-            
-            arguments.data.ajaxResponse['processObject'] = processObject.getThisMetaData();
-            arguments.data.ajaxResponse['processObject']['validations'] = processObject.getValidations();
-            arguments.data.ajaxResponse['processObject']['hasErrors']     = processObject.hasErrors();
-            arguments.data.ajaxResponse['processObject']['errors']        = processObject.getErrors();
-        }catch(any e){}
-        
-        var entity = evaluate('getHibachiScope().get#data.entityName#()');
-        var entityMeta = entity.getThisMetaData();
-        arguments.data.ajaxResponse['processObject']["entityMeta"] = entityMeta.properties;
     }
     
     /** returns the result of a processObject based action including error information. A form submit.
@@ -559,7 +559,7 @@ component extends="HibachiService"  accessors="true" output="false"
             if (isObject(savedAddress) && !savedAddress.hasErrors()){
                 //save the address at the order level.
                 if(structKeyExists(arguments.data, 'orderID')){
-                    var order = this.getOrder(arguments.data.orderID);
+                    var order = getOrderService().getOrder(arguments.data.orderID);
                     if(isNull(order) || order.getaccount().getAccountID() != getHibachiScope().getAccount().getAccountID() ){
                         this.addErrors(data, 'Could not find Order');
                         getHibachiScope().addActionResult( "public:cart.addShippingAddress", true);
@@ -616,7 +616,7 @@ component extends="HibachiService"  accessors="true" output="false"
         if (!isNull(accountAddress) && !accountAddress.hasErrors()){
             //save the address at the order level.
             if(structKeyExists(arguments.data, 'orderID')){
-                var order = this.getOrder(arguments.data.orderID);
+                var order = getOrderService().getOrder(arguments.data.orderID);
                 if(isNull(order) || order.getaccount().getAccountID() != getHibachiScope().getAccount().getAccountID() ){
                     this.addErrors(data, 'Could not find Order');
                     getHibachiScope().addActionResult( "public:cart.addShippingAddressUsingAccountAddress", true);
@@ -777,6 +777,11 @@ component extends="HibachiService"  accessors="true" output="false"
             var order = getHibachiScope().cart();
             order.setBillingAddress(savedAddress);
             
+            var orderPayments = order.getOrderPayments();
+            if(arrayLen(orderPayments)){
+               orderPayments[1].setBillingAddress(savedAddress); 
+            }
+            
             getService("OrderService").saveOrder(order);
         }
         if(savedAddress.hasErrors()){
@@ -893,8 +898,10 @@ component extends="HibachiService"  accessors="true" output="false"
         
         if(!isNull(subscriptionUsage) && subscriptionUsage.getAccount().getAccountID() == getHibachiScope().getAccount().getAccountID() ) {
             var subscriptionUsage = getSubscriptionService().saveSubscriptionUsage( subscriptionUsage, arguments.data );
+            if(subscriptionUsage.hasErrors()){
+                addErrors(arguments.data,subscriptionUsage.getErrors());
+            }
             getHibachiScope().addActionResult( "public:account.updateSubscriptionUsage", subscriptionUsage.hasErrors() );
-            return subscriptionUsage;
         } else {
             getHibachiScope().addActionResult( "public:account.updateSubscriptionUsage", true );
         }
@@ -914,16 +921,48 @@ component extends="HibachiService"  accessors="true" output="false"
         
         if(!isNull(subscriptionUsage) && subscriptionUsage.getAccount().getAccountID() == getHibachiScope().getAccount().getAccountID() ) {
             var subscriptionUsage = getSubscriptionService().processSubscriptionUsage( subscriptionUsage, arguments.data, 'renew' );
+            if(subscriptionUsage.hasErrors()){
+                addErrors(arguments.data,subscriptionUsage.getErrors());
+            }
             getHibachiScope().addActionResult( "public:account.updateSubscriptionUsage", subscriptionUsage.hasErrors() );
-            return subscriptionUsage;
         } else {
             getHibachiScope().addActionResult( "public:account.updateSubscriptionUsage", true );
         }
     }
     
+    /** 
+     * @http-context cancelSubscriptionUsage
+     * @description Subscription Usage - Cancel
+     * @http-return <b>(200)</b> Successfully Cancelled or <b>(400)</b> Bad or Missing Input Data
+     @ProcessMethod SubscriptionUsage_Cancel
+     */
+    public void function cancelSubscriptionUsage(required struct data) {
+        param name="arguments.data.subscriptionUsageID" default="";
+        
+        var subscriptionUsage = getSubscriptionService().getSubscriptionUsage( arguments.data.subscriptionUsageID );
+        
+        if(!structKeyExists(arguments.data,'effectiveDateTime')){
+            arguments.data.effectiveDateTime = subscriptionUsage.getExpirationDate();
+        }
+        
+        if(!isNull(subscriptionUsage) && subscriptionUsage.getAccount().getAccountID() == getHibachiScope().getAccount().getAccountID() ) {
+            var subscriptionUsage = getSubscriptionService().processSubscriptionUsage( subscriptionUsage, arguments.data, 'cancel' );
+            if(subscriptionUsage.hasErrors()){
+                addErrors(arguments.data,subscriptionUsage.getErrors());
+            }
+            getHibachiScope().addActionResult( "public:account.cancelSubscriptionUsage", subscriptionUsage.hasErrors() );
+        } else {
+            getHibachiScope().addActionResult( "public:account.cancelSubscriptionUsage", true );
+        }
+    }
+    
     /** exposes the cart and account */
     public void function getCartData(any data) {
-        arguments.data.ajaxResponse = getHibachiScope().getCartData();
+        if(!structKeyExists(arguments.data,'cartDataOptions') || !len(arguments.data['cartDataOptions'])){
+            arguments.data['cartDataOptions']='full';
+        }
+    
+        arguments.data.ajaxResponse = getHibachiScope().getCartData(cartDataOptions=arguments.data['cartDataOptions']);
     }
     
     public void function getAccountData(any data) {
@@ -1211,6 +1250,7 @@ component extends="HibachiService"  accessors="true" output="false"
         getHibachiScope().addActionResult( "public:cart.updateOrderFulfillment", cart.hasErrors() );
     }
 
+
     /** 
      * @http-context updateOrderFulfillmentAddressZone
      * @description Update Order Fulfillment Address Zone
@@ -1241,24 +1281,6 @@ component extends="HibachiService"  accessors="true" output="false"
         }
     }
 
-    /** 
-     * @http-context finalizeCart
-     * @description Finalize Cart
-     * @http-return <b>(200)</b> Successfully Updated or <b>(400)</b> Bad or Missing Input Data
-     */
-    public void function finalizeCart(required any data) {
-        var cart = getHibachiScope().cart();
-        
-        if(structKeyExists(data, 'attributes') && !isNull(data.attributes)){
-          for(var attribute in data.attributes){
-            cart.setAttributeValue(attribute,data.attributes[attribute].attributeValue);
-            getService('orderService').saveOrder(cart);
-          }
-        }
-
-        getHibachiScope().addActionResult( "public:cart.finalizeCart", cart.hasErrors() );
-    }
-    
     /** 
      * @http-context addPromotionCode
      * @description Add Promotion Code
@@ -1336,7 +1358,7 @@ component extends="HibachiService"  accessors="true" output="false"
         }
 
         if (structKeyExists(data, 'accountAddressID') && len(data.accountAddressID)) {
-            var paymentMethod = this.getPaymentMethod(data.newOrderPayment.paymentMethod.paymentMethodID);
+            var paymentMethod = getPaymentService().getPaymentMethod(data.newOrderPayment.paymentMethod.paymentMethodID);
             if(!isNull(paymentMethod) && paymentMethod.getPaymentMethodType() == 'termPayment'){
                 data.newOrderPayment.termPaymentAccount.accountID = getHibachiScope().getAccount().getAccountID();
             }
@@ -1366,7 +1388,7 @@ component extends="HibachiService"  accessors="true" output="false"
         if (data.newOrderPayment.requireBillingAddress || data.newOrderPayment.saveShippingAsBilling) {
             if (!structKeyExists(data.newOrderPayment, 'billingAddress')) {
 
-                var orderPayment = this.newOrderPayment();
+                var orderPayment = getPaymentService().newOrderPayment();
                 orderPayment.populate(data.newOrderPayment);
                 orderPayment.setOrder(getHibachiScope().getCart());
                 if (orderPayment.getPaymentMethod().getPaymentMethodType() == 'termPayment') {
@@ -1466,7 +1488,9 @@ component extends="HibachiService"  accessors="true" output="false"
             }else{
               this.addErrors(data,order.getErrors());
             }
-
+            if(getHibachiScope().getAccount().getGuestAccountFlag()){
+                getHibachiScope().getSession().removeAccount();
+            }
         }
 
     
@@ -1652,4 +1676,3 @@ component extends="HibachiService"  accessors="true" output="false"
     }
     
 }
-

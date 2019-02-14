@@ -4,6 +4,28 @@ component output="false" accessors="true" extends="HibachiService" {
 	property name="hibachiSessionService" type="any";
 	property name="totpAuthenticator" type="any";
 	
+	public void function init(){
+		//on init load all possible record level perms
+		loadPermissionRecordRestrictionsCache();
+	}
+	
+	public void function loadPermissionRecordRestrictionsCache(boolean refresh=false){
+		if(!structKeyExists(variables,'permissionRecordRestrictionMap') || arguments.refresh){
+			//Cleanup permissionRecordRestrictionMap
+			variables.permissionRecordRestrictionMap = {};
+			//load possible entities by permissionREcordRestrictions
+			var query = getDAO("HibachiDAO").getRecordLevelPermissionEntitieNames();
+			//for every entity
+			for(var entry in query){
+				variables.permissionRecordRestrictionMap[entry['entityClassName']] = true;
+			}
+		}
+	}
+	
+	public boolean function hasPermissionRecordRestriction(required string entityName){
+		return structKeyExists(variables.permissionRecordRestrictionMap,entityName);
+	}
+	
 	// ============================ PUBLIC AUTHENTICATION METHODS =================================
 	
 	public boolean function authenticateActionByAccount(required string action, required any account) {
@@ -11,7 +33,7 @@ component output="false" accessors="true" extends="HibachiService" {
 		return authDetails.authorizedFlag;
 	}
 	
-	public struct function getActionAuthenticationDetailsByAccount(required string action, required any account, struct restInfo) {
+	public struct function getActionAuthenticationDetailsByAccount(required string action, required any account, struct restInfo, string processContext) {
 		
 		var authDetails = {
 			authorizedFlag = false,
@@ -43,6 +65,10 @@ component output="false" accessors="true" extends="HibachiService" {
 			var itemName = listLast( arguments.action, "." );	
 		} else {
 			var itemName = 'default';
+		}
+		
+		if(structKeyExists(arguments, 'processContext') && len(arguments.processContext)){
+			itemName &= '_#arguments.processContext#';
 		}
 		
 		var actionPermissions = getActionPermissionDetails();
@@ -99,6 +125,11 @@ component output="false" accessors="true" extends="HibachiService" {
 				return authDetails;
 			}
 			
+			// For process / preprocess strip out process context from item name		
+			if( find("_",itemName) ){ 
+				itemName = left(itemName, find("_",itemName)-1); 
+			}
+			
 			// Check to see if the controller is an entity, and then verify against the entity itself
 			if(getActionPermissionDetails()[ subsystemName ].sections[ sectionName ].entityController) {
 				if ( left(itemName, 6) == "create" ) {
@@ -111,6 +142,8 @@ component output="false" accessors="true" extends="HibachiService" {
 					authDetails.authorizedFlag = authenticateEntityCrudByAccount(crudType="update", entityName=right(itemName, len(itemName)-4), account=arguments.account);
 				} else if ( left(itemName, 4) == "list" ) {
 					authDetails.authorizedFlag = authenticateEntityCrudByAccount(crudType="read", entityName=right(itemName, len(itemName)-4), account=arguments.account);
+				} else if ( left(itemName, 10) == "reportlist" ) {
+					authDetails.authorizedFlag = authenticateEntityCrudByAccount(crudType="report", entityName=right(itemName, len(itemName)-10), account=arguments.account);
 				} else if ( left(itemName, 15) == "multiPreProcess" ) {
 					authDetails.authorizedFlag = authenticateEntityCrudByAccount(crudType="process", entityName=right(itemName, len(itemName)-15), account=arguments.account);
 				} else if ( left(itemName, 12) == "multiProcess" ) {
@@ -340,7 +373,6 @@ component output="false" accessors="true" extends="HibachiService" {
 							
 							// Make sure that this property should be added as a property that can have permissions
 							if( (!structKeyExists(entityMetaData.properties[p], "fieldtype") || entityMetaData.properties[p].fieldtype neq "ID")
-								&& (!structKeyExists(entityMetaData.properties[p], "persistent") || entityMetaData.properties[p].persistent)
 								&& (!structKeyExists(entityMetaData.properties[p], "hb_populateEnabled") || entityMetaData.properties[p].hb_populateEnabled neq "false")) {
 								
 								// Add to ManyToMany Properties
@@ -549,6 +581,7 @@ component output="false" accessors="true" extends="HibachiService" {
 	public boolean function authenticateEntityPropertyByPermissionGroup(required string crudType, required string entityName, required string propertyName, required any permissionGroup) {
 		// Pull the permissions detail struct out of the permission group
 		var permissions = arguments.permissionGroup.getPermissionsByDetails();
+		
 
 		if( structKeyExists(permissions.entity.entities, arguments.entityName)  && arguments.propertyName == this.getPrimaryIDPropertyNameByEntityName(arguments.entityName)){
 			return true;

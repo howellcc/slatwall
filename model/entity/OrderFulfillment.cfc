@@ -46,7 +46,7 @@
 Notes:
 
 */
-component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" table="SwOrderFulfillment" persistent=true accessors=true output=false extends="HibachiEntity" cacheuse="transactional" hb_serviceName="orderService" hb_permission="order.orderFulfillments" hb_processContexts="fulfillItems,manualFulfillmentCharge" {
+component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" table="SwOrderFulfillment" persistent=true accessors=true output=false extends="HibachiEntity" cacheuse="transactional" hb_serviceName="orderService" hb_permission="order.orderFulfillments" hb_processContexts="fulfillItems,manualFulfillmentCharge,manualHandlingFee" {
 
 	// Persistent Properties
 	property name="orderFulfillmentID" ormtype="string" length="32" fieldtype="id" generator="uuid" unsavedvalue="" default="";
@@ -54,13 +54,21 @@ component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" 
 	property name="currencyCode" ormtype="string" length="3";
 	property name="emailAddress" hb_populateEnabled="public" ormtype="string";
 	property name="manualFulfillmentChargeFlag" ormtype="boolean" hb_populateEnabled="false";
+	property name="manualHandlingFeeFlag" ormtype="boolean" hb_populateEnabled="false";
 	property name="estimatedDeliveryDateTime" ormtype="timestamp";
 	property name="estimatedFulfillmentDateTime" ormtype="timestamp";
 	property name="estimatedShippingDate" ormtype="timestamp";
-	property name="thirdPartyShippingAccountIdentifier" ormtype="string";
+	property name="pickupDate" ormtype="timestamp" hb_populateenabled="true";
+	property name="thirdPartyShippingAccountIdentifier" column="thirdPartyShipAccntIdentifier" ormtype="string";
 	property name="handlingFee" ormtype="big_decimal" hb_formatType="currency";
+	//for shipping integration saves response with success or why a shipping integration failed
+	property name="lastStatusCode" ormtype="string";			// @hint this is the status code that was passed back in the response bean
+	property name="lastMessage" ormtype="string" length="4000"; // @hint this is a pipe and tilda delimited list of any messages that came back in the response.
+	
 	// Calculated Properties
 	property name="calculatedChargeTaxAmount" ormtype="big_decimal" hb_formatType="currency";
+	property name="calculatedShippingIntegrationName" ormtype="string";
+	
 	//hash of the integrationResponse used to decide if we need to rebuild the shippingMethodOptions
 	property name="fulfillmentMethodOptionsCacheKey" column="fulfillMethOptionsCacheKey" ormtype="string" hb_auditable="false";
 	
@@ -126,6 +134,7 @@ component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" 
 	property name="totalShippingWeight" type="numeric" persistent="false" hb_formatType="weight";
     property name="totalShippingQuantity" type="numeric" persistent="false" hb_formatType="weight";
     property name="shipmentItemMultiplier" type="numeric" persistent="false";
+    property name="shippingIntegrationName" type="string" persistent="false";
     
 	// Deprecated
 	property name="discountTotal" persistent="false";
@@ -345,7 +354,7 @@ component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" 
 	}
 
 	public numeric function getDiscountAmount() {
-		discountAmount = 0;
+		var discountAmount = 0;
 		for(var i=1; i<=arrayLen(getAppliedPromotions()); i++) {
 			discountAmount = getService('HibachiUtilityService').precisionCalculate(discountAmount + getAppliedPromotions()[i].getDiscountAmount());
 		}
@@ -485,6 +494,7 @@ component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" 
 	    		for(var i=1; i<=arrayLen(getFulfillmentShippingMethodOptions()); i++) {
 	    			if(getShippingMethod().getShippingMethodID() == getFulfillmentShippingMethodOptions()[i].getShippingMethodRate().getShippingMethod().getShippingMethodID()) {
 	    				variables.selectedShippingMethodOption = getFulfillmentShippingMethodOptions()[i];
+	    				break;
 	    			}
 	    		}
 	    	}
@@ -716,11 +726,9 @@ component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" 
 	// sets it up so that the charge for the shipping method is pulled out of the shippingMethodOptions
 	public void function setShippingMethod( any shippingMethod ) {
 		if(structKeyExists(arguments, "shippingMethod")) {
-			// If there aren't any shippingMethodOptions available, then try to populate this fulfillment
-			if( !arrayLen(getFulfillmentShippingMethodOptions()) ) {
+			if(!arrayLen(getFulfillmentShippingMethodOptions())){
 				getService("shippingService").updateOrderFulfillmentShippingMethodOptions( this );
 			}
-
 			// make sure that the shippingMethod exists in the fulfillmentShippingMethodOptions
 			for(var i=1; i<=arrayLen(getFulfillmentShippingMethodOptions()); i++) {
 				if(arguments.shippingMethod.getShippingMethodID() == getFulfillmentShippingMethodOptions()[i].getShippingMethodRate().getShippingMethod().getShippingMethodID()) {
@@ -729,8 +737,10 @@ component displayname="Order Fulfillment" entityname="SlatwallOrderFulfillment" 
 					variables.shippingMethod = arguments.shippingMethod;
 
 					// Set the charge
-					if(!getManualfulfillmentChargeFlag()) {
+					if(!getManualfulfillmentChargeFlag() && (isNull(getThirdPartyShippingAccountIdentifier()) || !len(getThirdPartyShippingAccountIdentifier()))) {
 						setFulfillmentCharge( getFulfillmentShippingMethodOptions()[i].getTotalCharge() );
+					}else if(len(getThirdPartyShippingAccountIdentifier())){
+						setFulfillmentCharge(0);
 					}
 				}
 			}

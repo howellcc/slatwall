@@ -65,7 +65,7 @@
 			$.slatwall.setSite( $.slatwall.getService("siteService").getSiteByCMSSiteID( $.event('siteID') ) );
 			
 			// Call any public slatAction methods that are found
-			if(len($.event('slatAction')) && listFirst($.event('slatAction'), ":") != "frontend") {
+			if(len($.event('slatAction'))) {
 				
 				// We need to pull out any redirectURL's for the form & url so they don't automatically get called
 				var redirectFormDetails = {};
@@ -183,7 +183,10 @@
 				if (listFindNoCase($.event('path'), $.slatwall.setting('globalURLKeyCategory'), "/")) {
 					categoryKeyLocation = listFindNoCase($.event('path'), $.slatwall.setting('globalURLKeyCategory'), "/");
 					if(categoryKeyLocation < listLen($.event('path'),"/")) {
-						$.slatwall.setRouteEntity("category", $.slatwall.getService("hibachiService").getCategoryByURLTitle(listGetAt($.event('path'), categoryKeyLocation + 1, "/"), true) );
+						var path = listSetAt($.event('path'),categoryKeyLocation,'|','/');
+						var urlTitlePath = RemoveChars(listLast(path,'|'),1,1);
+						urlTitlePath = left(urlTitlePath, len(urlTitlePath)-1);
+						$.slatwall.setRouteEntity("category", $.slatwall.getService("hibachiService").getCategoryByURLTitlePath(urlTitlePath, true) );
 					}
 				}
 				
@@ -192,6 +195,13 @@
 					attributeKeyLocation = listFindNoCase($.event('path'), $.slatwall.setting('globalURLKeyAttribute'), "/");
 					if(attributeKeyLocation < listLen($.event('path'),"/")) {
 						$.slatwall.setRouteEntity("attribute", $.slatwall.getService("attributeService").getAttributeByURLTitle(listGetAt($.event('path'), attributeKeyLocation + 1, "/"), true) );
+						if(len(listGetAt($.event('path'), attributeKeyLocation + 2, "/"))){
+							if(!isNull($.slatwall.getService("attributeService").getAttributeOptionByURLTitle(listGetAt($.event('path'), attributeKeyLocation + 2, "/")))){
+								$.slatwall.setRouteEntity("attributeOption", $.slatwall.getService("attributeService").getAttributeOptionByURLTitle(listGetAt($.event('path'), attributeKeyLocation + 2, "/"), true) );
+							} else {
+								$.slatwall.setRouteEntity("attributeOption", $.slatwall.getService("attributeService").getAttributeOptionByAttributeOptionValue(listGetAt($.event('path'), attributeKeyLocation + 2, "/"), true) );
+							}
+						}
 					}
 				}
 				
@@ -220,12 +230,6 @@
 						}
 						$.content().setMetaDesc( $.slatwall.getProduct().stringReplace( $.slatwall.getProduct().setting('productMetaDescriptionString') ) );
 						$.content().setMetaKeywords( $.slatwall.getProduct().stringReplace( $.slatwall.getProduct().setting('productMetaKeywordsString') ) );
-						
-						// DEPRECATED*** If LegacyInjectFlag is set to true then add the body
-						if($.slatwall.setting('integrationMuraLegacyInjectFlag')) {
-							$.content('body', $.content('body') & $.slatwall.doAction('frontend:product.detail'));
-						}
-						
 						// Setup CrumbList
 						if(productKeyLocation > 2) {
 							
@@ -464,40 +468,6 @@
 				}
 			}
 			
-			// Check for any slatActions that might have been passed in and render that page as the first
-			if(len($.event('slatAction')) && listFirst($.event('slatAction'), ":") == "frontend") {
-				
-				$.content('body', $.content('body') & $.slatwall.doAction($.event('slatAction')));	
-				
-
-			// If no slatAction was passed in, and we are in legacy mode... then check for keys in mura to determine what page to render
-			} else if ( $.slatwall.setting('integrationMuraLegacyInjectFlag') ) {
-				
-				// Check to see if the current content is a listing page, so that we add our frontend view to the content body
-				if(isBoolean($.slatwall.getContent().getProductListingPageFlag()) && $.slatwall.getContent().getProductListingPageFlag()) {
-					$.content('body', $.content('body') & $.slatwall.doAction('frontend:product.listcontentproducts'));
-				}
-				
-				// Render any of the 'special'  pages that might need to be rendered
-				if(len($.slatwall.setting('integrationMuraLegacyShoppingCart')) && $.slatwall.setting('integrationMuraLegacyShoppingCart') == $.content('filename')) {
-					$.content('body', $.content('body') & $.slatwall.doAction('frontend:cart.detail'));
-				} else if(len($.slatwall.setting('integrationMuraLegacyOrderStatus')) && $.slatwall.setting('integrationMuraLegacyOrderStatus') == $.content('filename')) {
-					$.content('body', $.content('body') & $.slatwall.doAction('frontend:order.detail'));
-				} else if(len($.slatwall.setting('integrationMuraLegacyOrderConfirmation')) && $.slatwall.setting('integrationMuraLegacyOrderConfirmation') == $.content('filename')) {
-					$.content('body', $.content('body') & $.slatwall.doAction('frontend:order.confirmation'));
-				} else if(len($.slatwall.setting('integrationMuraLegacyMyAccount')) && $.slatwall.setting('integrationMuraLegacyMyAccount') == $.content('filename')) {
-					// Checks for My-Account page
-					if($.event('showitem') != ""){
-						$.content('body', $.content('body') & $.slatwall.doAction('frontend:account.#$.event("showitem")#'));
-					} else {
-						$.content('body', $.content('body') & $.slatwall.doAction('frontend:account.detail'));
-					}
-				} else if(len($.slatwall.setting('integrationMuraLegacyCreateAccount')) && $.slatwall.setting('integrationMuraLegacyCreateAccount') == $.content('filename')) {
-					$.content('body', $.content('body') & $.slatwall.doAction('frontend:account.create'));
-				} else if(len($.slatwall.setting('integrationMuraLegacyCheckout')) && $.slatwall.setting('integrationMuraLegacyCheckout') == $.content('filename')) {
-					$.content('body', $.content('body') & $.slatwall.doAction('frontend:checkout.detail'));
-				}
-			}
 			
 			//If this is a content node, then get content access details. 
 			var accessToContentDetails = $.slatwall.getService("accessService").getAccessToContentDetails( $.slatwall.getAccount(), $.slatwall.getContent() );
@@ -884,6 +854,13 @@
 		
 		// This method is explicitly called during application reload from the conntector plugins onApplicationLoad() event
 		public void function verifySetup( required any $ ) {
+		
+			// Adding conditional statement to ensure backwards compatibility
+			// slatwallScope should exist because Slatwall Mura plugin (plugins/slatwall-mura/eventHandler.cfc) invokes slatwallApplication.reloadApplication() which creates hibachiScope. Need to set a flag so verifySlatwallRequest() will explicitly invoke slatwallApplication.bootstrap()
+			if (structKeyExists(request, 'slatwallScope')) {
+				request.slatwallScope.setValue('forceBootstrapFlag', true);
+			}
+			
 			verifySlatwallRequest( $=$ );
 			
 			var assignedSitesQuery = getMuraPluginConfig().getAssignedSites();
@@ -959,28 +936,29 @@
 					accountSyncType = getMuraPluginConfig().getSetting("accountSyncType"),
 					superUserSyncFlag = getMuraPluginConfig().getSetting("superUserSyncFlag")
 				};
-				
+				var threadKey = "slatwallMuraAppLoadSync_#cmsSiteID#";
 				// Kick of a thread for the rest of all the syncing
-				thread action="run" name="slatwallMuraAppLoadSync_#cmsSiteID#" threadData=threadData {
-					
-					var $ = createObject("mura.event").init( {siteID=threadData.cmsSiteID} ).getValue('MuraScope');
-					
-					verifySlatwallRequest( $=$ );
-					
-					// Sync all missing content for the siteID
-					syncMuraContent( $=$, slatwallSiteID=threadData.slatwallSiteID, muraSiteID=threadData.cmsSiteID, lastUpdateOnlyFlag=false );
-					
-					// Sync all missing categories
-					syncMuraCategories( $=$, slatwallSiteID=threadData.slatwallSiteID, muraSiteID=threadData.cmsSiteID );
-					
-					// Sync all content category assignments
-					syncMuraContentCategoryAssignment( muraSiteID=threadData.cmsSiteID );
-					
-					// Sync all missing accounts
-					syncMuraAccounts( $=$, accountSyncType=threadData.accountSyncType, superUserSyncFlag=threadData.superUserSyncFlag );
+				if( isNull(cfthread) || !structKeyExists(cfthread,threadKey)){
+					thread action="run" name="#threadKey#" threadData=threadData {
 
+						var $ = createObject("mura.event").init( {siteID=threadData.cmsSiteID} ).getValue('MuraScope');
+
+						verifySlatwallRequest( $=$ );
+
+						// Sync all missing content for the siteID
+						syncMuraContent( $=$, slatwallSiteID=threadData.slatwallSiteID, muraSiteID=threadData.cmsSiteID, lastUpdateOnlyFlag=false );
+
+						// Sync all missing categories
+						syncMuraCategories( $=$, slatwallSiteID=threadData.slatwallSiteID, muraSiteID=threadData.cmsSiteID );
+
+						// Sync all content category assignments
+						syncMuraContentCategoryAssignment( muraSiteID=threadData.cmsSiteID );
+
+						// Sync all missing accounts
+						syncMuraAccounts( $=$, accountSyncType=threadData.accountSyncType, superUserSyncFlag=threadData.superUserSyncFlag );
+
+					}
 				}
-				
 				// If the plugin is set to create default pages, and this siteID has not been populated then we need to populate it with pages & templates
 				if(getMuraPluginConfig().getSetting("createDefaultPages") && !listFindNoCase(populatedSiteIDs, cmsSiteID)) {
 					

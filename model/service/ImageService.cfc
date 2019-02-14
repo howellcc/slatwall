@@ -104,10 +104,7 @@ component persistent="false" extends="HibachiService" output="false" accessors="
         var resizedImagePaths = [];
         //var skus = [];
         
-        var skuCollectionList = getService('skuService').getSkuCollectionList();
-        skuCollectionList.setDisplayProperties('skuID,imageFile');
-        skuCollectionList.addFilter('skuID',arguments.skuIDList,'IN');
-        var skuRecords = skuCollectionList.getRecords();
+        var skuRecords = getService('skuDAO').getImageFileDataBySkuIDList(arguments.skuIDList);
         for(var skuRecord in skuRecords){
         	ArrayAppend(
         		resizedImagePaths, 
@@ -142,6 +139,7 @@ component persistent="false" extends="HibachiService" output="false" accessors="
 	// Image File Methods
 	public string function getResizedImagePath(required string imagePath, numeric width, numeric height, string resizeMethod="scale", string cropLocation="center", numeric cropX, numeric cropY, numeric scaleWidth, numeric scaleHeight, string missingImagePath, string canvasColor="") {
 		var resizedImagePath = "";
+		
 		// If the image can't be found default to a missing image
 		if(!fileExists(getHibachiUtilityService().hibachiExpandPath(arguments.imagePath))) {
 			
@@ -151,8 +149,10 @@ component persistent="false" extends="HibachiService" output="false" accessors="
 				arguments.imagePath = "#getApplicationValue('baseURL')##arguments.missingImagePath#";
 				
 		    //look if this has been supplied at the site level.
-			} else if (!isNull(getSiteService().getCurrentRequestSite()) && !isNull(getSiteService().getCurrentRequestSite().setting('siteMissingImagePath'))) {
-                
+			} else if (
+				!isNull(getSiteService().getCurrentRequestSite()) 
+				&& !isNull(getSiteService().getCurrentRequestSite().setting('siteMissingImagePath'))
+			) {
                 arguments.imagePath = getSiteService().getCurrentRequestSite().setting('siteMissingImagePath');
 			
 			//check the custom location

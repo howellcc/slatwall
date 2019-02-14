@@ -50,18 +50,19 @@ component entityname="SlatwallCycleCountBatch" table="SwCycleCountBatch" output=
 	
 	// Persistent Properties
 	property name="cycleCountBatchID" ormtype="string" length="32" fieldtype="id" generator="uuid" unsavedvalue="" default="";
-	property name="cycleCountBatchDate" ormtype="timestamp";
+	property name="totalDayCount" ormtype="integer";
+	property name="cycleCountBatchName" ormtype="string";
 
 	// Related Object Properties (many-to-one)
 	property name="cycleCountBatchStatusType" cfc="Type" fieldtype="many-to-one" fkcolumn="cycleCountBatchTypeID" hb_optionsSmartListData="f:parentType.systemCode=cycleCountBatchStatusType";
+	property name="location" cfc="Location" fieldtype="many-to-one" fkcolumn="locationID";
 	
 	// Related Object Properties (one-to-many)
 	property name="cycleCountBatchItems" singularname="cycleCountBatchItem" cfc="CycleCountBatchItem" type="array" fieldtype="one-to-many" fkcolumn="CycleCountBatchID" cascade="all-delete-orphan" inverse="true";
-
-	// Related Object Properties (one-to-one)
-	property name="physical" cfc="Physical"fieldtype="one-to-one" fkcolumn="physicalID";
+	property name="physicals" cfc="Physical" singularname="physical" fieldtype="one-to-many" fkcolumn="cycleCountBatchID" inverse="true";
 
 	// Related Object Properties (many-to-many - owner)
+	property name="cycleCountGroups" singularname="cycleCountGroup" cfc="CycleCountGroup" type="array" fieldtype="many-to-many" linktable="SwCycleCountBatchCountGroup" fkcolumn="cycleCountBatchID"  inversejoincolumn="cycleCountGroupID" hint="this is for reference in case we need to look up which groups were seelcted";
 	
 	// Related Object Properties (many-to-many - inverse)
 	
@@ -76,6 +77,10 @@ component entityname="SlatwallCycleCountBatch" table="SwCycleCountBatch" output=
 	
 	// Non-Persistent Properties
 	property name="statusCode" persistent="false";
+	property name="physicalsCount" persistent="false";
+	property name="futureCounts" persistent="false";
+	property name="cycleCountItemsList" persistent="false";
+	property name="physicalCountCollectionList" persistent="false";
 	
 	// ============ START: Non-Persistent Property Methods =================
 	public string function getStatusCode() {
@@ -88,25 +93,94 @@ component entityname="SlatwallCycleCountBatch" table="SwCycleCountBatch" output=
 		
 	// ============= START: Bidirectional Helper Methods ===================
 	
-	// Skus (many-to-many - owner)
-	public void function addSku(required any sku) {
-		if(arguments.sku.isNew() or !hassku(arguments.sku)) {
-			arrayAppend(variables.skus, arguments.sku);
+	// Cycle Count Groups (many-to-many - owner)
+	public void function addCycleCountGroup(required any cycleCountGroup) {
+		if(arguments.cycleCountGroup.isNew() or !hasCycleCountGroup(arguments.cycleCountGroup)) {
+			arrayAppend(variables.cycleCountGroups, arguments.cycleCountGroup);
 		}
-		if(isNew() or !arguments.sku.hasCycleCountBatch( this )) {
-			arrayAppend(arguments.sku.getCycleCountBatchs(), this);
+		if(isNew() or !arguments.cycleCountGroup.hasCycleCountBatch( this )) {
+			arrayAppend(arguments.cycleCountGroup.getCycleCountBatches(), this);
 		}
 	}
-	public void function removeSku(required any sku) {
-		var thisIndex = arrayFind(variables.skus, arguments.sku);
+	
+	public void function removeCycleCountGroup(required any cycleCountGroup) {
+		var thisIndex = arrayFind(variables.cycleCountGroups, arguments.cycleCountGroup);
 		if(thisIndex > 0) {
-			arrayDeleteAt(variables.skus, thisIndex);
+			arrayDeleteAt(variables.cycleCountGroups, thisIndex);
 		}
-		var thatIndex = arrayFind(arguments.sku.getCycleCountBatchs(), this);
+		var thatIndex = arrayFind(arguments.cycleCountGroup.getCycleCountBatches(), this);
 		if(thatIndex > 0) {
-			arrayDeleteAt(arguments.sku.getCycleCountBatchs(), thatIndex);
+			arrayDeleteAt(arguments.cycleCountGroup.getCycleCountBatches(), thatIndex);
 		}
 	}
+
+	public numeric function getPhysicalsCount(){
+		if(!structKeyExists(variables, 'physicalsCount')){
+			if(structKeyExists(variables, 'physicals') && arrayLen(variables.physicals)){
+				variables.physicalsCount = arrayLen(variables.physicals);
+			}else{
+				variables.physicalsCount = 0;
+			}
+		}
+		return variables.physicalsCount;
+	}
+	
+	public numeric function getTotalDayCount(){
+		if(!structKeyExists(variables,'totalDayCount')){
+			var days = 0;
+			for(var cycleCountGroup in getCycleCountGroups()){
+				if(!isNull(cycleCountGroup.getDaysInCycle()) && cycleCountGroup.getDaysInCycle() > days){
+					days = cycleCountGroup.getDaysInCycle();
+				}
+			}
+			variables.totalDayCount = days;
+		}
+		return variables.totalDayCount;
+	}
+	
+	public numeric function getRemainingDayCount(){
+		return getTotalDayCount() - getPhysicalsCount();
+	}
+
+	public numeric function getNextDayNumber(){
+		return getPhysicalsCount() + 1;
+	}
+	
+	public array function getFutureCounts(){
+		if(!structKeyExists(variables,futureCounts)){
+			var futureCounts = [];
+			var countGroupListings = {};
+			var cycleCountGroups = getCycleCountGroups();
+			for(var cycleCountGroup in cycleCountGroups){
+				countGroupListings[cycleCountGroup.getCycleCountGroupID()] = cycleCountGroup.getFutureCounts(getRemainingDayCount());
+			}
+			var startDay = 1;
+			for(var i = startDay; i < getRemainingDayCount(); i++){
+				var dayCount = [];
+				for(var key in countGroupListings){
+					if(!isNull(countGroupListings[key][i])){
+						arrayAppend(dayCount,countGroupListings[key][index],true);
+					}else{
+						arrayAppend(dayCount,[]);
+					}
+				}
+				arrayAppend(futureCounts,dayCount);
+			}
+		}
+
+		return variables.futureCounts;
+	}
+	
+	public array function getItemsToCountByDay(required numeric countDay, boolean padArrays = false){
+		var countItems = [];
+		var cycleDay = countDay + getPhysicalsCount();
+		var cycleCountGroups = getCycleCountGroups();
+		for(var cycleCountGroup in cycleCountGroups){
+			arrayAppend(countItems,cycleCountGroup.getCountItemsByDay(arguments.countDay, cycleDay, arguments.padArrays),true);
+		}
+		return countItems;
+	}
+	
 	
 	// =============  END:  Bidirectional Helper Methods ===================
 
@@ -120,6 +194,16 @@ component entityname="SlatwallCycleCountBatch" table="SwCycleCountBatch" output=
 
 	// ============== START: Overridden Implicet Getters ===================
 	
+	public any function getPhysicalCountCollectionList(){
+		if(!structKeyExists(variables,'physicalCountCollectionList')){
+			var physicalCountCollectionList = getService('physicalService').getPhysicalCountCollectionList();
+			physicalCountCollectionList.addFilter('physical.cycleCountBatch.cycleCountBatchID',this.getCycleCountBatchID());
+			physicalCountCollectionList.addOrderBy('countPostDateTime','ASC');
+			variables.physicalCountCollectionList = physicalCountCollectionList;
+		}
+		return variables.physicalCountCollectionList;
+	}
+	
 	// ==============  END: Overridden Implicet Getters ====================
 
 	// ================== START: Overridden Methods ========================
@@ -127,8 +211,8 @@ component entityname="SlatwallCycleCountBatch" table="SwCycleCountBatch" output=
 	public string function getSimpleRepresentation() {
 		var simpleRep = 'Batch';
 		
-		if( len(getCycleCountBatchDate()) ){
-			simpleRep = simpleRep & " - " & getService("HibachiUtilityService").formatValue_date(getCycleCountBatchDate());
+		if( len(getCycleCountBatchName()) ){
+			simpleRep = simpleRep & " - " & getCycleCountBatchName();
 		}
 		return simpleRep;
 	}

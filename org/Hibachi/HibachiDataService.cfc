@@ -1,6 +1,7 @@
 component accessors="true" output="false" extends="HibachiService" {
 
 	property name="hibachiDataDAO";
+	property name="hibachiUtilityService";
 
 	public boolean function isUniqueProperty( required string propertyName, required any entity ) {
 		return getHibachiDAO().isUniqueProperty(argumentcollection=arguments);
@@ -124,24 +125,54 @@ component accessors="true" output="false" extends="HibachiService" {
 	public boolean function loadDataFromXMLDirectory(required string xmlDirectory, boolean ignorePreviouslyInserted=true) {
 		var dirList = directoryList(arguments.xmlDirectory);
 
+		var checksumFilePath = expandPath('/#getDao("HibachiDao").getApplicationKey()#/') & 'custom/system/dbDataChecksums.txt.cfm';  
+	
+		if(!fileExists(checksumFilePath)){
+			fileWrite(checksumFilePath, '');	
+		} 
+
+		var checksumList = fileRead(checksumFilePath);
+
 		// Because some records might depend on other records already being in the DB (fk constraints) we catch errors and re-loop over records
 		var retryCount=0;
 		var runPopulation = true;
-
+		
+		if(!structKeyExists(request,'successfulDBDataScripts')){
+			request.successfulDBDataScripts = [];
+		}
+		
 		do{
 			// Set to false so that it will only rerun if an error occurs
 			runPopulation = false;
 
 			// Loop over files, read them, and send to loadData function
 			for(var i=1; i<= arrayLen(dirList); i++) {
-				if(len(dirList[i]) gt 7 && right(dirList[i],7) == "xml.cfm"){
-					var xmlRaw = FileRead(dirList[i]);
+				var filePath = dirList[i];
+				if(len(filePath) gt 7 && right(filePath,7) == "xml.cfm"){
+					var xmlRaw = FileRead(filePath);
+					var checksum = hash(xmlRaw); 
+					var identifier = filePath & ':' & checksum;
+					
+					if(listFindNoCase(checksumList, identifier) != 0){
+						continue; 
+					}	
 
 					try{
-						if( loadDataFromXMLRaw(xmlRaw, arguments.ignorePreviouslyInserted) && retryCount <= 6) {
-							retryCount += 1;
-							runPopulation = true;
+						if(!arrayfind(request.successfulDBDataScripts,dirList[i])){
+							if( loadDataFromXMLRaw(xmlRaw, arguments.ignorePreviouslyInserted) && retryCount <= 6) {
+								retryCount += 1;
+								runPopulation = true;
+								arrayAppend(request.successfulDBDataScripts,dirList[i]);
+							}
 						}
+						var index = findNoCase(filePath, checksumList);
+						if(index != 0){
+							var identifierToDelete = mid(checksumList, index, len(filePath) + 33); 
+							var listIndexToDelete = listFindNoCase(checksumList, identifierToDelete);
+							checksumList = listDeleteAt(checksumList, listIndexToDelete); 	
+						}
+						checksumList = listAppend(checksumList, identifier);
+	
 					} catch (any e) {
 						// If we haven't retried 6 times, then increment the retry counter and re-run the population
 						if(retryCount <= 6) {
@@ -155,18 +186,38 @@ component accessors="true" output="false" extends="HibachiService" {
 				}
 			}
 		} while (runPopulation);
-		var insertDataFilePath = expandPath('/#getDao("HibachiDao").getApplicationKey()#') & '/custom/config/' & 'insertedData.txt.cfm';
-		FileWrite(insertDataFilePath, variables.insertedData);
+		var insertDataFilePath = expandPath('/#getDao("HibachiDao").getApplicationKey()#') & '/custom/system/' & 'insertedData.txt.cfm';
+		
+		if(structKeyExists(variables, 'insertedData')){
+			FileWrite(insertDataFilePath, variables.insertedData);
+		}		
+
+		fileWrite(checksumFilePath, checksumList);		
 
 		return true;
 	}
+	
+	
 
 	public boolean function loadDataFromXMLRaw(required string xmlRaw, boolean ignorePreviouslyInserted=true) {
-		var xmlRawEscaped = replace(xmlRaw,"&","&amp;","all");
+		var xmlRawEscaped = replace(arguments.xmlRaw,"&","&amp;","all");
 		var xmlData = xmlParse(xmlRawEscaped);
 		var columns = {};
 		var idColumns = "";
 		var includesCircular = false;
+		
+		if(structKeyExists(xmlData.Table.xmlAttributes,'dependencies')){
+			var dependencies = listToArray(xmlData.Table.xmlAttributes.dependencies);
+			for(var dependency in dependencies){
+				var dependencyPath = expandPath('/Slatwall')&dependency;
+				var dependencyXMLRaw = FileRead(dependencyPath);
+				if(!arrayFind(request.successfulDBDataScripts,dependencyPath)){
+					loadDataFromXMLRaw(dependencyXMLRaw);
+					arrayAppend(request.successfulDBDataScripts,dependencyPath);
+				}
+			}
+			
+		}
 
 		// Loop over each column to parse xml
 		for(var ii=1; ii<= arrayLen(xmlData.Table.Columns.xmlChildren); ii++) {
@@ -175,7 +226,7 @@ component accessors="true" output="false" extends="HibachiService" {
 				idColumns = listAppend(idColumns, xmlData.Table.Columns.xmlChildren[ii].xmlAttributes.name);
 			}
 		}
-
+		
 		// Loop over each record to insert or update
 		for(var r=1; r <= arrayLen(xmlData.Table.Records.xmlChildren); r++) {
 
@@ -196,6 +247,11 @@ component accessors="true" output="false" extends="HibachiService" {
 				if(structKeyExists(columns[ thisColumnName ], 'dataType')) {
 					columnRecord.dataType = columns[ thisColumnName ].dataType;
 				}
+				
+				//check if the column needs to be decoded
+				if(structKeyExists(columns[ thisColumnName ], 'decodeForHTML') && columns[ thisColumnName ].decodeForHTML) {
+					columnRecord.value = getHibachiUtilityService().hibachiDecodeforHTML(columnRecord.value);
+				}
 
 				// Add this column record to the insert
 				if(!structKeyExists(columns[ thisColumnName ], 'circular') || columns[ thisColumnName ].circular == false) {
@@ -210,7 +266,6 @@ component accessors="true" output="false" extends="HibachiService" {
 				}
 
 			}
-
 			var idKey = xmlData.table.xmlAttributes.tableName;
 			for(var l=1; l<=listLen(idColumns); l++) {
 				idKey = listAppend(idKey, insertData[listGetAt(idColumns, l)].value, "~");
@@ -222,8 +277,12 @@ component accessors="true" output="false" extends="HibachiService" {
 			var keyFound = listFindNoCase(variables.insertedData, idKey);
 
 			var updateOnly = ignorePreviouslyInserted && keyFound;
-
-			getHibachiDataDAO().recordUpdate(xmlData.table.xmlAttributes.tableName, idColumns, updateData, insertData, updateOnly);
+			try{
+				getHibachiDataDAO().recordUpdate(xmlData.table.xmlAttributes.tableName, idColumns, updateData, insertData, updateOnly);
+			}catch(any e){
+				writedump(xmlData.table.xmlAttributes.tableName);
+				writedump(e);abort;
+			}
 			if(!keyFound){
 				variables.insertedData = listAppend(variables.insertedData, idKey);
 			}
@@ -292,7 +351,7 @@ component accessors="true" output="false" extends="HibachiService" {
 				tables[ thisTableName ]["tableType"] = columnInfo["tableType"];
 
 			// get table primary key
-			tables[ thisTableName ]["primaryKeyColumn"] = getPrimaryIDPropertyNameByEntityName(thisEntityName);
+			tables[ thisTableName ]["primaryKeyColumn"] = getPrimaryIDColumnNameByEntityName(thisEntityName);
 			//set table depth
 			tables[ thisTableName ]["depth"] = listLen(mapping["propertyIdentifier"], ".");
 
@@ -359,7 +418,7 @@ component accessors="true" output="false" extends="HibachiService" {
 					initializeTableStruct(tables, newTableName);
 					tables[ newTableName ]["tableType"] = newColumnInfo["tableType"];
 					tables[ newTableName ]["depth"] = listLen(thisPropertyIdentifier, ".");
-					tables[ newTableName ]["primaryKeyColumn"] = getPrimaryIDPropertyNameByEntityName(newEntityName);
+					tables[ newTableName ]["primaryKeyColumn"] = getPrimaryIDColumnNameByEntityName(newEntityName);
 
 					// many-to-many and one-to-many need to get added after the main object so, set a lower depth
 					if(newColumnInfo["fieldType"] == "many-to-many") {
@@ -496,6 +555,9 @@ component accessors="true" output="false" extends="HibachiService" {
 
 				generatedIDStruct[ tableName ] = {};
 
+				if (isNull(thisTableData)){
+					continue;
+				}
 				// Loop over each record to insert or update
 				for(var r=1; r <= thisTableData.recordcount; r++) {
 					transaction {

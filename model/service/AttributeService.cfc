@@ -175,6 +175,23 @@ component  extends="HibachiService" accessors="true" {
 
 		return attributeValueCopy;
 	}
+	
+	public string function getOptionLabelsByOptionValues(required string optionValueList){
+		var attributeOptionCollectionList = this.getAttributeOptionCollectionList();
+		attributeOptionCollectionList.addFilter('attributeOptionValue', arguments.optionValueList, 'in');
+		attributeOptionCollectionList.setDisplayProperties('attributeOptionLabel');
+		attributeOptionCollectionList.addOrderBy('sortOrder');
+		
+		var optionLabels = '';
+		
+		for (var attributeOption in attributeOptionCollectionList.getRecords() ){
+			optionLabels = ListAppend(optionLabels, attributeOption.attributeOptionLabel, ',' );
+		}
+	
+		
+		return optionLabels;
+		
+	}
 
 	// =====================  END: Logical Methods ============================
 
@@ -242,6 +259,14 @@ component  extends="HibachiService" accessors="true" {
 
 			//attributeModelCache
 			clearAttributeMetatDataCache(arguments.attribute.getAttributeSet());
+		}
+		
+		//if we are turning this into a custom property, we want to reload all servers to make sure things work properly
+		if(attribute.getCustomPropertyFlag()){
+			var serverInstanceSmartList = this.getServerInstanceSmartList();
+			for(var serverInstance in serverInstanceSmartList.getRecords()){
+				serverInstance.setServerInstanceExpired(true);
+			}	
 		}
 
 		return arguments.attribute;

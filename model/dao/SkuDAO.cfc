@@ -115,6 +115,14 @@ Notes:
 	</cffunction>
 	
 	<cfscript>
+		
+	public array function getImageFileDataBySkuIDList(required string skuIDList){
+		var hql = "SELECT NEW MAP(imageFile as imageFile,skuID as skuID) FROM #getApplicationKey()#Sku WHERE skuID IN (:skuIDList)";
+		
+		var params = {skuIDList=arguments.skuIDList};
+		
+		return ORMExecuteQuery(hql,params);
+    }
 
 	public any function getSkuBySkuCode( required string skuCode){
 		return ormExecuteQuery( "SELECT ss FROM SlatwallSku ss LEFT JOIN ss.alternateSkuCodes ascs WHERE ss.skuCode = :skuCode OR ascs.alternateSkuCode = :skuCode", {skuCode=arguments.skuCode}, true ); 
@@ -165,18 +173,18 @@ Notes:
 		return result;
 	}
 	
-	public array function getProductSkus(required any product, required any fetchOptions) {
+	public array function getProductSkus(required any product, required any fetchOptions, required string joinType) {
 		
 		var hql = "SELECT sku FROM SlatwallSku sku ";
 		if(fetchOptions) {
 			if(arguments.product.getBaseProductType() eq "contentAccess") {
-				hql &= "INNER JOIN FETCH sku.accessContents contents ";	
+				hql &= "#arguments.joinType# JOIN FETCH sku.accessContents contents ";	
 			} else if (arguments.product.getBaseProductType() eq "merchandise") {
-				hql &= "INNER JOIN FETCH sku.options option ";
+				hql &= "#arguments.joinType# JOIN FETCH sku.options option ";
 			} else if (arguments.product.getBaseProductType() eq "subscription") {
-				hql &= "INNER JOIN sku.subscriptionTerm st ";
-				hql &= "INNER JOIN sku.orderItems oi ";
-				hql &= "INNER JOIN FETCH sku.subscriptionBenefits sb ";
+				hql &= "#arguments.joinType# JOIN sku.subscriptionTerm st ";
+				hql &= "#arguments.joinType# JOIN sku.orderItems oi ";
+				hql &= "#arguments.joinType# JOIN FETCH sku.subscriptionBenefits sb ";
 			}
 		}
 		var hql &= "WHERE sku.product.productID = :productID ";
@@ -193,7 +201,7 @@ Notes:
 		};
 		
 		
-		var hql = 'SELECT COALESCE(AVG(stock.averageCost),0)
+		var hql = 'SELECT COALESCE( sum(stock.averageCost * stock.calculatedQOH) / nullIf(sum(stock.calculatedQOH),0), 0)
 			FROM SlatwallStock stock 
 			LEFT JOIN stock.sku sku
 			LEFT JOIN stock.location location
@@ -374,6 +382,7 @@ Notes:
 
 	<cffunction name="getSortedProductSkusID">
 		<cfargument name="productID" type="string" required="true" />
+		<cfargument name="joinType" type="string" default="INNER" />
 		
 		<cfset var sorted = "" />
 		<cfset var nextOptionGroupSortOrder = getHibachiCacheService().getOrCacheFunctionValue("skuDAO_getNextOptionGroupSortOrder", this, "getNextOptionGroupSortOrder") />
@@ -384,11 +393,11 @@ Notes:
 				SwSku.skuID
 			FROM
 				SwSku
-			  INNER JOIN
+			  #arguments.joinType# JOIN
 				SwSkuOption on SwSku.skuID = SwSkuOption.skuID
-			  INNER JOIN
+			  #arguments.joinType# JOIN
 				SwOption on SwSkuOption.optionID = SwOption.optionID
-			  INNER JOIN
+			  #arguments.joinType# JOIN
 				SwOptionGroup on SwOption.optionGroupID = SwOptionGroup.optionGroupID
 			WHERE
 				SwSku.productID = <cfqueryparam value="#arguments.productID#" cfsqltype="cf_sql_varchar" />

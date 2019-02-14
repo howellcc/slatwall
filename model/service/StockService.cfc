@@ -82,6 +82,25 @@ component extends="HibachiService" accessors="true" output="false" {
 
 		return stock;
 	}
+	
+	public any function findStockBySkuIDAndLocationID(required any skuID, required any locationID){
+		
+		var stock = getStockDAO().findStockBySkuIDAndLocationID(skuID=arguments.skuID, locationID=arguments.locationID);
+ 		if(isNull(stock)) {
+ 			if(getSlatwallScope().hasValue("stock_#arguments.skuID#_#arguments.locationID#")) {
+				// Set the stock in the requestCache so that duplicates for this stock don't get created.
+				stock = getSlatwallScope().getValue("stock_#arguments.skuID#_#arguments.locationID#");
+ 			} else {
+				stock = this.newStock();
+				stock.setSku(getService("skuService").getSkuBySkuID(arguments.skuID));
+				stock.setLocation(getService("locationService").getLocationByLocationID(arguments.locationID));
+				getHibachiDAO().save(stock);
+ 				// Set the stock in the requestCache so that duplicates for this stock don't get created.
+				getSlatwallScope().setValue("stock_#arguments.skuID#_#arguments.locationID#", stock);
+			}
+		}
+ 		return stock;
+	}
 
 	public any function getStockBySkuIDAndLocationID(required any skuID, required any locationID){
 		arguments.sku = getService('skuService').getSku(arguments.skuID);
@@ -272,7 +291,7 @@ component extends="HibachiService" accessors="true" output="false" {
 
 		return arguments.stock;
 	}
-	
+
 	//Process: StockAdjustment Context: addItems
 	public any function processStockAdjustment_addItems(required any stockAdjustment, struct data={}, string processContext="process") {
 
@@ -394,7 +413,7 @@ component extends="HibachiService" accessors="true" output="false" {
 	}
 
 	public any function processStockAdjustment_processAdjustment(required any stockAdjustment) {
-
+		getService('hibachiTagService').cfsetting(requesttimeout="600");
 		// Incoming (Transfer or ManualIn)
 		if( listFindNoCase("satLocationTransfer,satManualIn", arguments.stockAdjustment.getStockAdjustmentType().getSystemCode()) ) {
 
@@ -413,7 +432,6 @@ component extends="HibachiService" accessors="true" output="false" {
 				stockReceiverItem.setCurrencyCode(stockAdjustmentItem.getCurrencyCode());
 				stockReceiverItem.setStock(stock);
 				getHibachiScope().addModifiedEntity(stock);
-				getHibachiScope().addModifiedEntity(stock.getSkuLocationQuantity());
 			}
 		
 			this.saveStockReceiver(stockReceiver);
@@ -436,11 +454,21 @@ component extends="HibachiService" accessors="true" output="false" {
 				stockAdjustmentDeliveryItem.setStock(stock);
 				stockAdjustmentDeliveryItem.setCost(stockAdjustmentItem.getCost());
 				stockAdjustmentDeliveryItem.setCurrencyCode(stockAdjustmentItem.getCurrencyCode());
-				getHibachiScope().addModifiedEntity(stock);
-				getHibachiScope().addModifiedEntity(stock.getSkuLocationQuantity());
-			}
 
-			this.saveStockAdjustmentDelivery(stockAdjustmentDelivery);
+				getHibachiScope().addModifiedEntity(stockAdjustmentItem.getFromStock());
+				
+				stockAdjustmentDeliveryItem.validate(context="save");
+				if(stockAdjustmentDeliveryItem.hasErrors()){
+					arguments.stockAdjustment.addErrors(stockAdjustmentDeliveryItem.getErrors());
+				}
+				getHibachiScope().addModifiedEntity(stock);
+			}
+			if(!arguments.stockAdjustment.hasErrors()){
+				this.saveStockAdjustmentDelivery(stockAdjustmentDelivery);
+				if(stockAdjustmentDelivery.hasErrors()){
+					arguments.stockAdjustment.addErrors(stockAdjustmentDelivery.getErrors());
+				}
+			}
 		}
 
 
@@ -473,7 +501,6 @@ component extends="HibachiService" accessors="true" output="false" {
 					stockReceiverItem.setCurrencyCode(stockAdjustmentItem.getCurrencyCode());
 					stockReceiverItem.setStock( stockAdjustmentItem.getToStock() );
 					getHibachiScope().addModifiedEntity(stockAdjustmentItem.getToStock());
-					getHibachiScope().addModifiedEntity(stockAdjustmentItem.getToStock().getSkuLocationQuantity());
 
 				// If this is Out, create delivery
 				} else if (!isNull(stockAdjustmentItem.getFromStock())) {
@@ -495,11 +522,18 @@ component extends="HibachiService" accessors="true" output="false" {
 					stockAdjustmentDeliveryItem.setCurrencyCode(stockAdjustmentItem.getCurrencyCode());
 					stockAdjustmentDeliveryItem.setStock( stockAdjustmentItem.getFromStock() );
 					getHibachiScope().addModifiedEntity(stockAdjustmentItem.getFromStock());
+					
+					stockAdjustmentDeliveryItem.validate(context="save");
+					if(stockAdjustmentDeliveryItem.hasErrors()){
+						arguments.stockAdjustment.addErrors(stockAdjustmentDeliveryItem.getErrors());
+					}
 				}
 			}
 		}
-		// Set the status to closed
-		arguments.stockAdjustment.setStockAdjustmentStatusType( getTypeService().getTypeBySystemCode("sastClosed") );
+		if(!arguments.stockAdjustment.hasErrors()){
+			// Set the status to closed
+			arguments.stockAdjustment.setStockAdjustmentStatusType( getTypeService().getTypeBySystemCode("sastClosed") );
+		}
 
 		return arguments.stockAdjustment;
 

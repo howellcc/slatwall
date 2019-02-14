@@ -96,6 +96,7 @@ component entityname="SlatwallSubscriptionUsage" table="SwSubsUsage" persistent=
 	property name="modifiedByAccountID" hb_populateEnabled="false" ormtype="string";
 
 	// Non-Persistent Properties
+	property name="deferredRevenue" hb_formatType="currency" persistent="false";
 	property name="order" persistent="false";
 	property name="currentStatus" persistent="false";
 	property name="currentStatusCode" persistent="false";
@@ -117,6 +118,16 @@ component entityname="SlatwallSubscriptionUsage" table="SwSubsUsage" persistent=
 		} else {
 			return false;
 		}
+	}
+	
+	public numeric function getDeferredRevenue(){
+		var deferredRevenue = 0;
+		for(var subscriptionOrderItem in getSubscriptionOrderItems()){
+			deferredRevenue += subscriptionOrderItem.getDeferredRevenue();
+			
+		}
+		
+		return deferredRevenue;
 	}
 
 	public void function setFirstReminderEmailDateBasedOnNextBillDate() {
@@ -267,9 +278,10 @@ component entityname="SlatwallSubscriptionUsage" table="SwSubsUsage" persistent=
 
 	public any function getMostRecentSubscriptionOrderItem(){
 		if( hasSubscriptionOrderItem() ){
-			var subscriptionSmartList = this.getSubscriptionOrderItemsSmartList();
-			subscriptionSmartList.addOrder("createdDateTime|DESC");
-			return subscriptionSmartList.getFirstRecord();
+			var subscriptionOrderItemSmartList = getService("subscriptionService").getSubscriptionOrderItemSmartList();
+			subscriptionOrderItemSmartList.addFilter('subscriptionUsage.subscriptionUsageID', this.getSubscriptionUsageID());
+			subscriptionOrderItemSmartList.addOrder("createdDateTime|DESC");
+			return subscriptionOrderItemSmartList.getFirstRecord();
 		}
 	}
 

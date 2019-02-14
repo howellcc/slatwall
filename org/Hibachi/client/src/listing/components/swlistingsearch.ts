@@ -34,7 +34,8 @@ class SWListingSearchController {
         public listingService,
         public collectionService,
         public observerService,
-        public localStorageService
+        public localStorageService,
+        public appConfig
     ) {
        
     }
@@ -76,7 +77,7 @@ class SWListingSearchController {
     public selectSearchColumn = (column?)=>{
         this.selectedSearchColumn = column;
         this.configureSearchableColumns(column);
-        if(this.searchText){
+        if(this.swListingDisplay.searchText){
             this.search();
         }
     };
@@ -91,15 +92,55 @@ class SWListingSearchController {
             this.localStorageService.setItem('selectedPersonalCollection',angular.toJson(selectedPersonalCollection));
         }else{
             delete selectedPersonalCollection[this.swListingDisplay.baseEntityName.toLowerCase()];
-            console.log(selectedPersonalCollection);
+
             this.localStorageService.setItem('selectedPersonalCollection',angular.toJson(selectedPersonalCollection));
         }
+        window.location.href = this.appConfig.baseURL+'?'+this.appConfig.action+'='+'entity.list'+this.swListingDisplay.baseEntityName.toLowerCase();
+    }
+    
+    public deleteReportCollection = (persistedCollection)=>{
+        this.$hibachi.saveEntity(
+            'Collection',
+            persistedCollection.collectionID,
+            {},
+            'delete'
+        ).then((data)=>{
 
-        window.location.reload();
+        });
+    }
+    
+    public deletePersonalCollection = (personalCollection)=>{
+        this.$hibachi.saveEntity(
+            'Collection',
+            personalCollection.collectionID,
+            {
+                'softDeleteFlag':true
+            },
+            'save'
+        ).then((data)=>{
+            if(this.localStorageService.hasItem('selectedPersonalCollection')){
+                const selectedPersonalCollection = angular.fromJson(this.localStorageService.getItem('selectedPersonalCollection'));
+                const currentSelectedPersonalCollection = selectedPersonalCollection[this.swListingDisplay.collectionConfig.baseEntityName.toLowerCase()];
+                if(currentSelectedPersonalCollection){
+                    const currentSelectedPersonalCollectionID = currentSelectedPersonalCollection.collectionID;
+                    if(personalCollection.collectionID === currentSelectedPersonalCollectionID){
+                        this.selectPersonalCollection();
+                    }
+                }
+            }
+            this.hasPersonalCollections = false;
+            this.getPersonalCollections();
+        });
     }
 
     public savePersonalCollection=(collectionName?)=>{
-        if(this.localStorageService.hasItem('selectedPersonalCollection') && this.localStorageService.getItem('selectedPersonalCollection')[this.swListingDisplay.collectionConfig.baseEntityName.toLowerCase()] && (angular.isUndefined(this.personalCollectionIdentifier) || (angular.isDefined(this.localStorageService.getItem('selectedPersonalCollection')[this.swListingDisplay.collectionConfig.baseEntityName.toLowerCase()]['collectionDescription']) && this.localStorageService.getItem('selectedPersonalCollection')[this.swListingDisplay.collectionConfig.baseEntityName.toLowerCase()]['collectionDescription'] == this.personalCollectionIdentifier))){
+        if(
+            this.localStorageService.hasItem('selectedPersonalCollection') &&
+            this.localStorageService.getItem('selectedPersonalCollection')[this.swListingDisplay.collectionConfig.baseEntityName.toLowerCase()] &&
+            (angular.isUndefined(this.personalCollectionIdentifier) ||
+            (angular.isDefined(this.localStorageService.getItem('selectedPersonalCollection')[this.swListingDisplay.collectionConfig.baseEntityName.toLowerCase()]['collectionDescription']) &&
+            this.localStorageService.getItem('selectedPersonalCollection')[this.swListingDisplay.collectionConfig.baseEntityName.toLowerCase()]['collectionDescription'] == this.personalCollectionIdentifier))
+        ){
             var selectedPersonalCollection = angular.fromJson(this.localStorageService.getItem('selectedPersonalCollection'));
             if(selectedPersonalCollection[this.swListingDisplay.collectionConfig.baseEntityName.toLowerCase()]){
 
@@ -154,12 +195,10 @@ class SWListingSearchController {
                 this.collectionNameSaveIsOpen = false;
                 this.hasPersonalCollections=false;
             });
-            return
+            return;
         }
 
         this.collectionNameSaveIsOpen = true;
-
-
     }
 
     public getPersonalCollections = ()=>{
@@ -168,6 +207,8 @@ class SWListingSearchController {
             personalCollectionList.setDisplayProperties('collectionID,collectionName,collectionObject,collectionDescription');
             personalCollectionList.addFilter('accountOwner.accountID',this.$rootScope.slatwall.account.accountID);
             personalCollectionList.addFilter('collectionObject',this.swListingDisplay.baseEntityName);
+            personalCollectionList.addFilter('reportFlag',0);
+            personalCollectionList.addFilter('softDeleteFlag',true,"!=");
             if(angular.isDefined(this.personalCollectionIdentifier)){
                 personalCollectionList.addFilter('collectionDescription',this.personalCollectionIdentifier);
             }
@@ -186,13 +227,13 @@ class SWListingSearchController {
 
 
     private search =()=>{
-        if(this.searchText.length > 0 ){
+        if(this.swListingDisplay.searchText.length > 0 ){
             this.listingService.setExpandable(this.listingId, false);
         } else {
             this.listingService.setExpandable(this.listingId, true);
         }
 
-        this.collectionConfig.setKeywords(this.searchText);
+        this.collectionConfig.setKeywords(this.swListingDisplay.searchText);
 
         this.swListingDisplay.collectionConfig = this.collectionConfig;
 

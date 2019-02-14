@@ -102,7 +102,7 @@ Notes:
 
 				return keyLocation & '/';
 			}
-			return expandPath('/#getApplicationValue('applicationKey')#/custom/config/');
+			return expandPath('/#getApplicationValue('applicationKey')#/custom/system/');
 		}
 
 		public string function getLegacyEncryptionAlgorithm() {
@@ -118,6 +118,21 @@ Notes:
 		}
 
 	</cfscript>
+	
+	<cffunction name="arrayReverse">
+		<cfargument name="inArray">
+		<cfscript>
+			var outArray = ArrayNew(1);
+		    var i=0;
+		    var j = 1;
+		    for (i=ArrayLen(arguments.inArray);i GT 0;i=i-1){
+		        outArray[j] = arguments.inArray[i];
+		        j = j + 1;
+		    }
+		    return outArray;
+		</cfscript>
+	</cffunction>
+	
 	<!---
 	QueryTreeSort takes a query and efficiently (O(n)) resorts it hierarchically (parent-child), adding a Depth column that can then be used when displaying the data.
 
@@ -430,7 +445,8 @@ Notes:
 	* @return struct with file info.
 	*/
 	public struct function export(required any data, string columns, string columnNames, string fileName, string fileType = 'csv', boolean download = true ) {
-		 return getService("HibachiService").export(data=data, columns=columns, columnNames=columnNames, fileName=fileName, fileType=fileType, downloadFile=download);
+		 arguments.downloadFile = arguments.download;
+		 return getService("HibachiService").export(argumentCollection=arguments);
 	}
 	
 	// @hint utility function to sort array of ojbects can be used to override getCollection() method to add sorting.

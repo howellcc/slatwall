@@ -58,6 +58,15 @@ Notes:
 		</cfquery>
 	</cffunction>
 	
+	<cffunction name="turnOnPaymentProcessingFlag" access="public" returntype="void" output="false">
+		<cfargument name="orderID" type="string" required="true" />
+		
+		<cfset var rs = "" />
+ 		<cfquery name="rs">
+			UPDATE sworder set paymentProcessingInProgressFlag=true where orderID=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.orderID#" />
+		</cfquery>
+	</cffunction>
+	
 	<cffunction name="getDeliveredQuantitySum" access="public" returntype="any">
 			<cfargument name="orderItemID" type="string" required="true" />
 
@@ -103,13 +112,10 @@ Notes:
 		
 	<cfscript>
 		public any function getMostRecentNotPlacedOrderByAccountID( required string accountID ) {
-			return ormExecuteQuery(" FROM SlatwallOrder o WHERE o.account.accountID = ? AND o.orderStatusType.systemCode=? ORDER BY modifiedDateTime DESC", 
-				[arguments.accountID,'ostNotPlaced'], true, {maxResults=1}
+			return ormExecuteQuery(" FROM SlatwallOrder o WHERE o.account.accountID = :accountID AND o.orderStatusType.systemCode = :orderStatusType AND o.orderType.systemCode = :orderType ORDER BY modifiedDateTime DESC", 
+			{accountID:arguments.accountID,orderStatusType:'ostNotPlaced',orderType:'otSalesOrder'}, true, {maxResults=1}
 			);
-		}
-		
-		
-		
+		}		
 	
 		public struct function getQuantityPriceSkuAlreadyReturned(required any orderID, required any skuID) {
 			var params = [arguments.orderID, arguments.skuID];
@@ -178,6 +184,35 @@ Notes:
 					   AND oi.order.orderID = ? ";
 
 			return ormExecuteQuery(hql, params);
+		}
+		
+		public void function insertSubscriptionOrderDeliveryItem(
+			required string subscriptionOrderItemID, 
+			numeric quantity=1, 
+			numeric extendedprice,
+			numeric taxAmount
+		){
+			var q = new query();
+			
+			var subscriptionOrderDeliveryItemID = createHibachiUUID();
+			q.addParam(name='subscriptionOrderDeliveryItemID',value=subscriptionOrderDeliveryItemID);
+			q.addParam(name='subscriptionOrderItemID',value=arguments.subscriptionOrderItemID);
+			q.addParam(name='quantity',value=arguments.quantity);
+			q.addParam(name="earned",value=arguments.quantity*arguments.extendedprice);
+			q.addParam(name="taxAmount",value=arguments.quantity*arguments.taxAmount);
+			q.addParam(name='createdByAccountID',value=getHibachiScope().getAccount().getAccountID());
+			q.addParam(name='createdDateTime',value=now(),cfsqltype="cf_sql_timestamp");
+			q.addParam(name='modifiedByAccountID',value=getHibachiScope().getAccount().getAccountID());
+			q.addParam(name='modifiedDateTime',value=now(),cfsqltype="cf_sql_timestamp");
+			//Subscription Order Delivery Item Type Delivered
+			q.addParam(name='subscriptionOrderDeliveryItemTypeID',value='f22e6a41d678334700a550bddec925d2');
+			
+			var sql = "INSERT INTO swsubscriptionorderdeliveryitem (subscriptionOrderDeliveryItemID,subscriptionOrderItemID,quantity,createdByAccountID,createdDateTime,modifiedByAccountID,modifiedDateTime,earned,taxAmount,subscriptionOrderDeliveryItemTypeID) 
+						VALUES (:subscriptionOrderDeliveryItemID,:subscriptionOrderItemID,:quantity,:createdByAccountID,:createdDateTime,:modifiedByAccountID,:modifiedDateTime,:earned,:taxAmount,:subscriptionOrderDeliveryItemTypeID)";
+			
+			q.setSQL(sql);
+			
+			q.execute();
 		}
 
 	</cfscript>

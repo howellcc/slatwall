@@ -51,11 +51,11 @@ Notes:
 
 <cftry>
 	<cfquery name="local.taskConditionsConfigs">
-		SELECT workflowtaskID, taskConditionsConfig FROM swWorkflowTask where taskConditionsConfig not like '{"filterGroups":[{"filterGroup":[]}],"baseEntityAlias":"%'
+		SELECT workflowtaskID, taskConditionsConfig FROM swWorkflowTask
 	</cfquery>
 	<cfif local.taskConditionsConfigs.recordCount GT 0>
 		<cfloop query="local.taskConditionsConfigs" >
-			<cfset local.newConfig = rereplace(local.taskConditionsConfigs.taskConditionsConfig, '"(baseEntityAlias|propertyIdentifier|entityAlias)":"([A-Z])', '"\1":"_\2', 'ALL') />
+			<cfset local.newConfig = rereplace(local.taskConditionsConfigs.taskConditionsConfig, '"(baseEntityAlias|propertyIdentifier|entityAlias)":"([A-Z])', '"\1":"_\l\2', 'ALL') />
 			<cfquery>
 				UPDATE swWorkflowTask
 				SET taskConditionsConfig = <cfqueryparam cfsqltype="cf_sql_varchar" value="#local.newConfig#" />
@@ -65,7 +65,7 @@ Notes:
 	</cfif>
 	<cfcatch>
 		<cflog file="Slatwall" text="ERROR UPDATE SCRIPT - Update workflowtask taskConditionsConfig">
-		<cfset local.scriptHasErrors = true />
+		<cfthrow detail="Part of Script v5_1.2 had errors when running">
 	</cfcatch>
 </cftry>
 

@@ -107,8 +107,8 @@ Notes:
 			<cfset var downloadUUID = createUUID() />
 			<cfset var downloadFileName = "slatwall-#downloadUUID#.zip" />
 			<cfset var downloadHashFileName = "slatwall-#downloadUUID#.md5.txt" />
-			<cfset var deleteDestinationContentExclusionList = '/.git,/apps,/integrationServices,/custom,/WEB-INF,/.project,/setting.xml,/.rewriterule,/.htaccess,/web.config,/.settings,/.gitignore' />
-			<cfset var copyContentExclusionList = "" />
+			<cfset var deleteDestinationContentExclusionList = '/.git,/apps,/integrationServices,/custom,/WEB-INF,/.project,/setting.xml,/.rewriterule,/.htaccess,/web.config,/.settings,/.gitignore,/CODEOWNERS' />
+			<cfset var copyContentExclusionList = "CODEOWNERS" />
 			<cfset var slatwallDirectoryList = "" />
 
 			<!--- If the meta directory exists, and it hasn't been dismissed then we want to delete without user action --->
@@ -118,7 +118,7 @@ Notes:
 
 			<!--- if the meta directory doesn't exist, add it to the exclusion list--->
 			<cfif !getMetaFolderExistsFlag()>
-				<cfset copyContentExclusionList = "meta" />
+				<cfset copyContentExclusionList = ListAppend(copyContentExclusionList, "meta") />
 			</cfif>
 
 			<!--- before we do anything, make a backup --->
@@ -148,8 +148,8 @@ Notes:
 					<cfzip action="unzip" destination="#unzipDirectoryName#" file="#getTempDirectory()##downloadFileName#" >
 					<cfzip action="list" file="#getTempDirectory()##downloadFileName#" name="dirList" >
 					<cfset var sourcePath = unzipDirectoryName />
-					<cfif fileExists( "#slatwallRootPath#/custom/config/lastFullUpdate.txt.cfm" )>
-						<cffile action="delete" file="#slatwallRootPath#/custom/config/lastFullUpdate.txt.cfm" >
+					<cfif fileExists( "#slatwallRootPath#/custom/system/lastFullUpdate.txt.cfm" )>
+						<cffile action="delete" file="#slatwallRootPath#/custom/system/lastFullUpdate.txt.cfm" >
 					</cfif>
 					<cfset updateCopyStarted = true />
 					
@@ -165,8 +165,8 @@ Notes:
 				<cfzip action="unzip" destination="#getTempDirectory()#" file="#getTempDirectory()##downloadFileName#" >
 				<cfzip action="list" file="#getTempDirectory()##downloadFileName#" name="dirList" >
 				<cfset var sourcePath = getTempDirectory() & "#listFirst(dirList.name[1],'/')#" />
-				<cfif fileExists( "#slatwallRootPath#/custom/config/lastFullUpdate.txt.cfm" )>
-					<cffile action="delete" file="#slatwallRootPath#/custom/config/lastFullUpdate.txt.cfm" >
+				<cfif fileExists( "#slatwallRootPath#/custom/system/lastFullUpdate.txt.cfm" )>
+					<cffile action="delete" file="#slatwallRootPath#/custom/system/lastFullUpdate.txt.cfm" >
 				</cfif>
 				<cfset updateCopyStarted = true /> 
 				<cfset getHibachiUtilityService().duplicateDirectory(source=sourcePath, destination=slatwallRootPath, overwrite=true, recurse=true, copyContentExclusionList=copyContentExclusionList, deleteDestinationContent=true, deleteDestinationContentExclusionList=deleteDestinationContentExclusionList ) />
@@ -187,6 +187,16 @@ Notes:
 			</cfcatch>
 		</cftry>
 	</cffunction>
+	
+	<cffunction name="updateAttributeIsMigratedFlagByAttributeID" >
+		<cfargument name="attributeID" type="string" required="true"/>
+		<cfargument name="isMigratedFlag" type="boolean" required="true"/>
+		<cfquery>
+			UPDATE swAttribute
+			SET isMigratedFlag = #arguments.isMigratedFlag#
+			WHERE attributeID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.attributeID#" /> 
+		</cfquery>
+	</cffunction>
 
 	<cffunction name="updateCMSApplications">
 		<!--- Overwrite all CMS Application.cfc's with the latest from the skeletonApp --->
@@ -201,38 +211,44 @@ Notes:
 	<cffunction name="runScripts">
 		<cfset var scripts = this.listUpdateScriptOrderByLoadOrder() />
 		<cfloop array="#scripts#" index="local.script">
-			<cfif isNull(script.getSuccessfulExecutionCount())>
-				<cfset script.setSuccessfulExecutionCount(0) />
-			</cfif>
-			<cfif isNull(script.getExecutionCount())>
-				<cfset script.setExecutionCount(0) />
-			</cfif>
-			<!--- Run the script if never ran successfully or success count < max count ---->
-			<cfif isNull(script.getMaxExecutionCount()) OR script.getSuccessfulExecutionCount() EQ 0 OR script.getSuccessfulExecutionCount() LT script.getMaxExecutionCount()>
-				<!---- try to run the script --->
-				<cftry>
-					<!--- if it's a database script look for db specific file --->
-					<cfif findNoCase("database/",script.getScriptPath())>
-						<cfset var dbSpecificFileName = replaceNoCase(script.getScriptPath(),".cfm",".#getApplicationValue("databaseType")#.cfm") />
-						<cfif fileExists(expandPath("/Slatwall/config/scripts/#dbSpecificFileName#"))>
-							<cfinclude template="#getHibachiScope().getBaseURL()#/config/scripts/#dbSpecificFileName#" />
-						<cfelseif fileExists(expandPath("/Slatwall/config/scripts/#script.getScriptPath()#"))>
-							<cfinclude template="#getHibachiScope().getBaseURL()#/config/scripts/#script.getScriptPath()#" />
-						<cfelse>
-							<cfthrow message="update script file doesn't exist #getHibachiScope().getBaseURL()#/config/scripts/#script.getScriptPath()#" />
-						</cfif>
-					</cfif>
-					<cfset script.setSuccessfulExecutionCount(script.getSuccessfulExecutionCount()+1) />
-					<cfcatch>
-						<!--- failed, let's log this execution count --->
-						<cfset script.setExecutionCount(script.getExecutionCount()+1) />
-					</cfcatch>
-				</cftry>
-				<cfset script.setLastExecutedDateTime(now()) />
-				<cfset getDao('HibachiDao').save(script) />
-				<cfset getDao('HibachiDao').flushORMSession()/>
-			</cfif>
+			<cfset runScript(local.script)/>
 		</cfloop>
+	</cffunction>
+	
+	<cffunction name="runScript">
+		<cfargument name="script" type="any"/>
+		<cfif isNull(arguments.script.getSuccessfulExecutionCount())>
+			<cfset arguments.script.setSuccessfulExecutionCount(0) />
+		</cfif>
+		<cfif isNull(arguments.script.getExecutionCount())>
+			<cfset arguments.script.setExecutionCount(0) />
+		</cfif>
+		<!--- Run the script if never ran successfully or success count < max count ---->
+		<cfif isNull(arguments.script.getMaxExecutionCount()) OR arguments.script.getSuccessfulExecutionCount() EQ 0 OR arguments.script.getSuccessfulExecutionCount() LT arguments.script.getMaxExecutionCount()>
+			<!---- try to run the script --->
+			<cftry>
+				<!--- if it's a database script look for db specific file --->
+				<cfif findNoCase("database/",arguments.script.getScriptPath())>
+					<cfset var dbSpecificFileName = replaceNoCase(arguments.script.getScriptPath(),".cfm",".#getApplicationValue("databaseType")#.cfm") />
+					<cfif fileExists(expandPath("/Slatwall/config/scripts/#dbSpecificFileName#"))>
+						<cfinclude template="#getHibachiScope().getBaseURL()#/config/scripts/#dbSpecificFileName#" />
+					<cfelseif fileExists(expandPath("/Slatwall/config/scripts/#arguments.script.getScriptPath()#"))>
+						<cfinclude template="#getHibachiScope().getBaseURL()#/config/scripts/#arguments.script.getScriptPath()#" />
+					<cfelse>
+						<cfthrow message="update script file doesn't exist #getHibachiScope().getBaseURL()#/config/scripts/#arguments.script.getScriptPath()#" />
+					</cfif>
+				</cfif>
+				<cfset arguments.script.setSuccessfulExecutionCount(arguments.script.getSuccessfulExecutionCount()+1) />
+				<cfcatch>
+					<!--- failed, let's log this execution count --->
+					<cfset arguments.script.setExecutionCount(arguments.script.getExecutionCount()+1) />
+					<cfset arguments.script.setUpdateScriptException(cfcatch)/>
+				</cfcatch>
+			</cftry>
+			<cfset arguments.script.setLastExecutedDateTime(now()) />
+			<cfset getDao('HibachiDao').save(arguments.script) />
+			<cfset getDao('HibachiDao').flushORMSession()/>
+		</cfif>
 	</cffunction>
 
 	<cffunction name="getAvailableVersions">
@@ -253,7 +269,7 @@ Notes:
 	</cffunction>
 
 	<cffunction name='getMetaFolderExistsWithoutDismissalFlag'>
-		<cfreturn directoryExists( expandPath('/Slatwall/meta') ) && !fileExists( expandPath('/Slatwall/custom/config/metaDismiss.txt.cfm') ) />
+		<cfreturn directoryExists( expandPath('/Slatwall/meta') ) && !fileExists( expandPath('/Slatwall/custom/system/metaDismiss.txt.cfm') ) />
 	</cffunction>
 
 	<cffunction name='removeMeta'>
@@ -261,7 +277,7 @@ Notes:
 	</cffunction>
 
 	<cffunction name='dismissMeta'>
-		<cfset fileWrite( expandPath('/Slatwall/custom/config') & '/metaDismiss.txt.cfm', now() ) />
+		<cfset fileWrite( expandPath('/Slatwall/custom/system') & '/metaDismiss.txt.cfm', now() ) />
 	</cffunction>
 
 	<cffunction name="getMetaFolderExistsFlag">
@@ -274,7 +290,7 @@ Notes:
 		<cfargument name="overrideDataFlag" type="boolean" default="false" >
 		
 		<cfset var entityMetaData = getEntityMetaData(arguments.entityName)/>
-		<cfset var primaryIDName = getPrimaryIDPropertyNameByEntityName(arguments.entityName)/>
+		<cfset var primaryIDName = getPrimaryIDColumnNameByEntityName(arguments.entityName)/>
 		
 		<cfif getApplicationValue("databaseType") eq "MySQL">
 			
@@ -326,6 +342,46 @@ Notes:
 	
 
 	<cfscript>
+	
+	public any function migrateAttributeValuesToCustomProperties(){
+			//let's get all attributes flagged to become custom properties
+			var attributeDataQuery = getSlatwallScope().getDAO('attributeDAO').getAttributeDataQueryByCustomPropertyFlag();
+			var rbKeyValuePairStrings = '';
+			var path = expandPath('/#getApplicationKey()#') & '/custom/config/resourceBundles/en.properties';
+			
+			if(fileExists(path)){
+				var rbKeysFileRead = FileRead(path);
+				var rbKeysFileAppend = FileOpen(path,"append");
+			}
+			
+			for(var attribute in attributeDataQuery){
+				//if we have never done this before...
+				if(len(attribute['isMigratedFlag']) && !attribute['isMigratedFlag']){
+					//migrate values
+					migrateAttributeToCustomProperty(entityName=attribute['attributeSetObject'],customPropertyName=attribute['attributeCode']);
+					updateAttributeIsMigratedFlagByAttributeID(attribute['attributeID'],true);
+				}
+				//if we don't have the rbKey in the file we read
+				var rbKey = 'entity.' & attribute['attributeSetObject'] & '.' & attribute['attributeCode'];
+				if(!isNull(rbKeysFileRead) && !findNoCase(rbKey,rbKeysFileRead)){
+					rbKeyValuePairStrings = rbKeyValuePairStrings & getRbKeyValuePairByAttribute(attribute);
+				}
+			}
+			//if we have new rbkeys to add
+			if(len(rbKeyValuePairStrings) && !isNull(rbKeysFileAppend)){
+				//write to the .properties file
+				FileWriteLine(rbKeysFileAppend, rbKeyValuePairStrings); 
+				//recreate the JSON file
+				getService("HibachiJSONService").createJson();
+				
+				FileClose(rbKeysFileAppend);
+			}
+		}
+		
+		public string function getRbKeyValuePairByAttribute(required any attribute){
+			var newLine = (chr(13) & chr(10));
+			return newLine & 'entity.' & attribute['attributeSetObject'] & '.' & attribute['attributeCode'] & '=' & attribute['attributeName'];
+		}
 		
 		public boolean function updateEntitiesWithCustomProperties(){
 				var path = "#ExpandPath('/Slatwall/')#" & "model/entity";
@@ -427,18 +483,23 @@ Notes:
 			//add properties
 
 			var propertyString = '';
-			if(!isNull(arguments.customEntityParser.getFilePath())){
+			if(
+				!isNull(arguments.customEntityParser.getFileContent())
+				|| !isNull(arguments.customEntityParser.getFilePath())
+			){
 				PropertyString = arguments.customEntityParser.getPropertyString();
 			}
 			if(!isNull(arguments.attributeDataQueryByEntity)){
 				propertyString = mergeAttributesIntoPropertyString(arguments.coreEntityParser,propertyString,entityName,arguments.attributeDataQueryByEntity);
 			}
 			if(len(PropertyString)){
+				
 				if(arguments.coreEntityParser.hasCustomProperties() && arguments.purgeCustomProperties){
 					arguments.coreEntityParser.setFileContent(replace(arguments.coreEntityParser.getFileContent(),arguments.coreEntityParser.getCustomPropertyContent(),''));
 				}
 				
 				if(arguments.coreEntityParser.hasCustomProperties()){
+				
 					var customPropertyStartPos = arguments.coreEntityParser.getCustomPropertyStartPosition();
 					var customPropertyEndPos = arguments.coreEntityParser.getCustomPropertyEndPosition();
 					
@@ -450,6 +511,7 @@ Notes:
 						arguments.coreEntityParser.setFileContent(customPropertyContent);	
 					}
 				}else{
+				
 					var customPropertyString = arguments.customEntityParser.getCustomPropertyStringByPropertyString(PropertyString);
 					newContent = 	left(arguments.coreEntityParser.getFileContent(),arguments.coreEntityParser.getPropertyEndPos()-variables.paddingCount) 
 									& conditionalLineBreak & chr(9) & customPropertyString & chr(9) & 
@@ -460,7 +522,10 @@ Notes:
 			}
 			//add functions
 			var functionString = '';
-			if(!isNull(arguments.customEntityParser.getFilePath())){
+			if(
+				!isNull(arguments.customEntityParser.getFileContent())
+				|| !isNull(arguments.customEntityParser.getFilePath())
+			){
 				functionString = arguments.customEntityParser.getFunctionString();
 			}
 			if(len(functionString)){

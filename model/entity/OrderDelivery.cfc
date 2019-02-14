@@ -46,7 +46,7 @@
 Notes:
 
 */
-component displayname="Order Delivery" entityname="SlatwallOrderDelivery" table="SwOrderDelivery" persistent="true" accessors="true" output="false" extends="HibachiEntity" cacheuse="transactional" hb_serviceName="orderService" hb_permission="order.orderDelivery" hb_processContexts="create" {
+component displayname="Order Delivery" entityname="SlatwallOrderDelivery" table="SwOrderDelivery" persistent="true" accessors="true" output="false" extends="HibachiEntity" cacheuse="transactional" hb_serviceName="orderService" hb_permission="order.orderDeliveries" hb_processContexts="create" {
 
 	// Persistent Properties
 	property name="orderDeliveryID" ormtype="string" length="32" fieldtype="id" generator="uuid" unsavedvalue="" default="";
@@ -159,7 +159,7 @@ component displayname="Order Delivery" entityname="SlatwallOrderDelivery" table=
 	// ================== START: Overridden Methods ========================
 
 	public string function getSimpleRepresentation() {
-		return "Delivery for - " & getOrder().getOrderNumber();
+		return "Order Delivery: Order ##" & getOrder().getOrderNumber();
 	}
 
 	// ==================  END:  Overridden Methods ========================
