@@ -3,6 +3,7 @@ component accessors="true" output="false" extends="HibachiService" {
 	property name="cache" type="struct";
 	property name="internalCacheFlag" type="boolean";
 	property name="railoFlag" type="boolean";
+	property name="cacheBox";
 	 
 	
 	public any function init() {

@@ -109,6 +109,29 @@ component extends="framework.one" {
 	variables.framework.hibachi.skipDbData = false;
 	variables.framework.hibachi.useServerInstanceCacheControl=true;
 	variables.framework.hibachi.availableEnvironments = ['local','development','production'];
+
+	variables.framework.hibachi.cachebox = {
+		logBoxConfig = "cachebox.system.cache.config.LogBox",
+		scopeRegistration = {
+			enabled = true,
+			scope   = "application", // the cf scope you want
+			key     = "#this.name#_cacheBox"
+		},
+		defaultCache = {
+			objectDefaultTimeout = 120,
+			objectDefaultLastAccessTimeout = 30,
+			useLastAccessTimeouts = true,
+			reapFrequency = 2,
+			freeMemoryPercentageThreshold = 0,
+			evictionPolicy = "LRU",
+			evictCount = 1,
+			maxObjects = 1000,
+			objectStore = "ConcurrentSoftReferenceStore",
+			coldboxEnabled = false
+		},
+		caches = {},
+		listeners = []
+	};
 	
 	// Allow For Application Config
 	try{include "../../config/configFramework.cfm";}catch(any e){}
@@ -721,8 +744,6 @@ component extends="framework.one" {
 						omitDirectoryAliases = variables.framework.hibachi.beanFactoryOmitDirectoryAliases
 					});
 					
-					coreBF.declare('cacheFactory').instanceOf('cachebox.system.cache.CacheFactory').asSingleton();
-					
 					// Manually declare any Hibachi beans that are missing from the coreBF factory as a fallback
 					// NOTE: We cannot rely on coreBF.setParent(hibachiBF) to inject to proper dependency because of ambiguity with overridden class names in various locations Slatwall.org.Hibachi, Slatwall.model, Slatwall.custom.model, Slatwall.integrationServices.{integrationPackage}.model
 					var hibachiBeanInfo = hibachiBF.getBeanInfo().beanInfo;
@@ -800,6 +821,13 @@ component extends="framework.one" {
 					// NOTE: For more details about the quirk, view notes about the load() method in the org/hibachi/framework/hibachiaop.cfc
 					coreBF.load();
 					onBeanFactoryLoadComplete();
+
+					// Setup and configure CacheBox
+					var hibachiCacheBoxConfiguration = createObject('component','#variables.framework.applicationKey#.org.Hibachi.HibachiCacheBoxConfiguration');
+					hibachiCacheBoxConfiguration.setHibachiCacheboxConfigStruct(variables.framework.hibachi.cachebox);
+					var cacheBoxConfig = createObject( "component", "cachebox.system.cache.config.CacheBoxConfig" ).init(CFCconfig=hibachiCacheBoxConfiguration);
+					var cacheBox = createObject('component','cachebox.system.cache.CacheFactory').init(config=cacheBoxConfig);
+					coreBF.addBean('cacheBox', cacheBox);
 					
 					//==================== START: EVENT HANDLER SETUP ========================
 					
