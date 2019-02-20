@@ -1,0 +1,34 @@
+{
+    "name":"CacheBox",
+    "version":"5.3.0+837",
+    "location":"http://downloads.ortussolutions.com/ortussolutions/cachebox/5.3.0/cachebox-5.3.0.zip",
+    "author":"Ortus Solutions <info@ortussolutions.com>",
+    "slug":"cachebox",
+    "type":"caching",
+    "packageDirectory":"cachebox",
+    "keywords":"caching,aggregator,cache",
+    "homepage":"https://www.coldbox.org",
+    "documentation":"https://cachebox.ortusbooks.com",
+    "repository":{
+        "type":"git",
+        "url":"https://github.com/coldbox/coldbox-platform"
+    },
+    "bugs":"https://ortussolutions.atlassian.net/browse/CACHEBOX",
+    "shortDescription":" CacheBox is an enterprise caching engine, aggregator and API for ColdFusion applications. ",
+    "license":[
+        {
+            "type":"Apache2",
+            "url":"http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    ],
+    "contributors":[
+        "Brad Wood <bdw429s@gmail.com>",
+        "Curt Gratz <gratz@computerknowhow.com>"
+    ],
+    "ignore":[
+        "**/.*",
+        "tests",
+        "apidocs",
+        "*/.md"
+    ]
+}

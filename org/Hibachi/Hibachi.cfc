@@ -141,6 +141,7 @@ component extends="framework.one" {
 	// Defaults
 	this.mappings[ "/#variables.framework.applicationKey#" ] = replace(replace(getDirectoryFromPath(getCurrentTemplatePath()),"\","/","all"), "/org/Hibachi/", "");
 	this.mappings[ '/framework' ] = replace(getDirectoryFromPath(getCurrentTemplatePath()),"\","/","all") & '/framework';
+	this.mappings[ '/cachebox' ] = replace(getDirectoryFromPath(getCurrentTemplatePath()),"\","/","all") & 'framework/cachebox';
 
 	// Allow For Application Config
 	try{include "../../config/configMappings.cfm";}catch(any e){}
@@ -719,6 +720,8 @@ component extends="framework.one" {
 						transientPattern="Bean$",
 						omitDirectoryAliases = variables.framework.hibachi.beanFactoryOmitDirectoryAliases
 					});
+					
+					coreBF.declare('cacheFactory').instanceOf('cachebox.system.cache.CacheFactory').asSingleton();
 					
 					// Manually declare any Hibachi beans that are missing from the coreBF factory as a fallback
 					// NOTE: We cannot rely on coreBF.setParent(hibachiBF) to inject to proper dependency because of ambiguity with overridden class names in various locations Slatwall.org.Hibachi, Slatwall.model, Slatwall.custom.model, Slatwall.integrationServices.{integrationPackage}.model
