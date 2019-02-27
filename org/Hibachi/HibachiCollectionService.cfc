@@ -493,7 +493,7 @@ component output="false" accessors="true" extends="HibachiService" {
 		Using coldfusion operator versions - gt,lt,gte,lte,eq,neq,like
 
 	*/
-	public string function buildURL(required string queryAddition, boolean appendValues=true, boolean toggleKeys=true, string currentURL="", string delimiter=",") {
+	public string function buildURL(required string queryAddition, boolean appendValues=true, boolean toggleKeys=true, string currentURL="", string delimiter=",",string valueDelimiter=",") {
 		// Generate full URL if one wasn't passed in
 		if(!len(arguments.currentURL)) {
 			if(len(cgi.query_string)) {
@@ -502,6 +502,7 @@ component output="false" accessors="true" extends="HibachiService" {
 		}
 
 		var modifiedURL = "?";
+	
 		variables.dataKeyDelimiter = ":";
 		variables.valuedelimiter = ",";
 		
@@ -796,7 +797,7 @@ component output="false" accessors="true" extends="HibachiService" {
 		var response = {};
 		var collectionOptions = this.getCollectionOptionsFromData(arguments.data);
 		arguments.collectionEntity.setEnforceAuthorization(arguments.enforceAuthorization);
-
+		
 		if(!arguments.collectionEntity.getEnforceAuthorization() || getHibachiScope().authenticateCollection('read', arguments.collectionEntity)){
 			if(structkeyExists(collectionOptions,'currentPage') && len(collectionOptions.currentPage)){
 				collectionEntity.setCurrentPageDeclaration(collectionOptions.currentPage);
@@ -1057,11 +1058,18 @@ component output="false" accessors="true" extends="HibachiService" {
 			getHibachiService().export( collectionData, mergedHeaders, mergedTitles, collectionEntity.getCollectionObject(), "csv" );
 			return;
 		}
+		if(collectionEntity.isReport()){
+			collectionEntity.setIgnorePeriodInterval(true);
+			var collectionConfigData = getCollectionConfigExportDataByCollection(collectionEntity);
+			getHibachiService().export( argumentCollection=collectionConfigData );
+		}
+		
 		var exportCollectionConfigData = {};
 		exportCollectionConfigData['collectionConfig']=serializeJson(collectionEntity.getCollectionConfigStruct());
 		if(structKeyExists(arguments.data,'keywords')){
 			exportCollectionConfigData['keywords']=arguments.data.keywords;
 		}
+		
 		this.collectionConfigExport(exportCollectionConfigData);
 	}//<--end function
 
@@ -1076,6 +1084,7 @@ component output="false" accessors="true" extends="HibachiService" {
 		arguments.data.collectionConfig = DeserializeJSON(arguments.data.collectionConfig);
 		
 		var collectionEntity = getCollectionList(arguments.data.collectionConfig.baseEntityName);
+		
 		if(structKeyExists(arguments.data,'keywords')){
 			collectionEntity.setKeywords(arguments.data.keywords);
 		}
@@ -1092,8 +1101,8 @@ component output="false" accessors="true" extends="HibachiService" {
 		
 		if(structKeyExists(arguments.data,'exportFileName')){
 			collectionEntity.setExportFileName(arguments.data.exportFileName);
+			
 		}
-
 		var collectionConfigData = getCollectionConfigExportDataByCollection(collectionEntity);
 		getHibachiService().export( argumentCollection=collectionConfigData );
 	}
@@ -1194,7 +1203,6 @@ component output="false" accessors="true" extends="HibachiService" {
 		} else {
 			exportFileName = arguments.collectionEntity.getCollectionConfigStruct().baseEntityName;
 		}
-		
 		var collectionData = arguments.collectionEntity.getRecords(forExport=true,formatRecords=false);
 		var headers = getHeadersListByCollection(arguments.collectionEntity);
 		var title =  getHeadersListByCollection(arguments.collectionEntity, true);
@@ -1397,7 +1405,7 @@ component output="false" accessors="true" extends="HibachiService" {
 			//Handle Range
 			if (left(arguments.key, 2) == "r:"){
 				var value = arguments.data[arguments.key];
-				var ranges = listToArray(value);
+				var ranges = listToArray(value,arguments.collection.getInlistDelimiter());
 				var filterParts = "#listToArray(arguments.key, ':')#";
 				var prop = filterParts[2];//property
 				if(
@@ -1406,7 +1414,7 @@ component output="false" accessors="true" extends="HibachiService" {
 					&& listFind(trim(arguments.excludesList),trim(prop)) == 0
 				){
 					var ormtype = arguments.collection.getOrmTypeByPropertyIdentifier(prop);
-					var rangeValues = listToArray(data[arguments.key]);//value 20^40,100^ for example.
+					var rangeValues = listToArray(data[arguments.key],arguments.collection.getInlistDelimiter());//value 20^40,100^ for example.
 
 					for(var i=1; i <= arraylen(rangeValues);i++){
 						var rangeValue = rangeValues[i];
