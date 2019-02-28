@@ -9,27 +9,34 @@ import {CommonModule} from '@angular/common';
 import {UpgradeModule,downgradeInjectable,downgradeComponent} from '@angular/upgrade/static';
 
 //directives
-import {SWChildOrderItem} from "./components/swchildorderitem";
-import {SWOrderItem} from "./components/sworderitem";
-import {SwOiShippingLabelStamp} from "./components/swoishippinglabelstamp";
-import {SWOrderItemDetailStamp, SwOrderItemDetailStamp} from "./components/sworderitemdetailstamp";
-import {SWOrderItems} from "./components/sworderitems";
-import {SWResizedImage} from "./components/swresizedimage";
+import { SwChildOrderItem} from "./components/swchildorderitem";
+import { SwOrderItem} from "./components/sworderitem";
+import { SwOiShippingLabelStamp } from "./components/swoishippinglabelstamp";
+import { SwOrderItemDetailStamp } from "./components/sworderitemdetailstamp";
+import { SwOrderItems } from "./components/sworderitems";
+import { SwResizedImage } from "./components/swresizedimage";
+import { SwCurrency } from '../slatwall/filters/swcurrency';
+import { PaginationModule } from '../../../../org/Hibachi/client/src/pagination/pagination.module';
 
 @NgModule({
     declarations :[
+        SwOrderItems,
+        SwChildOrderItem,
+        SwCurrency,
+        SwOrderItem,
         SwOrderItemDetailStamp,
-        SwOiShippingLabelStamp
+        SwOiShippingLabelStamp,
+        SwResizedImage
     ],
     providers: [],
     imports : [
         CoreModule,
         CommonModule,
-        UpgradeModule
+        UpgradeModule,
+        PaginationModule
     ],
     entryComponents: [
-        SwOrderItemDetailStamp,
-        SwOiShippingLabelStamp
+        SwOrderItems
     ]
 })
 export class OrderItemModule{
@@ -45,14 +52,18 @@ var orderitemmodule = angular.module('hibachi.orderitem', [coremodule.name])
 .run([()=> {
 }])
 //directives
-.directive('swChildOrderItem',SWChildOrderItem.Factory())
-.directive('swOrderItem',SWOrderItem.Factory())
+//.directive('swOrderItems',SWOrderItems.Factory())
+.directive('swOrderItems', downgradeComponent({ component: SwOrderItems }) as angular.IDirectiveFactory)   
+//.directive('swChildOrderItem',SWChildOrderItem.Factory())
+//.directive('swChildOrderItem', downgradeComponent({ component: SwChildOrderItem }) as angular.IDirectiveFactory)        
+//.directive('swOrderItem',SWOrderItem.Factory())
+//.directive('swOrderItem',downgradeComponent({ component: SwOrderItem }) as angular.IDirectiveFactory)
 //.directive('swoishippinglabelstamp',SWOiShippingLabelStamp.Factory())
-.directive('swoishippinglabelstamp', downgradeComponent({ component: SwOiShippingLabelStamp }) as angular.IDirectiveFactory)    
+//.directive('swoishippinglabelstamp', downgradeComponent({ component: SwOiShippingLabelStamp }) as angular.IDirectiveFactory)    
 //.directive('swOrderItemDetailStamp',SWOrderItemDetailStamp.Factory())
-.directive('swOrderItemDetailStamp', downgradeComponent({ component: SwOrderItemDetailStamp }) as angular.IDirectiveFactory)    
-.directive('swOrderItems',SWOrderItems.Factory())
-.directive('swresizedimage',SWResizedImage.Factory())
+//.directive('swOrderItemDetailStamp', downgradeComponent({ component: SwOrderItemDetailStamp }) as angular.IDirectiveFactory)    
+//.directive('swresizedimage',SWResizedImage.Factory())
+//.directive('swresizedimage',downgradeComponent({ component: SwResizedImage }) as angular.IDirectiveFactory)
 //constants
 .constant('orderItemPartialsPath','orderitem/components/')
 ;
