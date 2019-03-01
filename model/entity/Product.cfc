@@ -151,11 +151,16 @@ component displayname="Product" entityname="SlatwallProduct" table="SwProduct" p
 	property name="livePrice" hb_formatType="currency" persistent="false";
 	property name="salePrice" hb_formatType="currency" persistent="false";
 	property name="schedulingOptions" hb_formatType="array" persistent="false";
+<<<<<<< HEAD
 		//CUSTOM PROPERTIES BEGIN
 
  property name="brown" ormtype="string";
  property name="extensionColor" ormtype="string" hb_formFieldType="select";
  property name="pantsStyle" ormtype="string" hb_formFieldType="select";//CUSTOM PROPERTIES END
+=======
+	
+	
+>>>>>>> c889dc75043797e10f1bcadb02540261190d64cc
 	public any function getNextDeliveryScheduleDate(){
 		if(!structKeyExists(variables,'nextDeliveryScheduleDate')){
 			var deliveryScheduleDateCollectionList = this.getDeliveryScheduleDatesCollectionList();
