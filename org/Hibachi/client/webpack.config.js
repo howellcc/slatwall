@@ -3,6 +3,7 @@ var ForceCaseSensitivityPlugin = require('force-case-sensitivity-webpack-plugin'
 var CompressionPlugin = require("compression-webpack-plugin");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const devMode = process.env.NODE_ENV !== "production";
 
 var path = require('path');
 var PATHS = {
@@ -12,7 +13,7 @@ var PATHS = {
 };
 
 var appConfig = {
-    mode:'development',
+    mode:devMode ? "development" : "production",
     context:PATHS.app,
     entry: {
         bundle:['./bootstrap.ts']
@@ -21,6 +22,7 @@ var appConfig = {
     output: {
         path: PATHS.dist,
         filename: '[name].[contenthash].js',
+        chunkFilename: '[name].[contenthash].js',
         publicPath:'#request.slatwallScope.getBaseURL()#/admin/client/dist/'
     },
     // Turn on sourcemaps
@@ -55,6 +57,12 @@ var appConfig = {
               webpackConfig: compilation.options,
               webpack: compilation.getStats().toJson()
             }
+          },
+          minify: {
+            removeComments: devMode ? false : true,
+            collapseWhitespace: devMode ? false : true,
+            minifyJS: devMode ? false : true,
+            minifyCSS: devMode ? false : true
           }
        }),
        // new CleanWebpackPlugin(['dist/*']) for < v2 versions of CleanWebpackPlugin

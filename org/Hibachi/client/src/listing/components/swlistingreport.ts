@@ -1,6 +1,6 @@
 /// <reference path='../../../typings/hibachiTypescript.d.ts' />
 /// <reference path='../../../typings/tsd.d.ts' />
-import { Chart, ChartData, Point } from 'chart.js';
+
 class SWListingReportController {
     public selectedCollectionID:string;
     public collectionName:string;
@@ -42,6 +42,13 @@ class SWListingReportController {
         public observerService,
         public collectionConfigService
     ) {
+        
+        const lazyLoad: any = 
+        async () => {
+            const {default:Chart} = await await import(/* webpackChunkName: "Chart" */ 'chart.js');
+        }
+        lazyLoad();
+        
         this.collectionConfig = this.collectionConfig.loadJson(this.collectionConfig.collectionConfigString);
         if(this.collectionId){
             var selectedReport = {
