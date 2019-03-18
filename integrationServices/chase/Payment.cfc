@@ -158,6 +158,43 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 		
 		body = body & repeatString(chr(32),1);
 		
+		//let's add the bill to Address now
+		
+		//AB is the bill to address format constant
+		
+		body = body & "AB";
+		
+		if(!isNull(arguments.requestBean.getAccountPrimaryPhoneNumber())) {
+			// next char indicates what type of phone number it is. Let's just hard code W (work) for simplicity
+			body = body & "W";
+			body = body & arguments.requestBean.getAccountPrimaryPhoneNumber();
+			//telephone numbers have length 14, so we justify that
+			body = body & repeatString(chr(32), 14 - len(arguments.requestBean.getAccountPrimaryPhoneNumber()));
+		} else {
+			body = body & repeatString(chr(32), 14);
+		}
+		
+		if(!isNull(arguments.requestBean.getAccountFirstName()) && !isNull(arguments.requestBean.getAccountLastName)){
+			var fullName = arguments.requestBean.getAccountFirstName() & ' ' & arguments.requestBean.getAccountLastName();
+			body = body & fullName;
+			//justify for 30 chars
+			body = body & repeatString(chr(32), 30 - len(fullName));
+		} else {
+			body = body & repeatString(chr(32), 30);
+		}
+		
+		body = body & this.justifyValue(arguments.requestBean.getBillingStreetAddress(),30);
+		
+		body = body & this.justifyValue(arguments.requestBean.getBillingStreet2Address(),28);
+		
+		body = body & this.justifyValue(arguments.requestBean.requestBean.getBillingCountryCode(),2);
+		
+		body = body & this.justifyValue(arguments.requestBean.requestBean.getBillingCity(),20);
+	
+		body = body & this.justifyValue(arguments.requestBean.requestBean.getBillingStateCode(),2);
+		
+		body = body & this.justifyValue(arguments.requestBean.requestBean.getBillingPostalCode(),10);
+		
 		httpRequest.addParam(type="body",value=body);
 		
 		var headers = getHeaders();
@@ -168,6 +205,14 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 		
 		var response = httpRequest.send().getPrefix();
 		return response;
+	}
+	
+	private string function justifyValue(string value,required numeric len){
+		if(!isNull(arguments.value)){
+			return repeatString(chr(32), arguments.len - len(arguments.value));
+		} else {
+			return repeatString(chr(32), arguments.len);
+		}
 	}
 	
 	private any function getHeaders(){
