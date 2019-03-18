@@ -170,8 +170,8 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 			body = body & arguments.requestBean.getAccountPrimaryPhoneNumber();
 			//telephone numbers have length 14, so we justify that
 			body = body & repeatString(chr(32), 14 - len(arguments.requestBean.getAccountPrimaryPhoneNumber()));
-		} else {
-			body = body & repeatString(chr(32), 14);
+		} else { // 15 white spaces, 1 for the type, 14 for the number
+			body = body & repeatString(chr(32), 15);
 		}
 		
 		if(!isNull(arguments.requestBean.getAccountFirstName()) && !isNull(arguments.requestBean.getAccountLastName)){
@@ -183,18 +183,24 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 			body = body & repeatString(chr(32), 30);
 		}
 		
-		body = body & this.justifyValue(arguments.requestBean.getBillingStreetAddress(),30);
+		body = body & justifyValue(arguments.requestBean.getBillingStreetAddress(),30);
+
+		body = body & justifyValue(arguments.requestBean.getBillingStreet2Address(),28);
+
+		body = body & justifyValue(arguments.requestBean.getBillingCountryCode(),2);
+
+		body = body & justifyValue(arguments.requestBean.getBillingCity(),20);
+
+		body = body & justifyValue(arguments.requestBean.getBillingStateCode(),2);
+
+		body = body & justifyValue(arguments.requestBean.getBillingPostalCode(),10);
 		
-		body = body & this.justifyValue(arguments.requestBean.getBillingStreet2Address(),28);
+		//all caps
 		
-		body = body & this.justifyValue(arguments.requestBean.requestBean.getBillingCountryCode(),2);
+		body = uCase(body);
 		
-		body = body & this.justifyValue(arguments.requestBean.requestBean.getBillingCity(),20);
-	
-		body = body & this.justifyValue(arguments.requestBean.requestBean.getBillingStateCode(),2);
-		
-		body = body & this.justifyValue(arguments.requestBean.requestBean.getBillingPostalCode(),10);
-		
+		writeDump(replace(body," ","_","all"));
+		writeDump(len(body));
 		httpRequest.addParam(type="body",value=body);
 		
 		var headers = getHeaders();
@@ -204,12 +210,13 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 		}
 		
 		var response = httpRequest.send().getPrefix();
+		writeDump(response);abort;
 		return response;
 	}
 	
-	private string function justifyValue(string value,required numeric len){
+	private any function justifyValue(value, len){
 		if(!isNull(arguments.value)){
-			return repeatString(chr(32), arguments.len - len(arguments.value));
+			return value & repeatString(chr(32), arguments.len - len(arguments.value));
 		} else {
 			return repeatString(chr(32), arguments.len);
 		}
@@ -247,6 +254,11 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 		requestBean.setTransactionAmount('1');
 		requestBean.setAccountFirstName(testAccount.getFirstName());
 		requestBean.setAccountLastName(testAccount.getLastName());
+		requestBean.setBillingCity("Worcester");
+		requestBean.setBillingStateCode("MA");
+		requestBean.setBillingCountryCode("US");
+		requestBean.setBillingStreetAddress("20 Franklin Street");
+		requestBean.setBillingPostalCode("01604");
 		writeDump(var=requestBean,top=1);
 		var response = processCreditCard(requestBean); 
 		return response;
