@@ -16,3 +16,8 @@ WEB-INF
 .rdsTempFiles/
 node_modules
 docker-compose.yml
+<<<<<<< HEAD
+=======
+dist
+npm-debug.log
+>>>>>>> 1ba9a37bf4... Deleted unnecessary files, fixed angular(and related package)'s version

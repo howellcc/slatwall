@@ -6,12 +6,29 @@
   "repository": "https://github.com/ten24/Slatwall",
   "license": "MIT",
   "dependencies": {
+<<<<<<< HEAD
     "angular": "^1.6.4",
     "angular-chart.js": "^1.1.1",
     "angular-mocks": "^1.6.4",
+=======
+    "angular": "1.5.5",
+    "angular-animate": "1.5.5",
+    "angular-aria": "^1.5.5",
+    "angular-chart.js": "^1.1.1",
+    "angular-cookies": "1.5.5",
+    "angular-loader": "^1.5.5",
+    "angular-message-format": "^1.5.5",
+    "angular-messages": "^1.5.5",
+    "angular-mocks": "1.5.5",
+    "angular-resource": "1.5.5",
+    "angular-route": "1.5.5",
+    "angular-sanitize": "1.5.5",
+    "angular-touch": "1.5.5",
+>>>>>>> 1ba9a37bf4... Deleted unnecessary files, fixed angular(and related package)'s version
     "blueimp-md5": "^1.1.0",
     "bower": "^1.8.0",
     "chart.js": "^2.7.2",
+<<<<<<< HEAD
     "force-case-sensitivity-webpack-plugin": "^0.1.1",
     "compression-webpack-plugin": "^1.1.3",
     "gulp": "^3.9.1",
@@ -36,6 +53,10 @@
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.11",
     "webpack-stream": "*"
+=======
+    "md5": "^2.0.0",
+    "rxjs": "^5.4.3"
+>>>>>>> 1ba9a37bf4... Deleted unnecessary files, fixed angular(and related package)'s version
   },
   "devDependencies": {
     "angular": "^1.6.4",
