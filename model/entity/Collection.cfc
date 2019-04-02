@@ -1697,8 +1697,6 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 		var fromHQL = ' FROM #hibachiBaseEntityName# as #getBaseEntityAlias()#';
 		addHQLAlias(arguments.baseEntityName,getBaseEntityAlias());
 
-		fromHQL &= getJoinHQL();
-
 		return fromHQL;
 	}
 
@@ -1790,7 +1788,7 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
         return aliasList;
     }
 
-	public string function getHQL(boolean excludeSelectAndOrderBy = false, forExport=false, excludeOrderBy = false, excludeGroupBy=false){
+	public string function getHQL(boolean excludeSelectAndOrderBy = false, boolean forExport=false, boolean excludeOrderBy = false, boolean excludeGroupBy=false, boolean toManyOnly=false){
 		
 		structDelete(variables,'groupBys');
 		
@@ -1798,7 +1796,7 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 		variables.postFilterGroups = [];
 		variables.postOrderBys = [];
 
-		var HQL = createHQLFromCollectionObject(this, arguments.excludeSelectAndOrderBy, arguments.forExport, arguments.excludeOrderBy,arguments.excludeGroupBy);
+		var HQL = createHQLFromCollectionObject(this, arguments.excludeSelectAndOrderBy, arguments.forExport, arguments.excludeOrderBy,arguments.excludeGroupBy, arguments.toManyOnly);
 	
 		return HQL;
 	}
@@ -3029,7 +3027,7 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 			var countHQLSelections = "SELECT NEW MAP(COUNT(tempAlias.id) as recordsCount ";
 			var countHQLSuffix = ' FROM  #getService('hibachiService').getProperlyCasedFullEntityName(getCollectionObject())# tempAlias 
 									#replace(getJoinHQL(toManyOnly=true),'#getBaseEntityAlias()#.','tempAlias.','All')#
-									WHERE tempAlias.id IN ( SELECT MIN(#getBaseEntityAlias()#.id) #getHQL(true, false, true)# )';
+									WHERE tempAlias.id IN ( SELECT MIN(#getBaseEntityAlias()#.id) #getHQL(true, false, true,false,true)# )';
  		}else{
  			var countHQLSelections = 'SELECT NEW MAP(COUNT(#getBaseEntityAlias()#.id) as recordsCount ';
  			var countHQLSuffix = getHQL(true);
@@ -3528,7 +3526,8 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 		boolean excludeSelectAndOrderBy=false,
 		boolean forExport=false,
 	    boolean excludeOrderBy=false,
-	    boolean excludeGroupBy=false
+	    boolean excludeGroupBy=false,
+	    boolean toManyOnly=false
 	){
 
 
@@ -3542,6 +3541,7 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 		if(!isNull(collectionConfig.baseEntityName)){
 			var selectHQL = "";
 			var fromHQL = "";
+			var joinHQL = "";
 			var filterHQL = "";
 			var postFilterHQL = "";
 			var orderByHQL = "";
@@ -3656,9 +3656,9 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 			}
 
 			fromHQL &= getFromHQL(collectionConfig.baseEntityName);
+			joinHQL &= getJoinHQL(arguments.toManyOnly);
 			
-			
-			HQL = SelectHQL & FromHQL & filterHQL  & postFilterHQL & groupByHQL & aggregateFilters & orderByHQL;
+			HQL = SelectHQL & FromHQL & joinHQL & filterHQL  & postFilterHQL & groupByHQL & aggregateFilters & orderByHQL;
 		
 
 		}
