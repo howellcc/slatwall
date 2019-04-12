@@ -1559,13 +1559,13 @@ component displayname="Collection" entityname="SlatwallCollection" table="SwColl
 						}
 
 						var predicate = getPredicate(filter);
-						if(!isnull(filter.attributeID)){
+						if(isnull(filter.attributeID)){
 								if(structKeyExists(filter,'propertyIdentifier') && len(filter.propertyIdentifier)){
 									var propertyIdentifier = filter.propertyIdentifier;
 									getPropertyIdentifierAlias(rereplace(listrest(propertyIdentifier,'_'),'_','.','all'),'filter');
 
 									if(ListFind('<>,!=,NOT IN,NOT LIKE',comparisonOperator) > 0){
-										propertyIdentifier = "COALESCE(#propertyIdentifier#,'')";
+										propertyIdentifier = "#propertyIdentifier#";
 									}
 									filterGroupHQL &= " #logicalOperator# #propertyIdentifier# #comparisonOperator# #predicate# ";
 								}
