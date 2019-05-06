@@ -209,45 +209,65 @@ component extends="HibachiService" accessors="true" output="false" {
 					var currentObjectName = arguments.workflowTrigger.getScheduleCollection().getCollectionObject();
 				}
 				
-				var currentObjectPrimaryIDName = getService('HibachiService').getPrimaryIDPropertyNameByEntityName(currentObjectName);
-				var triggerCollectionResult = scheduleCollection.getPrimaryIDs(arguments.workflowTrigger.getCollectionFetchSize());
-				//Loop Collection Data
-				for(var i=1; i <= ArrayLen(triggerCollectionResult); i++){
-					//get current ObjectID
-					var workflowTriggerID = arguments.workflowTrigger.getWorkflowTriggerID();
-					var currentObjectID = triggerCollectionResult[i][currentObjectPrimaryIDName];
-					var currentThreadName = "thread_#right(workflowTriggerID, 6)&i#";
-	
-					thread action="run" name="#currentThreadName#" currentObjectName="#currentObjectName#" currentObjectID="#currentObjectID#" workflowTriggerID="#workflowTriggerID#"{
-						//load Objects by id
-	
-						var workflowTrigger = getHibachiScope().getEntity('WorkflowTrigger', workflowTriggerID);
-						var processData = {
-							entity = getHibachiScope().getEntity(currentObjectName, currentObjectID),
-							workflowTrigger = workflowTrigger
-						};
-	
-						//Call proccess method to execute Tasks
-						this.processWorkflow(workflowTrigger.getWorkflow(), processData, 'execute');
-	
-						if(processData.entity.hasErrors()) {
-							throw("error");
-							//application[getDao('hibachiDao').gethibachiInstanceApplicationScopeKey()].application.endHibachiLifecycle();
+				
+				if(arguments.workflowTrigger.getCollectionPassthrough()){
+					//Don't Instantiate every object, just passthroughn the collection records returned
+					var currentObjectName = arguments.workflowTrigger.getScheduleCollection().getCollectionObject();
+					var triggerCollection = arguments.workflowTrigger.getScheduleCollection();
+					triggerCollection.setPageRecordsShow(arguments.workflowTrigger.getCollectionFetchSize());
+					var triggerCollectionResult = triggerCollection.getPageRecords();
+	 				var processData = {
+						entity = this.invokeMethod('new#currentObjectName#'),
+						workflowTrigger = arguments.workflowTrigger,
+						collectionData = { 'collectionData' = triggerCollectionResult}
+					};
+					//Call proccess method to execute Tasks
+					this.processWorkflow(workflowTrigger.getWorkflow(), processData, 'execute');
+
+
+				}else{
+					//Instantiate one object per Collection Record returned
+					
+					var currentObjectPrimaryIDName = getService('HibachiService').getPrimaryIDPropertyNameByEntityName(currentObjectName);
+					var triggerCollectionResult = scheduleCollection.getPrimaryIDs(arguments.workflowTrigger.getCollectionFetchSize());
+					//Loop Collection Data
+					for(var i=1; i <= ArrayLen(triggerCollectionResult); i++){
+						//get current ObjectID
+						var workflowTriggerID = arguments.workflowTrigger.getWorkflowTriggerID();
+						var currentObjectID = triggerCollectionResult[i][currentObjectPrimaryIDName];
+						var currentThreadName = "thread_#right(workflowTriggerID, 6)&i#";
+		
+						thread action="run" name="#currentThreadName#" currentObjectName="#currentObjectName#" currentObjectID="#currentObjectID#" workflowTriggerID="#workflowTriggerID#"{
+							//load Objects by id
+		
+							var workflowTrigger = getHibachiScope().getEntity('WorkflowTrigger', workflowTriggerID);
+							var processData = {
+								entity = getHibachiScope().getEntity(currentObjectName, currentObjectID),
+								workflowTrigger = workflowTrigger
+							};
+		
+							//Call proccess method to execute Tasks
+							this.processWorkflow(workflowTrigger.getWorkflow(), processData, 'execute');
+		
+							if(processData.entity.hasErrors()) {
+								throw("error");
+								//application[getDao('hibachiDao').gethibachiInstanceApplicationScopeKey()].application.endHibachiLifecycle();
+							}
+		
+							if(!getHibachiScope().getORMHasErrors()) {
+								getHibachiScope().getDAO("hibachiDAO").flushORMSession();
+							}
+							// Commit audit queue
+							getHibachiScope().getService("hibachiAuditService").commitAudits();
 						}
-	
-						if(!getHibachiScope().getORMHasErrors()) {
-							getHibachiScope().getDAO("hibachiDAO").flushORMSession();
+						threadJoin(currentThreadName);
+		
+						//if there was any errors inside of the thread, propagate to catch
+						if(structKeyExists(evaluate(currentThreadName), 'error')){
+							writedump(evaluate(currentThreadName).error);
+							throw(evaluate(currentThreadName).error.message);
+							break;
 						}
-						// Commit audit queue
-						getHibachiScope().getService("hibachiAuditService").commitAudits();
-					}
-					threadJoin(currentThreadName);
-	
-					//if there was any errors inside of the thread, propagate to catch
-					if(structKeyExists(evaluate(currentThreadName), 'error')){
-						writedump(evaluate(currentThreadName).error);
-						throw(evaluate(currentThreadName).error.message);
-						break;
 					}
 				}
 			//run process without collection
@@ -315,7 +335,7 @@ component extends="HibachiService" accessors="true" output="false" {
 		return workflowTrigger;
 	}
 
-	private boolean function executeTaskAction(required any workflowTaskAction, any entity, required string type){
+	private boolean function executeTaskAction(required any workflowTaskAction, any entity, required string type, struct data = {}){
 		var actionSuccess = false;
 		
 		switch (workflowTaskAction.getActionType()) {
@@ -363,11 +383,15 @@ component extends="HibachiService" accessors="true" output="false" {
 				if(structKeyExists(arguments,'entity')){
 					var entityService = getServiceByEntityName( entityName=arguments.entity.getClassName());
 					var processContext = listLast(workflowTaskAction.getProcessMethod(),'_');
-					var processData = {'1'=arguments.entity};
-					
+					var processData = {
+						'1'=arguments.entity,
+						'2' = arguments.data
+					};
+				
 					if(arguments.entity.hasProcessObject(processContext)){
-						processData['2'] = arguments.entity.getProcessObject(processContext);
+						processData['3'] = arguments.entity.getProcessObject(processContext);
 					}
+					
 					var processMethod = entityService.invokeMethod(workflowTaskAction.getProcessMethod(), processData);
 					
 					if(!processMethod.hasErrors()) {

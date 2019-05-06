@@ -22,6 +22,7 @@ component output="false" accessors="true" extends="HibachiTransient" {
 	property name="isAWSInstance" type="boolean" default="0";
 	property name="entityURLKeyType" type="string";
 	property name="permissionGroupCacheKey" type="string";
+	property name="entityQueueData" type="struct";
 
 	public any function init() {
 		setORMHasErrors( false );
@@ -376,6 +377,51 @@ component output="false" accessors="true" extends="HibachiTransient" {
 		variables[ arguments.key ] = arguments.value;
 	}
 
+
+	public any function addEntityQueueData(required string baseID, required string baseObject, string processMethod='', any entityQueueData={}, string entityQueueType = ''){
+		if(!structKeyExists(variables, "entityQueueData")) {
+			variables.entityQueueData = {};
+		}
+		arguments.entityQueueID = getDAO('HibachiDAO').createHibachiUUID();
+		
+		if(!structKeyExists(variables.entityQueueData, '#arguments.baseObject#_#arguments.baseID#_#arguments.processMethod#')){
+			variables.entityQueueData['#arguments.baseObject#_#arguments.baseID#_#arguments.processMethod#'] = arguments;
+			getService('HibachiEntityQueueService').insertEntityQueueItem(argumentCollection=arguments);
+		}
+	}
+	
+	public struct function getEntityQueueData(){
+		if(!structKeyExists(variables, "entityQueueData")) {
+			variables.entityQueueData = {};
+		}
+		return variables.entityQueueData;
+		
+	}
+	
+	public void function clearEntityQueueData(){
+		var entityQueues = getEntityQueueData();
+		var entityQueueIDsToBeDeleted = '';
+		
+		for(var entityQueue in entityQueues){
+			entityQueueIDsToBeDeleted = listAppend(entityQueueIDsToBeDeleted, entityQueues[entityQueue]['entityQueueID']);
+		}
+		variables.entityQueueData = {};
+		getService('HibachiEntityQueueService').deleteEntityQueueItems(entityQueueIDsToBeDeleted);
+		
+	}
+	
+	public void function deleteEntityQueue(entityQueueID){
+		var entityQueues = getEntityQueueData();
+		
+		for(var entityQueue in entityQueues){
+			if(entityQueues[entityQueue]['entityQueueID'] == arguments.entityQueueID){
+				StructDelete(entityQueues, entityQueue);
+				getService('HibachiEntityQueueService').deleteEntityQueueItems(arguments.entityQueueID);
+				break;
+			}
+		}
+		
+	}
 
 	// ==================== RENDERING HELPERS ================================
 
