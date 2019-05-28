@@ -96,6 +96,9 @@ component extends="org.Hibachi.Hibachi" output="false" {
 		if(!getHibachiScope().getApplicationValue('skipDbData')){
 			// Setup Default Data... Not called on soft reloads.
 			getBeanFactory().getBean("hibachiDataService").loadDataFromXMLDirectory(xmlDirectory = ExpandPath("/Slatwall/config/dbdata"));
+			//custom dbdata here
+			
+			//integration dbdata here
 			getBeanFactory().getBean('integrationService').loadDataFromIntegrations();
 			writeLog(file="Slatwall", text="General Log - Default Data Has Been Confirmed");
 		}
