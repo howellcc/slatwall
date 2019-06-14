@@ -53,11 +53,13 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 	variables.timeout = 45;
 	variables.transactionCodes = {};
 	variables.currencyCodeMap = {};
+	variables.creditCardTypeMap = {};
 
 	public any function init(){
 		// Set Defaults
 		variables.transactionCodes = {
-			authorize="AU"
+			authorize="AU",
+			generateToken="TN"
 		};
 		
 		variables.currencyCodeMap = {
@@ -73,6 +75,15 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 			"ZAR"=710,
 			"SEK"=752,
 			"CHF"=756
+		};
+		
+		variables.creditCardTypeMap = {
+			"American Express"="AX",
+			"Visa"="VI",
+			"Diners Club"="DD",
+			"Discover"="DI",
+			"JCB"="JC",
+			"MasterCard"="MC"
 		};
 		
 		variables.formattedTDNumber = numberFormat(setting('transactionDivisionNumber'),"0000000009");
@@ -107,30 +118,44 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 	
 		//order identifier field has 22 char
 		
-		body = body & arguments.requestBean.getOrderShortReferenceID();
+		body &= arguments.requestBean.getOrderShortReferenceID();
 
 		//pad with spaces
-		body = body & repeatString(chr(32), 22 - len(arguments.requestBean.getOrderShortReferenceID()));
+		body &= repeatString(chr(32), 22 - len(arguments.requestBean.getOrderShortReferenceID()));
 		
-		//MOP - hard-coding visa for now
+		//MOP - need to grab from credit card type
 		
-		body = body & "VI" & arguments.requestBean.getCreditCardNumber();
+		body &= variables.creditCardTypeMap[arguments.requestBean.getCreditCardType()];
 		
-		//account/credit card number field has length 19. Let's pad the rest.
+		var usingTokenFlag = true;
+
+		var accountNumber = arguments.requestBean.getProviderToken();
+
+		if(isNull(accountNumber) || !len(accountNumber)){
+			accountNumber = arguments.requestBean.getCreditCardNumber();
+			usingTokenFlag = false;
+			
+		}
 		
-		body = body & repeatString(chr(32), 19 - len(arguments.requestBean.getCreditCardNumber()));
+		body &= accountNumber;
 		
-		body = body & arguments.requestBean.getExpirationMonth() & right(arguments.requestBean.getExpirationYear(),2);
+		//account/credit card number/token field has length 19. Let's pad the rest.
+		
+		logHibachi(19 - len(accountNumber),true);
+		
+		body &= repeatString(chr(32), 19 - len(accountNumber));
+		
+		body &= arguments.requestBean.getExpirationMonth() & right(arguments.requestBean.getExpirationYear(),2);
 		
 		//TD number also goes in the body. Because the fact that it goes in the header is not enough.
-		body = body & variables.formattedTDNumber;
+		body &= variables.formattedTDNumber;
 		
 		//transaction amount, padded with zeroes
-		body = body & numberFormat(arguments.requestBean.getTransactionAmount() * 100,"000000000009");
+		body &= numberFormat(arguments.requestBean.getTransactionAmount() * 100,"000000000009");
 		
 		//now we need to append the currency code
 
-		body = body & variables.currencyCodeMap[arguments.requestBean.getTransactionCurrencyCode()];
+		body &= variables.currencyCodeMap[arguments.requestBean.getTransactionCurrencyCode()];
 		
 		/*next char is "transaction type". Hard-coding 7 that designates a transaction 
 			between anaccountholder and a merchant consummated via the Internet where the
@@ -139,68 +164,81 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 			such as SSL, but authentication was not performed
 		*/
 		
-		body = body & 7;
+		body &= 7;
 		
 		// for the next value we'll need to figure out whether we are passing a plain credit card number or token.
 		// 203 for plain value, 204 for token
 		
-		body = body & 203;
+		body &= usingTokenFlag ? 204 : 203;
 		
 		// payment indicator - leaving it blank
 		
-		body = body & repeatString(chr(32),1);
+		body &= repeatString(chr(32),1);
 		
 		// transaction code
 		
-		body = body & variables.transactionCodes[arguments.requestBean.getTransactionType()];
+		body &= variables.transactionCodes[arguments.requestBean.getTransactionType()];
 		
 		// char 84 is reserved and should be left blank
 		
-		body = body & repeatString(chr(32),1);
+		body &= repeatString(chr(32),1);
 		
 		//let's add the bill to Address now
 		
 		//AB is the bill to address format constant
 		
-		body = body & "AB";
+		body &= "AB";
 		
 		if(!isNull(arguments.requestBean.getAccountPrimaryPhoneNumber())) {
+			
 			// next char indicates what type of phone number it is. Let's just hard code W (work) for simplicity
-			body = body & "W";
-			body = body & arguments.requestBean.getAccountPrimaryPhoneNumber();
+			body &= "W";
+			body &= arguments.requestBean.getAccountPrimaryPhoneNumber();
+			
 			//telephone numbers have length 14, so we justify that
-			body = body & repeatString(chr(32), 14 - len(arguments.requestBean.getAccountPrimaryPhoneNumber()));
+			body &= repeatString(chr(32), 14 - len(arguments.requestBean.getAccountPrimaryPhoneNumber()));
+			
 		} else { // 15 white spaces, 1 for the type, 14 for the number
-			body = body & repeatString(chr(32), 15);
+			body &= repeatString(chr(32), 15);
 		}
 		
 		if(!isNull(arguments.requestBean.getAccountFirstName()) && !isNull(arguments.requestBean.getAccountLastName)){
+			
 			var fullName = arguments.requestBean.getAccountFirstName() & ' ' & arguments.requestBean.getAccountLastName();
-			body = body & fullName;
+			body &= fullName;
+			
 			//justify for 30 chars
-			body = body & repeatString(chr(32), 30 - len(fullName));
+			body &= repeatString(chr(32), 30 - len(fullName));
+			
 		} else {
-			body = body & repeatString(chr(32), 30);
+			body &= repeatString(chr(32), 30);
 		}
 		
-		body = body & justifyValue(arguments.requestBean.getBillingStreetAddress(),30);
+		//justifyValue method prints the value and correctly prints out the number of spaces necessary
+		
+		//let's do that for all the address stuff
+		
+		body &= justifyValue(arguments.requestBean.getBillingStreetAddress(),30);
 
-		body = body & justifyValue(arguments.requestBean.getBillingStreet2Address(),28);
+		body &= justifyValue(arguments.requestBean.getBillingStreet2Address(),28);
 
-		body = body & justifyValue(arguments.requestBean.getBillingCountryCode(),2);
+		body &= justifyValue(arguments.requestBean.getBillingCountryCode(),2);
 
-		body = body & justifyValue(arguments.requestBean.getBillingCity(),20);
+		body &= justifyValue(arguments.requestBean.getBillingCity(),20);
 
-		body = body & justifyValue(arguments.requestBean.getBillingStateCode(),2);
+		body &= justifyValue(arguments.requestBean.getBillingStateCode(),2);
 
-		body = body & justifyValue(arguments.requestBean.getBillingPostalCode(),10);
+		body &= justifyValue(arguments.requestBean.getBillingPostalCode(),10);
+		
+		//Carriage return
+		body &= repeatString(chr(13),1);
 		
 		//all caps
 		
 		body = uCase(body);
 		
-		writeDump(replace(body," ","_","all"));
-		writeDump(len(body));
+		logHibachi(body,true);
+		
 		httpRequest.addParam(type="body",value=body);
 		
 		var headers = getHeaders();
@@ -210,13 +248,20 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 		}
 		
 		var response = httpRequest.send().getPrefix();
-		writeDump(response);abort;
+
 		return response;
 	}
 	
 	private any function justifyValue(value, len){
 		if(!isNull(arguments.value)){
-			return value & repeatString(chr(32), arguments.len - len(arguments.value));
+			var lengthToJustify = arguments.len - len(arguments.value);
+			//if value is longer than size of field
+			if(lengthToJustify < 0){
+				//truncate value by that much
+				value = right(value,lengthToJustify * - 1);
+				lengthToJustify = 0;
+			}
+			return value & repeatString(chr(32),lengthToJustify);
 		} else {
 			return repeatString(chr(32), arguments.len);
 		}
@@ -234,10 +279,37 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 	}
 	
 	private any function getResponseBean(required struct rawResponse, required any requestBean){
-		var response = new Slatwall.model.transient.payment.CreditCardTransactionResponseBean();
-		response.setStatusCode(mid(rawResponse.fileContent,27,3));
-		response.setAuthorizationCode(mid(rawResponse.fileContent,36,6));
-		var amount = LSParseNumber(mid(rawResponse.fileContent,73,12)) / 100;
+		var response = new Slatwall.integrationServices.chase.model.ChaseTransactionResponseBean();
+		var data = rawResponse.fileContent;
+		logHibachi(data,true);
+		//response reason code
+		response.setStatusCode(mid(data,27,3));
+		
+		if( left(response.getStatusCode(),1) != "1" ){
+			response.addError(response.getStatusCode,data);
+			return response;
+		}
+		
+		//authorization/verification code
+		response.setAuthorizationCode(mid(data,36,6));
+		response.setAvsCode(mid(data,42,2));
+		
+		var amount = LSParseNumber(mid(data,73,12)) / 100;
+		
+		//not sure if we need these
+		var paymentAdviceCode = mid(data,70,2);
+		var cavvResponseCode = mid(data,72,1);
+		
+		if(
+			(requestBean.getTransactionType() == "authorize" || requestBean.getTransactionType() == "generateToken") 
+			&& mid(data,85,2) == "TI"
+		){
+			response.setProviderToken(trim(mid(data,87,20)));
+		}
+		
+		response.setAmountByTransactionType(requestBean.getTransactionType(),amount);
+		
+		return response;
 	}
 	
 	public any function testIntegration() {
@@ -251,7 +323,7 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 		requestBean.setSecurityCode('123');
 		requestBean.setExpirationMonth('01');
 		requestBean.setExpirationYear(year(now())+1);
-		requestBean.setTransactionAmount('1');
+		requestBean.setTransactionAmount(42.10);
 		requestBean.setAccountFirstName(testAccount.getFirstName());
 		requestBean.setAccountLastName(testAccount.getLastName());
 		requestBean.setBillingCity("Worcester");
@@ -259,7 +331,6 @@ component accessors="true" output="false" displayname="Chase" implements="Slatwa
 		requestBean.setBillingCountryCode("US");
 		requestBean.setBillingStreetAddress("20 Franklin Street");
 		requestBean.setBillingPostalCode("01604");
-		writeDump(var=requestBean,top=1);
 		var response = processCreditCard(requestBean); 
 		return response;
 	}
